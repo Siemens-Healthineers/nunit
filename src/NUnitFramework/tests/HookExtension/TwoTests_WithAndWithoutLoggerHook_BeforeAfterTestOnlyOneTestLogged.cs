@@ -28,13 +28,12 @@ namespace NUnit.Framework.Tests.HookExtension
         {
             var testResult = TestsUnderTest.Execute();
 
-            Assert.That(testResult.Logs, Is.EqualTo(new[]
-            {
+            Assert.That(testResult.Logs, Is.EqualTo([
                 $"- BeforeTestCase({nameof(TestUnderTest.TestWithHookLogging)})",
                 nameof(TestUnderTest.TestWithHookLogging),
                 $"- AfterTestCase({nameof(TestUnderTest.TestWithHookLogging)})",
                 nameof(TestUnderTest.TestWithoutHookLogging)
-            }));
+            ]));
 
             TestLog.Logs.Clear();
         }
