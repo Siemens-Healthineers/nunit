@@ -19,6 +19,8 @@ public class LogTestActionAttribute : Attribute, ITestAction
     public ActionTargets Targets => ActionTargets.Test | ActionTargets.Suite;
 }
 
+// H-ToDo: enrich test by Hooks and implement
+
 public class TestActionHooksTests
 {
     [LogTestAction]
