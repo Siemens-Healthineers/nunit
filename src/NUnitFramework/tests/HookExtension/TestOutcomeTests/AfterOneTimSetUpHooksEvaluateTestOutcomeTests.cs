@@ -23,7 +23,7 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
             TestResult beforeHookTestResult = null;
             context.HookExtension?.BeforeAnySetUps.AddHandler((sender, eventArgs) =>
             {
-                beforeHookTestResult = eventArgs.Context.CurrentResult;
+                beforeHookTestResult = eventArgs.Context.CurrentResult.Clone();
             });
 
             context.HookExtension?.AfterAnySetUps.AddHandler((sender, eventArgs) =>

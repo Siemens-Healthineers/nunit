@@ -17,7 +17,7 @@ public class AfterTestOutcomeLogger : NUnitAttribute, IApplyToContext
         TestResult beforeHookTestResult = null;
         context.HookExtension?.BeforeTest.AddHandler((sender, eventArgs) =>
         {
-            beforeHookTestResult = eventArgs.Context.CurrentResult;
+            beforeHookTestResult = eventArgs.Context.CurrentResult.Clone();
         });
 
         context.HookExtension?.AfterTest.AddHandler((sender, eventArgs) =>

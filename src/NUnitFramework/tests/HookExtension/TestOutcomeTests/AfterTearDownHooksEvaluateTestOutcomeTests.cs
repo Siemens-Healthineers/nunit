@@ -22,7 +22,7 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
             TestResult beforeHookTestResult = null;
             context.HookExtension?.BeforeAnyTearDowns.AddHandler((sender, eventArgs) =>
             {
-                beforeHookTestResult = eventArgs.Context.CurrentResult;
+                beforeHookTestResult = eventArgs.Context.CurrentResult.Clone();
             });
 
             context.HookExtension?.AfterAnyTearDowns.AddHandler((sender, eventArgs) =>
