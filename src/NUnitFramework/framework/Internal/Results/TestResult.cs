@@ -450,9 +450,8 @@ namespace NUnit.Framework.Internal
             deltaResult.AssertCount = AssertCount - previous.AssertCount;
 
             // Calculate the delta for AssertionResults
-            var newAssertionResults = AssertionResults.Except(previous.AssertionResults).ToList();
             deltaResult.AssertionResults.Clear();
-            foreach (var assertion in newAssertionResults)
+            foreach (var assertion in AssertionResults.Except(previous.AssertionResults))
             {
                 deltaResult.RecordAssertion(assertion);
             }
