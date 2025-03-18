@@ -74,6 +74,7 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
     }
 
     // H-TODO: enrich the test to also failing tests and setups
+    // H-TODO: enrich or write new test for exceptions from hooks
 
     [TestSetupUnderTest]
     [NonParallelizable]

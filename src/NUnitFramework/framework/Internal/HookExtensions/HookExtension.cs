@@ -73,74 +73,32 @@ public class HookExtension
 
     internal async Task OnBeforeAnySetUps(TestExecutionContext context, IMethodInfo method)
     {
-        try
-        {
-            await _invokeBeforeAnySetUps(this, new TestHookIMethodEventArgs(context, method));
-        }
-        catch
-        {
-            // hook extension must not throw exceptions so they are caught and ignored!
-        }
+        await _invokeBeforeAnySetUps(this, new TestHookIMethodEventArgs(context, method));
     }
 
     internal async Task OnAfterAnySetUps(TestExecutionContext context, IMethodInfo method, Exception? exceptionContext = null)
     {
-        try
-        {
-            await _invokeAfterAnySetUps(this, new TestHookIMethodEventArgs(context, method, exceptionContext));
-        }
-        catch
-        {
-            // hook extension must not throw exceptions so they are caught and ignored!
-        }
+        await _invokeAfterAnySetUps(this, new TestHookIMethodEventArgs(context, method, exceptionContext));
     }
 
     internal async Task OnBeforeTest(TestExecutionContext context)
     {
-        try
-        {
-            await _invokeBeforeTest(this, new TestHookTestMethodEventArgs(context));
-        }
-        catch
-        {
-            // hook extension must not throw exceptions so they are caught and ignored!
-        }
+        await _invokeBeforeTest(this, new TestHookTestMethodEventArgs(context));
     }
 
     internal async Task OnAfterTest(TestExecutionContext context, Exception? exceptionContext = null)
     {
-        try
-        {
-            await _invokeAfterTest(this, new TestHookTestMethodEventArgs(context, exceptionContext));
-        }
-        catch
-        {
-            // hook extension must not throw exceptions so they are caught and ignored!
-        }
+        await _invokeAfterTest(this, new TestHookTestMethodEventArgs(context, exceptionContext));
     }
 
     internal async Task OnBeforeAnyTearDowns(TestExecutionContext context, IMethodInfo method)
     {
-        try
-        {
-            await _invokeBeforeAnyTearDowns(this, new TestHookIMethodEventArgs(context, method));
-        }
-        catch
-        {
-            // hook extension must not throw exceptions so they are caught and ignored!
-        }
+        await _invokeBeforeAnyTearDowns(this, new TestHookIMethodEventArgs(context, method));
     }
 
     internal async Task OnAfterAnyTearDowns(TestExecutionContext context, IMethodInfo method, Exception? exceptionContext = null)
     {
-        try
-        {
-            await _invokeAfterAnyTearDowns(this, new TestHookIMethodEventArgs(context, method, exceptionContext));
-        }
-        catch
-        {
-            // hook extension must not throw exceptions so they are caught and ignored!
-        }
+        await _invokeAfterAnyTearDowns(this, new TestHookIMethodEventArgs(context, method, exceptionContext));
     }
 }
 
