@@ -27,6 +27,9 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         global-json-file: global.json
+        dotnet-version: |
+            6.0.x
+            8.0.x
         
     - name: 🛠️ Install dotnet tools
       run: dotnet tool restore
@@ -68,6 +71,9 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         global-json-file: global.json
+        dotnet-version: |
+            6.0.x
+            8.0.x
 
     - name: 🛠️ Install F#
       run: sudo apt-get install fsharp
@@ -100,10 +106,12 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         global-json-file: global.json
-        dotnet-version: 6.x
+        dotnet-version: |
+            6.0.x
+            8.0.x
 
     - name: 🛠️ Install dotnet tools
-      run: dotnet tool restore
+      run: dotnet tool restore --tool-manifest ./.config-macos/dotnet-tools.json
 
     - name: 🔨 Build and Test
       run: dotnet tool run dotnet-cake --target=Test --test-run-name=Linux --configuration=Release

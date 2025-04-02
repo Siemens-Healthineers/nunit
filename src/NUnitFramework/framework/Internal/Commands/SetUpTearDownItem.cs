@@ -118,7 +118,7 @@ namespace NUnit.Framework.Internal.Commands
             var methodInfo = MethodInfoCache.Get(method);
 
             if (methodInfo.IsAsyncOperation)
-                AsyncToSyncAdapter.Await(() => InvokeMethod(method, context));
+                AsyncToSyncAdapter.Await(context, () => InvokeMethod(method, context));
             else
                 InvokeMethod(method, context);
         }

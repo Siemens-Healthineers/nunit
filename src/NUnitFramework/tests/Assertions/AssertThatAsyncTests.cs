@@ -28,6 +28,18 @@ namespace NUnit.Framework.Tests.Assertions
         }
 
         [Test]
+        public async Task AssertionPasses_FaultedDelegate_ThrowsAnyException()
+        {
+            await Assert.ThatAsync(() => throw new Exception("Ugh"), Throws.Exception);
+        }
+
+        [Test]
+        public async Task AssertionPasses_FaultedTask_ThrowsAnyException()
+        {
+            await Assert.ThatAsync(() => Task.FromException(new Exception("Ugh")), Throws.Exception);
+        }
+
+        [Test]
         public async Task AssertionPasses_FaultedTask_ThrowsMatchingException()
         {
             await Assert.ThatAsync(() => Task.FromException(new InvalidOperationException()), Throws.InvalidOperationException);
@@ -147,13 +159,7 @@ namespace NUnit.Framework.Tests.Assertions
         private static async Task AssertAssertionFailsAsync(Func<Task> assertion)
         {
             await Assert.ThatAsync(
-                async () =>
-                {
-                    using (new TestExecutionContext.IsolatedContext())
-                    {
-                        await assertion();
-                    }
-                },
+                async () => await assertion(),
                 Throws.InstanceOf<AssertionException>());
         }
     }

@@ -93,7 +93,7 @@ namespace NUnit.Framework.Constraints
         public virtual ConstraintResult ApplyTo<TActual>(ActualValueDelegate<TActual> del)
         {
             if (AsyncToSyncAdapter.IsAsyncOperation(del))
-                return ApplyTo(AsyncToSyncAdapter.Await(() => del.Invoke()));
+                return ApplyTo(AsyncToSyncAdapter.Await(TestExecutionContext.CurrentContext, () => del.Invoke()));
 
             return ApplyTo(GetTestObject(del));
         }
@@ -105,6 +105,7 @@ namespace NUnit.Framework.Constraints
         /// </summary>
         /// <param name="actual">A reference to the value to be tested</param>
         /// <returns>A ConstraintResult</returns>
+        [Obsolete("This was never implemented and will be removed.")]
         public virtual ConstraintResult ApplyTo<TActual>(ref TActual actual)
         {
             return ApplyTo(actual);

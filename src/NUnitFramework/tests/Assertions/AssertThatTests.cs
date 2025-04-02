@@ -103,6 +103,46 @@ namespace NUnit.Framework.Tests.Assertions
 
         private int ReturnsFour() => 4;
 
+        [Test]
+        public void TestEquatableWithConvertible()
+        {
+            var actual = new Number(42);
+            var expected = new Number(42.0);
+
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        private readonly struct Number : IEquatable<Number>, IConvertible
+        {
+            private readonly double _value;
+
+            public Number(int value) => _value = value;
+            public Number(double value) => _value = value;
+
+            public bool Equals(Number other)
+            {
+                return _value == other._value;
+            }
+
+            TypeCode IConvertible.GetTypeCode() => TypeCode.Object;
+            byte IConvertible.ToByte(IFormatProvider? provider) => throw new NotImplementedException();
+            sbyte IConvertible.ToSByte(IFormatProvider? provider) => throw new NotImplementedException();
+            ushort IConvertible.ToUInt16(IFormatProvider? provider) => throw new NotImplementedException();
+            short IConvertible.ToInt16(IFormatProvider? provider) => throw new NotImplementedException();
+            uint IConvertible.ToUInt32(IFormatProvider? provider) => throw new NotImplementedException();
+            int IConvertible.ToInt32(IFormatProvider? provider) => throw new NotImplementedException();
+            ulong IConvertible.ToUInt64(IFormatProvider? provider) => throw new NotImplementedException();
+            long IConvertible.ToInt64(IFormatProvider? provider) => throw new NotImplementedException();
+            string IConvertible.ToString(IFormatProvider? provider) => throw new NotImplementedException();
+            bool IConvertible.ToBoolean(IFormatProvider? provider) => throw new NotImplementedException();
+            char IConvertible.ToChar(IFormatProvider? provider) => throw new NotImplementedException();
+            DateTime IConvertible.ToDateTime(IFormatProvider? provider) => throw new NotImplementedException();
+            decimal IConvertible.ToDecimal(IFormatProvider? provider) => throw new NotImplementedException();
+            double IConvertible.ToDouble(IFormatProvider? provider) => throw new NotImplementedException();
+            float IConvertible.ToSingle(IFormatProvider? provider) => throw new NotImplementedException();
+            object IConvertible.ToType(Type conversionType, IFormatProvider? provider) => throw new NotImplementedException();
+        }
+
 #pragma warning disable NUnit2010 // Use EqualConstraint for better assertion messages in case of failure
 
         [Test]
@@ -360,6 +400,79 @@ namespace NUnit.Framework.Tests.Assertions
             Assert.That(ex?.Message, Does.Contain("Assert.That(() => false, Is.True)"));
         }
 
+        [TestCase(default(string), default(string))]
+        [TestCase("", "")]
+        public void AssertWithStrings(string? actual, string? expected)
+        {
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void AssertWithExpectedTypeImplicitConvertibleToString()
+        {
+            const string value = "Implicit Cast";
+            var instance = new TypeWithImplicitCastToString(value);
+
+#pragma warning disable NUnit2021 // Incompatible types for EqualTo constraint
+            Assert.That(value, Is.Not.EqualTo(instance), "EqualConstaint");
+#pragma warning restore NUnit2021 // Incompatible types for EqualTo constraint
+        }
+
+        [Test]
+        public void AssertWithActualTypeImplicitConvertibleToString()
+        {
+            const string value = "Implicit Cast";
+            var instance = new TypeWithImplicitCastToString(value);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(instance.Value, Is.EqualTo(value), "Value");
+                Assert.That(instance, Is.Not.EqualTo(value), "ImplicitOperatorNotConsidered");
+            });
+        }
+
+        private sealed class TypeWithImplicitCastToString
+        {
+            public string Value { get; }
+
+            public TypeWithImplicitCastToString(string value)
+            {
+                Value = value;
+            }
+
+            public static implicit operator string(TypeWithImplicitCastToString instance) => instance.Value;
+        }
+
+        [Test]
+        public void AssertWithTypeWhichImplementsIEquatableString()
+        {
+            const string value = "Equatable<string>";
+            var instance = new TypeWhichImplementsIEquatableString(value);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(instance.Value, Is.EqualTo(value), "Value");
+                Assert.That(instance, Is.EqualTo(value), "EqualStringConstaint");
+                Assert.That(() => Assert.That(instance, Is.EqualTo(value.ToLowerInvariant()).IgnoreCase),
+                            Throws.InvalidOperationException);
+            });
+        }
+
+        private sealed class TypeWhichImplementsIEquatableString : IEquatable<string>
+        {
+            public string Value { get; }
+
+            public TypeWhichImplementsIEquatableString(string value)
+            {
+                Value = value;
+            }
+
+            public bool Equals(string? other)
+            {
+                return Value.Equals(other);
+            }
+        }
+
         [TestCase("Hello", "World")]
         [TestCase('A', 'B')]
         [TestCase(false, true)]
@@ -378,13 +491,83 @@ namespace NUnit.Framework.Tests.Assertions
 
             Assert.Multiple(() =>
             {
-                Assert.That(new ClassWithSomeToleranceAwareMembers(1, 1.1, "1.1", zero), Is.EqualTo(instance).UsingPropertiesComparer());
-                Assert.That(new ClassWithSomeToleranceAwareMembers(1, 1.2, "1.1", zero), Is.Not.EqualTo(instance).UsingPropertiesComparer());
-                Assert.That(new ClassWithSomeToleranceAwareMembers(1, 1.2, "1.1", zero), Is.EqualTo(instance).Within(0.1).UsingPropertiesComparer());
-                Assert.That(new ClassWithSomeToleranceAwareMembers(1, 1.1, "1.1", null), Is.Not.EqualTo(instance).UsingPropertiesComparer());
-                Assert.That(new ClassWithSomeToleranceAwareMembers(1, 1.1, "2.2", zero), Is.Not.EqualTo(instance).UsingPropertiesComparer());
-                Assert.That(new ClassWithSomeToleranceAwareMembers(1, 2.2, "1.1", zero), Is.Not.EqualTo(instance).UsingPropertiesComparer());
-                Assert.That(new ClassWithSomeToleranceAwareMembers(2, 1.1, "1.1", zero), Is.Not.EqualTo(instance).UsingPropertiesComparer());
+                Assert.That(new ClassWithSomeToleranceAwareMembers(1, 1.1, "1.1", zero),
+                            Is.EqualTo(instance).UsingPropertiesComparer());
+
+                Assert.That(new ClassWithSomeToleranceAwareMembers(1, 1.2, "1.1", zero),
+                            Is.Not.EqualTo(instance).UsingPropertiesComparer());
+                Assert.That(new ClassWithSomeToleranceAwareMembers(1, 1.2, "1.1", zero),
+                            Is.EqualTo(instance).UsingPropertiesComparer(c => c.Excluding(nameof(ClassWithSomeToleranceAwareMembers.ValueB))));
+                Assert.That(new ClassWithSomeToleranceAwareMembers(1, 1.2, "1.1", zero),
+                            Is.EqualTo(instance).Within(0.1).UsingPropertiesComparer());
+
+                Assert.That(new ClassWithSomeToleranceAwareMembers(1, 1.1, "1.1", null),
+                            Is.Not.EqualTo(instance).UsingPropertiesComparer());
+                Assert.That(new ClassWithSomeToleranceAwareMembers(1, 1.1, "1.1", null),
+                            Is.EqualTo(instance).UsingPropertiesComparer(c => c.Excluding(nameof(ClassWithSomeToleranceAwareMembers.Chained))));
+
+                Assert.That(new ClassWithSomeToleranceAwareMembers(1, 1.1, "2.2", zero),
+                            Is.Not.EqualTo(instance).UsingPropertiesComparer());
+                Assert.That(new ClassWithSomeToleranceAwareMembers(1, 1.1, "2.2", zero),
+                            Is.EqualTo(instance).UsingPropertiesComparer(c => c.Excluding(nameof(ClassWithSomeToleranceAwareMembers.ValueC))));
+
+                Assert.That(new ClassWithSomeToleranceAwareMembers(2, 1.1, "1.1", zero),
+                            Is.Not.EqualTo(instance).UsingPropertiesComparer());
+                Assert.That(new ClassWithSomeToleranceAwareMembers(2, 1.1, "1.1", zero),
+                            Is.EqualTo(instance).UsingPropertiesComparer(c => c.Excluding(nameof(ClassWithSomeToleranceAwareMembers.ValueA))));
+
+                Assert.That(new ClassWithSomeToleranceAwareMembers(2, 2.2, "2.2", zero),
+                            Is.Not.EqualTo(instance).UsingPropertiesComparer());
+
+                // Exclude all but one property.
+                Assert.That(new ClassWithSomeToleranceAwareMembers(2, 1.1, "1.1", zero),
+                            Is.EqualTo(instance).UsingPropertiesComparer(c => c.Excluding(
+                                nameof(ClassWithSomeToleranceAwareMembers.ValueA),
+                                nameof(ClassWithSomeToleranceAwareMembers.ValueB),
+                                nameof(ClassWithSomeToleranceAwareMembers.ValueC))));
+
+                Assert.That(new ClassWithSomeToleranceAwareMembers(2, 1.1, "1.1", zero),
+                            Is.EqualTo(instance).UsingPropertiesComparer(c => c.Excluding(
+                                x => x.ValueA,
+                                x => x.ValueB,
+                                x => x.ValueC)));
+
+                // Only test for the one property.
+                Assert.That(new ClassWithSomeToleranceAwareMembers(2, 1.1, "1.1", zero),
+                            Is.EqualTo(instance).UsingPropertiesComparer(
+                                c => c.Using(nameof(ClassWithSomeToleranceAwareMembers.Chained))));
+
+                Assert.That(new ClassWithSomeToleranceAwareMembers(2, 1.1, "1.1", zero),
+                            Is.EqualTo(instance)
+                              .UsingPropertiesComparer(c => c.Using(x => x.Chained)));
+
+                // Property names work on nested classes!
+                var alsmostZero = new ClassWithSomeToleranceAwareMembers(1, 0.0, string.Empty, null);
+                Assert.That(new ClassWithSomeToleranceAwareMembers(1, 2.2, "2.2", alsmostZero),
+                            Is.EqualTo(instance).UsingPropertiesComparer(
+                                c => c.Using(nameof(ClassWithSomeToleranceAwareMembers.ValueA))));
+
+                // We can't test properties that don't exist
+                Assert.That(() =>
+                            Assert.That(new ClassWithSomeToleranceAwareMembers(2, 1.1, "1.1", zero),
+                                        Is.EqualTo(instance).UsingPropertiesComparer(c => c.Using("ValueD"))),
+                            Throws.InstanceOf<ArgumentException>().With.Message.Contains("must all exist"));
+
+                // We can't exclude properties that don't exist
+                Assert.That(() =>
+                            Assert.That(new ClassWithSomeToleranceAwareMembers(2, 1.1, "1.1", zero),
+                                        Is.EqualTo(instance).UsingPropertiesComparer(c => c.Excluding("ValueD"))),
+                            Throws.InstanceOf<ArgumentException>().With.Message.Contains("must all exist"));
+
+                // We don't allow excluding all properties.
+                Assert.That(() =>
+                            Assert.That(new ClassWithSomeToleranceAwareMembers(2, 1.1, "1.1", null),
+                                        Is.EqualTo(instance).UsingPropertiesComparer(c => c.Excluding(
+                                            nameof(ClassWithSomeToleranceAwareMembers.ValueA),
+                                            nameof(ClassWithSomeToleranceAwareMembers.ValueB),
+                                            nameof(ClassWithSomeToleranceAwareMembers.ValueC),
+                                            nameof(ClassWithSomeToleranceAwareMembers.Chained)))),
+                            Throws.InstanceOf<NotSupportedException>().With.Message.Contains("No comparer found"));
             });
         }
 
@@ -396,6 +579,20 @@ namespace NUnit.Framework.Tests.Assertions
             var instance = new ClassWithSomeToleranceAwareMembers(1, 1.1, "1.1", zero);
 
             Assert.That(new ClassWithSomeToleranceAwareMembers(1, 1.2, "1.1", zero), Is.EqualTo(instance).UsingPropertiesComparer());
+        }
+
+        [Test]
+        public void AssertThatDifferentTypesCanBeCompared()
+        {
+            var instanceC = new ClassWithSomeToleranceAwareMembers(1, 1.1, "1.1", null);
+            var instanceS = new StructWithSomeToleranceAwareMembers(1, 1.1, "1.1", SomeEnum.Two);
+
+            Assert.That(() =>
+                Assert.That(instanceS, Is.Not.EqualTo(instanceC).UsingPropertiesComparer()),
+                Throws.InstanceOf<NotSupportedException>());
+
+            Assert.That(instanceS, Is.EqualTo(instanceC).UsingPropertiesComparer(
+                c => c.CompareOnlyCommonProperties()));
         }
 
         private sealed class ClassWithSomeToleranceAwareMembers
@@ -438,37 +635,53 @@ namespace NUnit.Framework.Tests.Assertions
         [Test]
         public void AssertThatEqualsWithStructMemberDifferences()
         {
-            var instance = new StructWithSomeToleranceAwareMembers(1, 1.1, "1.1", SomeEnum.One);
+            var instance = new StructWithSomeToleranceAwareMembers(1, 0.123, "1.1", SomeEnum.One);
 
             Assert.That(() =>
-                Assert.That(new StructWithSomeToleranceAwareMembers(2, 1.1, "1.1", SomeEnum.One), Is.EqualTo(instance).UsingPropertiesComparer()),
-                Throws.InstanceOf<AssertionException>().With.Message.Contains("at property StructWithSomeToleranceAwareMembers.ValueA")
-                                                       .And.Message.Contains("Expected: 1"));
+                Assert.That(new StructWithSomeToleranceAwareMembers(2, 0.123, "1.1", SomeEnum.One), Is.EqualTo(instance).UsingPropertiesComparer()),
+                    Throws.InstanceOf<AssertionException>().With
+                        .Message.Contains("Expected: StructWithSomeToleranceAwareMembers { ValueA = 1, ValueB = 0.123d, ValueC = \"1.1\", ValueD = One }").And
+                        .Message.Contains("But was:  StructWithSomeToleranceAwareMembers { ValueA = 2, ValueB = 0.123d, ValueC = \"1.1\", ValueD = One }").And
+                        .Message.Contains("at property StructWithSomeToleranceAwareMembers.ValueA").And
+                        .Message.Contains("Expected: 1").And
+                        .Message.Contains("But was:  2"));
             Assert.That(() =>
-                Assert.That(new StructWithSomeToleranceAwareMembers(1, 1.2, "1.1", SomeEnum.One), Is.EqualTo(instance).UsingPropertiesComparer()),
-                Throws.InstanceOf<AssertionException>().With.Message.Contains("at property StructWithSomeToleranceAwareMembers.ValueB")
-                                                       .And.Message.Contains("Expected: 1.1"));
+                Assert.That(new StructWithSomeToleranceAwareMembers(1, 0.246, "1.1", SomeEnum.One), Is.EqualTo(instance).UsingPropertiesComparer()),
+                    Throws.InstanceOf<AssertionException>().With
+                        .Message.Contains("Expected: StructWithSomeToleranceAwareMembers { ValueA = 1, ValueB = 0.123d, ValueC = \"1.1\", ValueD = One }").And
+                        .Message.Contains("But was:  StructWithSomeToleranceAwareMembers { ValueA = 1, ValueB = 0.246d, ValueC = \"1.1\", ValueD = One }").And
+                        .Message.Contains("at property StructWithSomeToleranceAwareMembers.ValueB").And
+                        .Message.Contains("Expected: 0.123d").And
+                        .Message.Contains("But was:  0.246d"));
             Assert.That(() =>
-                Assert.That(new StructWithSomeToleranceAwareMembers(1, 1.1, "1.2", SomeEnum.One), Is.EqualTo(instance).UsingPropertiesComparer()),
-                Throws.InstanceOf<AssertionException>().With.Message.Contains("at property StructWithSomeToleranceAwareMembers.ValueC")
-                                                       .And.Message.Contains("Expected: \"1.1\""));
+                Assert.That(new StructWithSomeToleranceAwareMembers(1, 0.123, "2.2", SomeEnum.One), Is.EqualTo(instance).UsingPropertiesComparer()),
+                    Throws.InstanceOf<AssertionException>().With
+                        .Message.Contains("Expected: StructWithSomeToleranceAwareMembers { ValueA = 1, ValueB = 0.123d, ValueC = \"1.1\", ValueD = One }").And
+                        .Message.Contains("But was:  StructWithSomeToleranceAwareMembers { ValueA = 1, ValueB = 0.123d, ValueC = \"2.2\", ValueD = One }").And
+                        .Message.Contains("at property StructWithSomeToleranceAwareMembers.ValueC").And
+                        .Message.Contains("Expected: \"1.1\"").And
+                        .Message.Contains("But was:  \"2.2\""));
             Assert.That(() =>
-                Assert.That(new StructWithSomeToleranceAwareMembers(1, 1.1, "1.1", SomeEnum.Two), Is.EqualTo(instance).UsingPropertiesComparer()),
-                Throws.InstanceOf<AssertionException>().With.Message.Contains("at property StructWithSomeToleranceAwareMembers.ValueD")
-                                                       .And.Message.Contains("Expected: One"));
+                Assert.That(new StructWithSomeToleranceAwareMembers(1, 0.123, "1.1", SomeEnum.Two), Is.EqualTo(instance).UsingPropertiesComparer()),
+                    Throws.InstanceOf<AssertionException>().With
+                        .Message.Contains("Expected: StructWithSomeToleranceAwareMembers { ValueA = 1, ValueB = 0.123d, ValueC = \"1.1\", ValueD = One }").And
+                        .Message.Contains("But was:  StructWithSomeToleranceAwareMembers { ValueA = 1, ValueB = 0.123d, ValueC = \"1.1\", ValueD = Two }").And
+                        .Message.Contains("at property StructWithSomeToleranceAwareMembers.ValueD").And
+                        .Message.Contains("Expected: One").And
+                        .Message.Contains("But was:  Two"));
 
             /*
              * Uncomment this block to see the actual exception messages. Test will fail.
              *
             Assert.Multiple(() =>
             {
-                Assert.That(new StructWithSomeToleranceAwareMembers(2, 1.1, "1.1", SomeEnum.One), Is.EqualTo(instance).UsingPropertiesComparer());
-                Assert.That(new StructWithSomeToleranceAwareMembers(1, 1.1, "1.1", SomeEnum.One), Is.EqualTo(instance).UsingPropertiesComparer());
-                Assert.That(new StructWithSomeToleranceAwareMembers(1, 1.2, "1.1", SomeEnum.One), Is.EqualTo(instance).UsingPropertiesComparer());
-                Assert.That(new StructWithSomeToleranceAwareMembers(1, 1.1, "1.2", SomeEnum.One), Is.EqualTo(instance).UsingPropertiesComparer());
-                Assert.That(new StructWithSomeToleranceAwareMembers(1, 1.1, "1.1", SomeEnum.Two), Is.EqualTo(instance).UsingPropertiesComparer());
+                Assert.That(new StructWithSomeToleranceAwareMembers(2, 0.123, "1.1", SomeEnum.One), Is.EqualTo(instance).UsingPropertiesComparer());
+                Assert.That(new StructWithSomeToleranceAwareMembers(1, 0.246, "1.1", SomeEnum.One), Is.EqualTo(instance).UsingPropertiesComparer());
+                Assert.That(new StructWithSomeToleranceAwareMembers(1, 0.123, "1.1", SomeEnum.One), Is.EqualTo(instance).UsingPropertiesComparer());
+                Assert.That(new StructWithSomeToleranceAwareMembers(1, 0.123, "1.2", SomeEnum.One), Is.EqualTo(instance).UsingPropertiesComparer());
+                Assert.That(new StructWithSomeToleranceAwareMembers(1, 0.123, "1.1", SomeEnum.Two), Is.EqualTo(instance).UsingPropertiesComparer());
             });
-            */
+             */
         }
 
         private enum SomeEnum
@@ -491,11 +704,6 @@ namespace NUnit.Framework.Tests.Assertions
             public double ValueB { get; }
             public string ValueC { get; }
             public SomeEnum ValueD { get; }
-
-            public override string ToString()
-            {
-                return $"{ValueA} {ValueB} '{ValueC}' {ValueD}";
-            }
         }
 
         [Test]
@@ -656,6 +864,22 @@ namespace NUnit.Framework.Tests.Assertions
         }
 
         [Test]
+        public void PropertiesComparerDoesNotSupportPropertiesOfDifferentTypes()
+        {
+            var actual = new TypeWithObjectProperty { Value = new ClassA(123) };
+            var expected = new TypeWithObjectProperty { Value = new ClassB("Not A Number") };
+            Assert.That(() => Assert.That(actual, Is.EqualTo(expected).UsingPropertiesComparer()), Throws.InstanceOf<AssertionException>());
+        }
+
+        private class TypeWithObjectProperty
+        {
+            public object? Value { get; set; }
+        }
+
+        private record ClassA(int Number);
+        private record ClassB(string String);
+
+        [Test]
         public void TestPropertyFailureSecondLevel()
         {
             var one = new ParentClass(new ChildClass(new GrandChildClass(1)), new ChildClass(new GrandChildClass(2), new GrandChildClass(3)));
@@ -745,6 +969,51 @@ namespace NUnit.Framework.Tests.Assertions
             public GrandChildClass(int value) => Value = value;
 
             public int Value { get; }
+        }
+
+        // Different type with different property name comparison
+        private sealed record Address(string House, string Street, string City, string AreaCode, string Country);
+        private sealed record Person(string Name, Address Address);
+
+        private sealed record USAddress(string House, string Street, string City, string ZipCode);
+        private sealed record USPerson(string Name, USAddress USAddress);
+
+        [Test]
+        public void CompareMatchingDifferentTypes()
+        {
+            var person = new Person("John Doe", new Address("10", "CSI", "Las Vegas", "89030", "U.S.A."));
+            var usPerson = new USPerson("John Doe", new USAddress("10", "CSI", "Las Vegas", "89030"));
+
+            // We can supply a Value for the missing property 'Country'
+            Assert.That(usPerson, Is.EqualTo(person).UsingPropertiesComparer(
+                c => c.Map<USPerson>(x => x.Address, y => y.USAddress)
+                      .Map<Address, USAddress>(x => x.AreaCode, y => y.ZipCode)
+                      .Map<Address>(x => x.Country, "U.S.A.")));
+
+            // Or we can exclude the 'Country' property.
+            // However this would also pass when the source country is not U.S.A.
+            Assert.That(usPerson, Is.EqualTo(person).UsingPropertiesComparer(
+                c => c.Map<USPerson>(x => x.Address, y => y.USAddress)
+                      .Map<Address, USAddress>(x => x.AreaCode, y => y.ZipCode)
+                      .Excluding<Address>(x => x.Country)));
+        }
+
+        [Test]
+        public void CompareMismatchedDifferentTypes()
+        {
+            var person = new Person("John Doe", new Address("10", "CSI", "Las Vegas", "89030", "U.S.A."));
+            var usPerson = new USPerson("John Doe", new USAddress("10", "CSI", "Las Vegas", "89031"));
+
+            Assert.That(() =>
+                Assert.That(usPerson, Is.EqualTo(person).UsingPropertiesComparer(
+                    c => c.Map<USPerson>(x => x.Address, y => y.USAddress)
+                          .Map<Address, USAddress>(x => x.AreaCode, y => y.ZipCode)
+                          .Map<Address>(x => x.Country, "U.S.A."))),
+                    Throws.InstanceOf<AssertionException>()
+                          .With.Message.Contains("at property Person.Address => USPerson.USAddress")
+                          .And.Message.Contains("at property Address.AreaCode => USAddress.ZipCode")
+                          .And.Message.Contains("Expected: \"89030\"")
+                          .And.Message.Contains("But was:  \"89031\""));
         }
     }
 }

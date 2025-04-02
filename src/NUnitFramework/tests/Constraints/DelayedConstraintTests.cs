@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using NUnit.Framework.Constraints;
 using ActualValueDelegate = NUnit.Framework.Constraints.ActualValueDelegate<object>;
 
@@ -32,7 +33,7 @@ namespace NUnit.Framework.Tests.Constraints
         [SetUp]
         public void SetUp()
         {
-            ExpectedDescription = "True after 500 milliseconds delay";
+            ExpectedDescription = "After 500 milliseconds delay";
             StringRepresentation = "<after 500 <equal True>>";
 
             _boolValue = false;
@@ -232,13 +233,48 @@ namespace NUnit.Framework.Tests.Constraints
             Assert.That(watch.ElapsedMilliseconds, Is.GreaterThanOrEqualTo(AFTER));
         }
 
-        private int _pollCount;
+        [Test, Platform(Exclude = "MACOSX", Reason = "Doesn't seem to work correctly with timing, something to ponder later")]
+        public void ThatPollingChecksValueCorrectNumberOfTimes()
+        {
+            var list = new PretendList();
+
+#pragma warning disable NUnit2044 // Non-delegate actual parameter
+            Assert.That(() => Assert.That(list, Has.Count.EqualTo(1).After(1000, 100)),
+                        Throws.InstanceOf<AssertionException>());
+#pragma warning restore NUnit2044 // Non-delegate actual parameter
+            Assert.That(list.PollCount, Is.GreaterThan(5).And.LessThanOrEqualTo(10 + 1));
+        }
+
+        private class PretendList
+        {
+            public int PollCount { get; private set; }
+
+            public int Count
+            {
+                get
+                {
+                    PollCount++;
+                    return 0;
+                }
+            }
+        }
 
         [Test, Platform(Exclude = "MACOSX", Reason = "Doesn't seem to work correctly with timing, something to ponder later")]
         public void ThatPollingCallsDelegateCorrectNumberOfTimes()
         {
-            _pollCount = 0;
-            Assert.That(PollCount, Is.EqualTo(4).After(110, 25));
+            int pollCount = 0;
+            Assert.That(() => Assert.That(() => ++pollCount, Is.EqualTo(0).After(1000, 100)),
+                        Throws.InstanceOf<AssertionException>());
+            Assert.That(pollCount, Is.GreaterThan(5).And.LessThanOrEqualTo(10 + 1));
+        }
+
+        [Test, Platform(Exclude = "MACOSX", Reason = "Doesn't seem to work correctly with timing, something to ponder later")]
+        public void ThatPollingCallsAsyncDelegateCorrectNumberOfTimes()
+        {
+            int pollCount = 0;
+            Assert.That(() => Assert.ThatAsync(() => Task.FromResult(++pollCount), Is.EqualTo(0).After(1000, 100)),
+                        Throws.InstanceOf<AssertionException>());
+            Assert.That(pollCount, Is.GreaterThan(5).And.LessThanOrEqualTo(10 + 1));
         }
 
         [Test]
@@ -288,11 +324,6 @@ namespace NUnit.Framework.Tests.Constraints
             Assert.That(DoesNotThrowAfterRetry, Is.EqualTo("Success!").After(AFTER, POLLING));
         }
 
-        private int PollCount()
-        {
-            return _pollCount++;
-        }
-
         [Test]
         public void PreservesOriginalResultAdditionalLines()
         {
@@ -300,12 +331,63 @@ namespace NUnit.Framework.Tests.Constraints
                 () => Assert.That(() => new[] { 1, 2 }, Is.EquivalentTo(new[] { 2, 3 }).After(1)));
 
             var expectedMessage =
-                "  Expected: equivalent to < 2, 3 > after 1 millisecond delay" + Environment.NewLine +
+                "  After 1 millisecond delay" + Environment.NewLine +
+                "  Expected: equivalent to < 2, 3 >" + Environment.NewLine +
                 "  But was:  < 1, 2 >" + Environment.NewLine +
                 "  Missing (1): < 3 >" + Environment.NewLine +
                 "  Extra (1): < 1 >" + Environment.NewLine;
 
             Assert.That(exception.Message, Does.Contain(expectedMessage));
+        }
+
+        [Test]
+        public async Task PreservesUsingPropertiesComparerResultWithPolling()
+        {
+            await Assert.ThatAsync(FailingDelayedAssertion, Throws.InstanceOf<AssertionException>()
+                .With.Message.Contains("After 200 milliseconds delay")
+                .With.Message.Contains("Expected: ExpectedType { My = 9.876m, Type = 0.432m, With = <{ Lots = True, Of = 23456, Properties = 1 }> }")
+                .With.Message.Contains("But was:  ExpectedType { My = 3.548m, Type = 0.123m, With = <{ Lots = False, Of = 13456, Properties = -1 }> }")
+                .With.Message.Contains("at property ExpectedType.My:")
+                .With.Message.Contains("Expected: 9.876m")
+                .With.Message.Contains("But was:  3.548m"));
+
+            static async Task FailingDelayedAssertion()
+            {
+                await Assert.ThatAsync(GetExpectedResult, Is.EqualTo(new ExpectedType()
+                {
+                    My = 9.876m,
+                    Type = 0.432m,
+                    With = new
+                    {
+                        Lots = true,
+                        Of = "23456",
+                        Properties = 1,
+                    }
+                }).UsingPropertiesComparer().After(200, 100));
+            }
+
+            static async Task<ExpectedType> GetExpectedResult()
+            {
+                await Task.Yield();
+                return new ExpectedType()
+                {
+                    My = 3.548m,
+                    Type = 0.123m,
+                    With = new
+                    {
+                        Lots = false,
+                        Of = "13456",
+                        Properties = -1,
+                    }
+                };
+            }
+        }
+
+        private sealed class ExpectedType
+        {
+            public decimal My { get; set; }
+            public decimal Type { get; set; }
+            public object? With { get; set; }
         }
 
         private static int _setValuesDelay;

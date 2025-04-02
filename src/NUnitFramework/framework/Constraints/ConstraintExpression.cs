@@ -384,6 +384,25 @@ namespace NUnit.Framework.Constraints
 
         #endregion
 
+        #region MultipleOf, Even, Odd
+
+        /// <summary>
+        /// Returns a constraint that tests for a number to be a multiple of another.
+        /// </summary>
+        public MultipleOfConstraint MultipleOf(int multiple) => Append(new MultipleOfConstraint(multiple));
+
+        /// <summary>
+        /// Returns a constraint that tests for a number to be even (i.e. a multiple of two)
+        /// </summary>
+        public MultipleOfConstraint Even => MultipleOf(2);
+
+        /// <summary>
+        /// Returns a constraint that tests for a number to be odd.
+        /// </summary>
+        public MultipleOfConstraint Odd => Not.Even;
+
+        #endregion
+
         #region Empty
 
         /// <summary>
@@ -428,6 +447,14 @@ namespace NUnit.Framework.Constraints
         }
 
         /// <summary>
+        /// Returns a constraint that tests two items for equality
+        /// </summary>
+        public EqualConstraint<T> EqualTo<T>(T? expected)
+        {
+            return Append(new EqualConstraint<T>(expected));
+        }
+
+        /// <summary>
         /// Returns a constraint that tests two strings for equality
         /// </summary>
         public EqualStringConstraint EqualTo(string? expected)
@@ -462,13 +489,96 @@ namespace NUnit.Framework.Constraints
         /// <summary>
         /// Returns a constraint that tests two numbers for equality
         /// </summary>
-#pragma warning disable CS3024 // Constraint type is not CLS-compliant
-        public EqualNumericConstraint<T> EqualTo<T>(T expected)
-            where T : unmanaged, IConvertible, IEquatable<T>
+        public EqualNumericConstraint<double> EqualTo(double expected)
         {
-            return Append(new EqualNumericConstraint<T>(expected));
+            return Append(new EqualNumericConstraint<double>(expected));
         }
-#pragma warning restore CS3024 // Constraint type is not CLS-compliant
+
+        /// <summary>
+        /// Returns a constraint that tests two numbers for equality
+        /// </summary>
+        public EqualNumericConstraint<float> EqualTo(float expected)
+        {
+            return Append(new EqualNumericConstraint<float>(expected));
+        }
+
+        /// <summary>
+        /// Returns a constraint that tests two numbers for equality
+        /// </summary>
+        public EqualNumericConstraint<decimal> EqualTo(decimal expected)
+        {
+            return Append(new EqualNumericConstraint<decimal>(expected));
+        }
+
+        /// <summary>
+        /// Returns a constraint that tests two numbers for equality
+        /// </summary>
+        public EqualNumericConstraint<long> EqualTo(long expected)
+        {
+            return Append(new EqualNumericConstraint<long>(expected));
+        }
+
+        /// <summary>
+        /// Returns a constraint that tests two numbers for equality
+        /// </summary>
+        public EqualNumericConstraint<int> EqualTo(int expected)
+        {
+            return Append(new EqualNumericConstraint<int>(expected));
+        }
+
+        /// <summary>
+        /// Returns a constraint that tests two numbers for equality
+        /// </summary>
+        public EqualNumericConstraint<short> EqualTo(short expected)
+        {
+            return Append(new EqualNumericConstraint<short>(expected));
+        }
+
+        /// <summary>
+        /// Returns a constraint that tests two numbers for equality
+        /// </summary>
+        public EqualNumericConstraint<byte> EqualTo(byte expected)
+        {
+            return Append(new EqualNumericConstraint<byte>(expected));
+        }
+
+#pragma warning disable CS3002 // Return type is not CLS-compliant
+#pragma warning disable CS3001 // Argument type is not CLS-compliant
+
+        /// <summary>
+        /// Returns a constraint that tests two numbers for equality
+        /// </summary>
+        public EqualNumericConstraint<ulong> EqualTo(ulong expected)
+        {
+            return Append(new EqualNumericConstraint<ulong>(expected));
+        }
+
+        /// <summary>
+        /// Returns a constraint that tests two numbers for equality
+        /// </summary>
+        public EqualNumericConstraint<uint> EqualTo(uint expected)
+        {
+            return Append(new EqualNumericConstraint<uint>(expected));
+        }
+
+        /// <summary>
+        /// Returns a constraint that tests two numbers for equality
+        /// </summary>
+        public EqualNumericConstraint<ushort> EqualTo(ushort expected)
+        {
+            return Append(new EqualNumericConstraint<ushort>(expected));
+        }
+
+        /// <summary>
+        /// Returns a constraint that tests two numbers for equality
+        /// </summary>
+        public EqualNumericConstraint<sbyte> EqualTo(sbyte expected)
+        {
+            return Append(new EqualNumericConstraint<sbyte>(expected));
+        }
+
+#pragma warning restore CS3001 // Argument type is not CLS-compliant
+#pragma warning restore CS3002 // Return type is not CLS-compliant
 
         #endregion
 
@@ -702,6 +812,15 @@ namespace NUnit.Framework.Constraints
             return Append(new SomeItemsConstraint(new EqualConstraint(expected)));
         }
 
+        /// <summary>
+        /// Returns a new <see cref="SomeItemsConstraint"/> checking for the
+        /// presence of a particular object in the collection.
+        /// </summary>
+        public SomeItemsConstraint<T> Member<T>(T? expected)
+        {
+            return Append(new SomeItemsConstraint<T>(new EqualConstraint<T>(expected)));
+        }
+
         #endregion
 
         #region Contains
@@ -719,6 +838,21 @@ namespace NUnit.Framework.Constraints
         public SomeItemsConstraint Contains(object? expected)
         {
             return Append(new SomeItemsConstraint(new EqualConstraint(expected)));
+        }
+
+        /// <summary>
+        /// <para>
+        /// Returns a new <see cref="SomeItemsConstraint"/> checking for the
+        /// presence of a particular object in the collection.
+        /// </para>
+        /// <para>
+        /// To search for a substring instead of a collection element, use the
+        /// <see cref="Contains(string)"/> overload.
+        /// </para>
+        /// </summary>
+        public SomeItemsConstraint<T> Contains<T>(T? expected)
+        {
+            return Append(new SomeItemsConstraint<T>(new EqualConstraint<T>(expected)));
         }
 
         /// <summary>
@@ -742,6 +876,15 @@ namespace NUnit.Framework.Constraints
         /// presence of a particular object in the collection.
         /// </summary>
         public SomeItemsConstraint Contain(object? expected)
+        {
+            return Contains(expected);
+        }
+
+        /// <summary>
+        /// Returns a new <see cref="SomeItemsConstraint"/> checking for the
+        /// presence of a particular object in the collection.
+        /// </summary>
+        public SomeItemsConstraint<T> Contain<T>(T? expected)
         {
             return Contains(expected);
         }

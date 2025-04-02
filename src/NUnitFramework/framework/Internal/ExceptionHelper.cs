@@ -172,7 +172,7 @@ namespace NUnit.Framework.Internal
                 {
                     try
                     {
-                        AsyncToSyncAdapter.Await(parameterlessDelegate.DynamicInvokeWithTransparentExceptions);
+                        AsyncToSyncAdapter.Await(TestExecutionContext.CurrentContext, parameterlessDelegate.DynamicInvokeWithTransparentExceptions);
                     }
                     catch (Exception ex)
                     {
@@ -199,13 +199,16 @@ namespace NUnit.Framework.Internal
         {
             Guard.ArgumentNotNull(parameterlessDelegate, parameterName);
 
-            try
+            using (new TestExecutionContext.IsolatedContext())
             {
-                await parameterlessDelegate();
-            }
-            catch (Exception e)
-            {
-                return e;
+                try
+                {
+                    await parameterlessDelegate();
+                }
+                catch (Exception e)
+                {
+                    return e;
+                }
             }
 
             return null;
