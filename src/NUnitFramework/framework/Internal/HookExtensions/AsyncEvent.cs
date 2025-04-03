@@ -69,7 +69,7 @@ namespace NUnit.Framework.Internal.HookExtensions
                     }));
                 }
             }
-            
+
             Delegate[] syncHandlers;
             lock (_handlers)
                 syncHandlers = _handlers.ToArray();
