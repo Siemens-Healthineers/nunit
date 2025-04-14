@@ -36,22 +36,27 @@ public class HookExtension
     /// Gets or sets the hook event that is triggered before any setup methods are executed.
     /// </summary>
     public AsyncEvent<TestHookIMethodEventArgs> BeforeAnySetUps { get; set; }
+
     /// <summary>
     /// Gets or sets the hook event that is triggered after any setup methods are executed.
     /// </summary>
     public AsyncEvent<TestHookIMethodEventArgs> AfterAnySetUps { get; set; }
+
     /// <summary>
     /// Gets or sets the hook event that is triggered before a test method is executed.
     /// </summary>
     public AsyncEvent<TestHookTestMethodEventArgs> BeforeTest { get; set; }
+
     /// <summary>
     /// Gets or sets the hook event that is triggered after a test method is executed.
     /// </summary>
     public AsyncEvent<TestHookTestMethodEventArgs> AfterTest { get; set; }
+
     /// <summary>
     /// Gets or sets the hook event that is triggered before any teardown methods are executed.
     /// </summary>
     public AsyncEvent<TestHookIMethodEventArgs> BeforeAnyTearDowns { get; set; }
+
     /// <summary>
     /// Gets or sets the hook event that is triggered after any teardown methods are executed.
     /// </summary>
