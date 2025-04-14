@@ -76,34 +76,34 @@ public class HookExtension
         other._invokeAfterAnyTearDowns?.GetInvocationList()?.ToList().ForEach(d => _invokeAfterAnyTearDowns += d as AsyncEventHandler<TestHookIMethodEventArgs>);
     }
 
-    internal async Task OnBeforeAnySetUps(TestExecutionContext context, IMethodInfo method)
+    internal void OnBeforeAnySetUps(TestExecutionContext context, IMethodInfo method)
     {
-        await _invokeBeforeAnySetUps(this, new TestHookIMethodEventArgs(context, method));
+        _invokeBeforeAnySetUps(this, new TestHookIMethodEventArgs(context, method));
     }
 
-    internal async Task OnAfterAnySetUps(TestExecutionContext context, IMethodInfo method, Exception? exceptionContext = null)
+    internal void OnAfterAnySetUps(TestExecutionContext context, IMethodInfo method, Exception? exceptionContext = null)
     {
-        await _invokeAfterAnySetUps(this, new TestHookIMethodEventArgs(context, method, exceptionContext));
+        _invokeAfterAnySetUps(this, new TestHookIMethodEventArgs(context, method, exceptionContext));
     }
 
-    internal async Task OnBeforeTest(TestExecutionContext context)
+    internal void OnBeforeTest(TestExecutionContext context)
     {
-        await _invokeBeforeTest(this, new TestHookTestMethodEventArgs(context));
+        _invokeBeforeTest(this, new TestHookTestMethodEventArgs(context));
     }
 
-    internal async Task OnAfterTest(TestExecutionContext context, Exception? exceptionContext = null)
+    internal void OnAfterTest(TestExecutionContext context, Exception? exceptionContext = null)
     {
-        await _invokeAfterTest(this, new TestHookTestMethodEventArgs(context, exceptionContext));
+        _invokeAfterTest(this, new TestHookTestMethodEventArgs(context, exceptionContext));
     }
 
-    internal async Task OnBeforeAnyTearDowns(TestExecutionContext context, IMethodInfo method)
+    internal void OnBeforeAnyTearDowns(TestExecutionContext context, IMethodInfo method)
     {
-        await _invokeBeforeAnyTearDowns(this, new TestHookIMethodEventArgs(context, method));
+        _invokeBeforeAnyTearDowns(this, new TestHookIMethodEventArgs(context, method));
     }
 
-    internal async Task OnAfterAnyTearDowns(TestExecutionContext context, IMethodInfo method, Exception? exceptionContext = null)
+    internal void OnAfterAnyTearDowns(TestExecutionContext context, IMethodInfo method, Exception? exceptionContext = null)
     {
-        await _invokeAfterAnyTearDowns(this, new TestHookIMethodEventArgs(context, method, exceptionContext));
+        _invokeAfterAnyTearDowns(this, new TestHookIMethodEventArgs(context, method, exceptionContext));
     }
 }
 
