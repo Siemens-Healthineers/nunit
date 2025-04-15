@@ -10,22 +10,21 @@ namespace NUnit.Framework.Tests.Internal.HookExtension
         [Test]
         public void Invoke_AsyncEventThrowingException_AggregatedExceptionIsThrown()
         {
-            var asyncEvent = new AsyncEvent<TestHookTestMethodEventArgs>(out var invoke);
+            var asyncEvent = new AsyncEvent<TestHookTestMethodEventArgs>();
             var exception = new Exception("Test exception");
             var testMethodEventArgs = new TestHookTestMethodEventArgs(null);
             asyncEvent.AddAsyncHandler(async (sender, args) => throw exception);
-            Assert.Throws<AggregateException>(() => invoke(this, testMethodEventArgs).Wait());
+            Assert.Throws<AggregateException>(() => asyncEvent.Invoke(this, testMethodEventArgs).Wait());
         }
 
         [Test]
         public void Invoke_SyncEventThrowingException_AggregatedExceptionIsThrown()
         {
-            var syncEvent = new AsyncEvent<TestHookTestMethodEventArgs>(out var invoke);
+            var syncEvent = new AsyncEvent<TestHookTestMethodEventArgs>();
             var exception = new Exception("Test exception");
             var testMethodEventArgs = new TestHookTestMethodEventArgs(null);
             syncEvent.AddHandler((sender, args) => throw exception);
-            Assert.Throws<AggregateException>(() => invoke(this, testMethodEventArgs).Wait());
+            Assert.Throws<AggregateException>(() => syncEvent.Invoke(this, testMethodEventArgs).Wait());
         }
-
     }
 }
