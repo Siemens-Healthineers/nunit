@@ -17,20 +17,13 @@ public class HookExtension
     /// </summary>
     public HookExtension()
     {
-        BeforeAnySetUps = new AsyncEvent<TestHookIMethodEventArgs>(out _invokeBeforeAnySetUps);
-        AfterAnySetUps = new AsyncEvent<TestHookIMethodEventArgs>(out _invokeAfterAnySetUps);
-        BeforeTest = new AsyncEvent<TestHookTestMethodEventArgs>(out _invokeBeforeTest);
-        AfterTest = new AsyncEvent<TestHookTestMethodEventArgs>(out _invokeAfterTest);
-        BeforeAnyTearDowns = new AsyncEvent<TestHookIMethodEventArgs>(out _invokeBeforeAnyTearDowns);
-        AfterAnyTearDowns = new AsyncEvent<TestHookIMethodEventArgs>(out _invokeAfterAnyTearDowns);
+        BeforeAnySetUps = new AsyncEvent<TestHookIMethodEventArgs>();
+        AfterAnySetUps = new AsyncEvent<TestHookIMethodEventArgs>();
+        BeforeTest = new AsyncEvent<TestHookTestMethodEventArgs>();
+        AfterTest = new AsyncEvent<TestHookTestMethodEventArgs>();
+        BeforeAnyTearDowns = new AsyncEvent<TestHookIMethodEventArgs>();
+        AfterAnyTearDowns = new AsyncEvent<TestHookIMethodEventArgs>();
     }
-
-    private AsyncEventHandler<TestHookIMethodEventArgs> _invokeBeforeAnySetUps;
-    private AsyncEventHandler<TestHookIMethodEventArgs> _invokeAfterAnySetUps;
-    private AsyncEventHandler<TestHookTestMethodEventArgs> _invokeBeforeTest;
-    private AsyncEventHandler<TestHookTestMethodEventArgs> _invokeAfterTest;
-    private AsyncEventHandler<TestHookIMethodEventArgs> _invokeBeforeAnyTearDowns;
-    private AsyncEventHandler<TestHookIMethodEventArgs> _invokeAfterAnyTearDowns;
 
     /// <summary>
     /// Gets or sets the hook event that is triggered before any setup methods are executed.
@@ -68,42 +61,49 @@ public class HookExtension
     /// <param name="other">The instance of <see cref="HookExtension"/> to copy hooks from.</param>
     public HookExtension(HookExtension other) : this()
     {
-        other._invokeBeforeAnySetUps?.GetInvocationList()?.ToList().ForEach(d => _invokeBeforeAnySetUps += d as AsyncEventHandler<TestHookIMethodEventArgs>);
-        other._invokeAfterAnySetUps?.GetInvocationList()?.ToList().ForEach(d => _invokeAfterAnySetUps += d as AsyncEventHandler<TestHookIMethodEventArgs>);
-        other._invokeBeforeTest?.GetInvocationList()?.ToList().ForEach(d => _invokeBeforeTest += d as AsyncEventHandler<TestHookTestMethodEventArgs>);
-        other._invokeAfterTest?.GetInvocationList()?.ToList().ForEach(d => _invokeAfterTest += d as AsyncEventHandler<TestHookTestMethodEventArgs>);
-        other._invokeBeforeAnyTearDowns?.GetInvocationList()?.ToList().ForEach(d => _invokeBeforeAnyTearDowns += d as AsyncEventHandler<TestHookIMethodEventArgs>);
-        other._invokeAfterAnyTearDowns?.GetInvocationList()?.ToList().ForEach(d => _invokeAfterAnyTearDowns += d as AsyncEventHandler<TestHookIMethodEventArgs>);
+        other.BeforeAnySetUps.GetHandlers().ToList().ForEach(d => BeforeAnySetUps.AddHandler((EventHandler<TestHookIMethodEventArgs>)d));
+        other.AfterAnySetUps.GetHandlers().ToList().ForEach(d => AfterAnySetUps.AddHandler((EventHandler<TestHookIMethodEventArgs>)d));
+        other.BeforeTest.GetHandlers().ToList().ForEach(d => BeforeTest.AddHandler((EventHandler<TestHookTestMethodEventArgs>)d));
+        other.AfterTest.GetHandlers().ToList().ForEach(d => AfterTest.AddHandler((EventHandler<TestHookTestMethodEventArgs>)d));
+        other.BeforeAnyTearDowns.GetHandlers().ToList().ForEach(d => BeforeAnyTearDowns.AddHandler((EventHandler<TestHookIMethodEventArgs>)d));
+        other.AfterAnyTearDowns.GetHandlers().ToList().ForEach(d => AfterAnyTearDowns.AddHandler((EventHandler<TestHookIMethodEventArgs>)d));
+
+        other.BeforeAnySetUps.GetAsyncHandlers().ToList().ForEach(d => BeforeAnySetUps.AddAsyncHandler((AsyncEventHandler<TestHookIMethodEventArgs>)d));
+        other.AfterAnySetUps.GetAsyncHandlers().ToList().ForEach(d => AfterAnySetUps.AddAsyncHandler((AsyncEventHandler<TestHookIMethodEventArgs>)d));
+        other.BeforeTest.GetAsyncHandlers().ToList().ForEach(d => BeforeTest.AddAsyncHandler((AsyncEventHandler<TestHookTestMethodEventArgs>)d));
+        other.AfterTest.GetAsyncHandlers().ToList().ForEach(d => AfterTest.AddAsyncHandler((AsyncEventHandler<TestHookTestMethodEventArgs>)d));
+        other.BeforeAnyTearDowns.GetAsyncHandlers().ToList().ForEach(d => BeforeAnyTearDowns.AddAsyncHandler((AsyncEventHandler<TestHookIMethodEventArgs>)d));
+        other.AfterAnyTearDowns.GetAsyncHandlers().ToList().ForEach(d => AfterAnyTearDowns.AddAsyncHandler((AsyncEventHandler<TestHookIMethodEventArgs>)d));
     }
 
     internal void OnBeforeAnySetUps(TestExecutionContext context, IMethodInfo method)
     {
-        _invokeBeforeAnySetUps(this, new TestHookIMethodEventArgs(context, method));
+        BeforeAnySetUps.Invoke(this, new TestHookIMethodEventArgs(context, method));
     }
 
     internal void OnAfterAnySetUps(TestExecutionContext context, IMethodInfo method, Exception? exceptionContext = null)
     {
-        _invokeAfterAnySetUps(this, new TestHookIMethodEventArgs(context, method, exceptionContext));
+        AfterAnySetUps.Invoke(this, new TestHookIMethodEventArgs(context, method, exceptionContext));
     }
 
     internal void OnBeforeTest(TestExecutionContext context)
     {
-        _invokeBeforeTest(this, new TestHookTestMethodEventArgs(context));
+        BeforeTest.Invoke(this, new TestHookTestMethodEventArgs(context));
     }
 
     internal void OnAfterTest(TestExecutionContext context, Exception? exceptionContext = null)
     {
-        _invokeAfterTest(this, new TestHookTestMethodEventArgs(context, exceptionContext));
+        AfterTest.Invoke(this, new TestHookTestMethodEventArgs(context, exceptionContext));
     }
 
     internal void OnBeforeAnyTearDowns(TestExecutionContext context, IMethodInfo method)
     {
-        _invokeBeforeAnyTearDowns(this, new TestHookIMethodEventArgs(context, method));
+        BeforeAnyTearDowns.Invoke(this, new TestHookIMethodEventArgs(context, method));
     }
 
     internal void OnAfterAnyTearDowns(TestExecutionContext context, IMethodInfo method, Exception? exceptionContext = null)
     {
-        _invokeAfterAnyTearDowns(this, new TestHookIMethodEventArgs(context, method, exceptionContext));
+        AfterAnyTearDowns.Invoke(this, new TestHookIMethodEventArgs(context, method, exceptionContext));
     }
 }
 

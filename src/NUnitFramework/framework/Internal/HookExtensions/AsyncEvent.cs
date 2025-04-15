@@ -16,17 +16,6 @@ namespace NUnit.Framework.Internal.HookExtensions
         private readonly List<Delegate> _asyncHandlers = new();
 
         /// <summary>
-        /// Constructor that initializes the event and provides an event handler to invoke it.
-        /// </summary>
-        /// <param name="invoke">
-        /// The event handler to invoke the event.
-        /// </param>
-        public AsyncEvent(out AsyncEventHandler<TEventArgs> invoke)
-        {
-            invoke = Invoke;
-        }
-
-        /// <summary>
         /// Adds a synchronous handler to the event.
         /// </summary>
         /// <param name="handler">The event handler to be attached to the event.</param>
@@ -46,7 +35,19 @@ namespace NUnit.Framework.Internal.HookExtensions
                 _asyncHandlers.Add(asyncHandler);
         }
 
-        private Task Invoke(object? sender, TEventArgs e)
+        internal IReadOnlyList<Delegate> GetHandlers()
+        {
+            lock (_handlers)
+                return _handlers;
+        }
+
+        internal IReadOnlyList<Delegate> GetAsyncHandlers()
+        {
+            lock (_handlers)
+                return _asyncHandlers;
+        }
+
+        internal Task Invoke(object? sender, TEventArgs e)
         {
             if (!_handlers.Any() && !_asyncHandlers.Any())
             {
