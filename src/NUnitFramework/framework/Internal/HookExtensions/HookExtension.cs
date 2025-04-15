@@ -78,32 +78,32 @@ public class HookExtension
 
     internal void OnBeforeAnySetUps(TestExecutionContext context, IMethodInfo method)
     {
-        await BeforeAnySetUps.Invoke(this, new TestHookIMethodEventArgs(context, method));
+        BeforeAnySetUps.Invoke(this, new TestHookIMethodEventArgs(context, method));
     }
 
     internal void OnAfterAnySetUps(TestExecutionContext context, IMethodInfo method, Exception? exceptionContext = null)
     {
-        await AfterAnySetUps.Invoke(this, new TestHookIMethodEventArgs(context, method, exceptionContext));
+        AfterAnySetUps.Invoke(this, new TestHookIMethodEventArgs(context, method, exceptionContext));
     }
 
     internal void OnBeforeTest(TestExecutionContext context)
     {
-        await BeforeTest.Invoke(this, new TestHookTestMethodEventArgs(context));
+        BeforeTest.Invoke(this, new TestHookTestMethodEventArgs(context));
     }
 
     internal void OnAfterTest(TestExecutionContext context, Exception? exceptionContext = null)
     {
-        await AfterTest.Invoke(this, new TestHookTestMethodEventArgs(context, exceptionContext));
+        AfterTest.Invoke(this, new TestHookTestMethodEventArgs(context, exceptionContext));
     }
 
     internal void OnBeforeAnyTearDowns(TestExecutionContext context, IMethodInfo method)
     {
-        await BeforeAnyTearDowns.Invoke(this, new TestHookIMethodEventArgs(context, method));
+        BeforeAnyTearDowns.Invoke(this, new TestHookIMethodEventArgs(context, method));
     }
 
     internal void OnAfterAnyTearDowns(TestExecutionContext context, IMethodInfo method, Exception? exceptionContext = null)
     {
-        await AfterAnyTearDowns.Invoke(this, new TestHookIMethodEventArgs(context, method, exceptionContext));
+        AfterAnyTearDowns.Invoke(this, new TestHookIMethodEventArgs(context, method, exceptionContext));
     }
 }
 
