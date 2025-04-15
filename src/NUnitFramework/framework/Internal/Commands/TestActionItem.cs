@@ -37,8 +37,14 @@ namespace NUnit.Framework.Internal.Commands
         /// <param name="test">The test to which the action applies</param>
         public void BeforeTest(Interfaces.ITest test)
         {
+            var context = TestExecutionContext.CurrentContext;
+            context.HookExtension?.OnBeforeTestAction(context, new MethodWrapper(_action.GetType(), "BeforeTest"));
+
             BeforeTestWasRun = true;
             _action.BeforeTest(test);
+
+            // H-TODO: add exception handling
+            context.HookExtension?.OnAfterTestAction(context, new MethodWrapper(_action.GetType(), "BeforeTest"));
         }
 
         /// <summary>
@@ -48,8 +54,14 @@ namespace NUnit.Framework.Internal.Commands
         /// <param name="test">The test to which the action applies</param>
         public void AfterTest(Interfaces.ITest test)
         {
+            var context = TestExecutionContext.CurrentContext;
+            context.HookExtension?.OnBeforeTestAction(context, new MethodWrapper(_action.GetType(), "AfterTest"));
+
             if (BeforeTestWasRun)
                 _action.AfterTest(test);
+
+            // H-TODO: add exception handling
+            context.HookExtension?.OnAfterTestAction(context, new MethodWrapper(_action.GetType(), "AfterTest"));
         }
     }
 }

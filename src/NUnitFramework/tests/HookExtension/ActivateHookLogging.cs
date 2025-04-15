@@ -59,7 +59,7 @@ internal class LoggerHook
     public void BeforeOneTimeTearDown(string methodName) => TestLog.Log($"- BeforeOneTimeTearDown({methodName})");
     public void AfterOneTimeTearDown(string methodName) => TestLog.Log($"- AfterOneTimeTearDown({methodName})");
 
-    public void BeforeAnySetUps(object? sender, TestHookFixtureMethodEventArgs eventArgs)
+    public void BeforeAnySetUps(object? sender, MethodHookEventArgs eventArgs)
     {
         if (eventArgs.Context.CurrentTest.IsSuite)
         {
@@ -71,7 +71,7 @@ internal class LoggerHook
         }
     }
 
-    public void AfterAnySetUps(object? sender, TestHookFixtureMethodEventArgs eventArgs)
+    public void AfterAnySetUps(object? sender, MethodHookEventArgs eventArgs)
     {
         if (eventArgs.Context.CurrentTest.IsSuite)
         {
@@ -83,7 +83,7 @@ internal class LoggerHook
         }
     }
 
-    public void BeforeAnyTearDowns(object? sender, TestHookFixtureMethodEventArgs eventArgs)
+    public void BeforeAnyTearDowns(object? sender, MethodHookEventArgs eventArgs)
     {
         if (eventArgs.Context.CurrentTest.IsSuite)
         {
@@ -95,7 +95,7 @@ internal class LoggerHook
         }
     }
 
-    public void AfterAnyTearDowns(object? sender, TestHookFixtureMethodEventArgs eventArgs)
+    public void AfterAnyTearDowns(object? sender, MethodHookEventArgs eventArgs)
     {
         if (eventArgs.Context.CurrentTest.IsSuite)
         {
@@ -107,12 +107,12 @@ internal class LoggerHook
         }
     }
 
-    public void BeforeTest(object? sender, TestHookTestMethodEventArgs eventArgs)
+    public void BeforeTest(object? sender, TestHookEventArgs eventArgs)
     {
         TestLog.Log($"- BeforeTestCase({eventArgs.Context.CurrentTest.MethodName})");
     }
 
-    public void AfterTest(object? sender, TestHookTestMethodEventArgs eventArgs)
+    public void AfterTest(object? sender, TestHookEventArgs eventArgs)
     {
         TestLog.Log($"- AfterTestCase({eventArgs.Context.CurrentTest.MethodName})");
     }
