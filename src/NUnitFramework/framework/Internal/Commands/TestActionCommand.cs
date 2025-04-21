@@ -1,5 +1,7 @@
 // Copyright (c) Charlie Poole, Rob Prouse and Contributors. MIT License - see LICENSE.txt
 
+using System;
+
 namespace NUnit.Framework.Internal.Commands
 {
     /// <summary>
@@ -22,21 +24,35 @@ namespace NUnit.Framework.Internal.Commands
 
             BeforeTest = context =>
             {
-                context.HookExtension?.OnBeforeTestActionBeforeTest(context, new TypeWrapper(action.GetType()));
+                try
+                {
+                    context.HookExtension?.OnBeforeTestActionBeforeTest(context, new TypeWrapper(action.GetType()));
 
-                action.BeforeTest(Test);
-
-                // H-TODO: add exception handling
+                    action.BeforeTest(Test);
+                }
+                catch (Exception exception)
+                {
+                    // H-TODO: add tests for exception handling
+                    context.HookExtension?.OnAfterTestActionBeforeTest(context, new TypeWrapper(action.GetType()), exception);
+                    throw;
+                }
                 context.HookExtension?.OnAfterTestActionBeforeTest(context, new TypeWrapper(action.GetType()));
             };
 
             AfterTest = context =>
             {
-                context.HookExtension?.OnBeforeTestActionAfterTest(context, new TypeWrapper(action.GetType()));
+                try
+                {
+                    context.HookExtension?.OnBeforeTestActionAfterTest(context, new TypeWrapper(action.GetType()));
 
-                action.AfterTest(Test);
-
-                // H-TODO: add exception handling
+                    action.AfterTest(Test);
+                }
+                catch (Exception exception)
+                {
+                    // H-TODO: add tests for exception handling
+                    context.HookExtension?.OnAfterTestActionAfterTest(context, new TypeWrapper(action.GetType()), exception);
+                    throw;
+                }
                 context.HookExtension?.OnAfterTestActionAfterTest(context, new TypeWrapper(action.GetType()));
             };
         }

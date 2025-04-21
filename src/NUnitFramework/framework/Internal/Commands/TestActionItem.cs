@@ -1,5 +1,7 @@
 // Copyright (c) Charlie Poole, Rob Prouse and Contributors. MIT License - see LICENSE.txt
 
+using System;
+
 namespace NUnit.Framework.Internal.Commands
 {
     /// <summary>
@@ -38,12 +40,19 @@ namespace NUnit.Framework.Internal.Commands
         public void BeforeTest(Interfaces.ITest test)
         {
             var context = TestExecutionContext.CurrentContext;
-            context.HookExtension?.OnBeforeTestActionBeforeTest(context, new TypeWrapper(_action.GetType()));
+            try
+            {
+                context.HookExtension?.OnBeforeTestActionBeforeTest(context, new TypeWrapper(_action.GetType()));
 
-            BeforeTestWasRun = true;
-            _action.BeforeTest(test);
-
-            // H-TODO: add exception handling
+                BeforeTestWasRun = true;
+                _action.BeforeTest(test);
+            }
+            catch (Exception exception)
+            {
+                // H-TODO: add tests for exception handling
+                context.HookExtension?.OnAfterTestActionBeforeTest(context, new TypeWrapper(_action.GetType()), exception);
+                throw;
+            }
             context.HookExtension?.OnAfterTestActionBeforeTest(context, new TypeWrapper(_action.GetType()));
         }
 
@@ -55,12 +64,19 @@ namespace NUnit.Framework.Internal.Commands
         public void AfterTest(Interfaces.ITest test)
         {
             var context = TestExecutionContext.CurrentContext;
-            context.HookExtension?.OnBeforeTestActionAfterTest(context, new TypeWrapper(_action.GetType()));
+            try
+            {
+                context.HookExtension?.OnBeforeTestActionAfterTest(context, new TypeWrapper(_action.GetType()));
 
-            if (BeforeTestWasRun)
-                _action.AfterTest(test);
-
-            // H-TODO: add exception handling
+                if (BeforeTestWasRun)
+                    _action.AfterTest(test);
+            }
+            catch (Exception exception)
+            {
+                // H-TODO: add test for exception handling
+                context.HookExtension?.OnAfterTestActionAfterTest(context, new TypeWrapper(_action.GetType()));
+                throw;
+            }
             context.HookExtension?.OnAfterTestActionAfterTest(context, new TypeWrapper(_action.GetType()));
         }
     }
