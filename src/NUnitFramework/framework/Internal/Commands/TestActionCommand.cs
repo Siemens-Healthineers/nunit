@@ -22,22 +22,22 @@ namespace NUnit.Framework.Internal.Commands
 
             BeforeTest = context =>
             {
-                context.HookExtension?.OnBeforeTestAction(context, new MethodWrapper(action.GetType(), "BeforeTest"));
+                context.HookExtension?.OnBeforeTestActionBeforeTest(context, new TypeWrapper(action.GetType()));
 
                 action.BeforeTest(Test);
 
                 // H-TODO: add exception handling
-                context.HookExtension?.OnAfterTestAction(context, new MethodWrapper(action.GetType(), "BeforeTest"));
+                context.HookExtension?.OnAfterTestActionBeforeTest(context, new TypeWrapper(action.GetType()));
             };
 
             AfterTest = context =>
             {
-                context.HookExtension?.OnBeforeTestAction(context, new MethodWrapper(action.GetType(), "AfterTest"));
+                context.HookExtension?.OnBeforeTestActionAfterTest(context, new TypeWrapper(action.GetType()));
 
                 action.AfterTest(Test);
 
                 // H-TODO: add exception handling
-                context.HookExtension?.OnAfterTestAction(context, new MethodWrapper(action.GetType(), "AfterTest"));
+                context.HookExtension?.OnAfterTestActionAfterTest(context, new TypeWrapper(action.GetType()));
             };
         }
     }

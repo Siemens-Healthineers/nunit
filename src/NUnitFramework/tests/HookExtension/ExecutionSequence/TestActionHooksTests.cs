@@ -9,13 +9,21 @@ public class TestActionLoggingHookExtension : NUnitAttribute, IApplyToContext
 {
     public void ApplyToContext(TestExecutionContext context)
     {
-        context.HookExtension?.BeforeTestAction.AddHandler((sender, eventArgs) =>
+        context.HookExtension?.BeforeTestActionBeforeTest.AddHandler((sender, eventArgs) =>
         {
-            TestLog.LogCurrentMethod($"BeforeTestAction({(eventArgs.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
+            TestLog.LogCurrentMethod($"BeforeTestActionBeforeTest({(eventArgs.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
         });
-        context.HookExtension?.AfterTestAction.AddHandler((sender, eventArgs) =>
+        context.HookExtension?.AfterTestActionBeforeTest.AddHandler((sender, eventArgs) =>
         {
-            TestLog.LogCurrentMethod($"AfterTestAction({(eventArgs.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
+            TestLog.LogCurrentMethod($"AfterTestActionBeforeTest({(eventArgs.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
+        });
+        context.HookExtension?.BeforeTestActionAfterTest.AddHandler((sender, eventArgs) =>
+        {
+            TestLog.LogCurrentMethod($"BeforeTestActionAfterTest({(eventArgs.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
+        });
+        context.HookExtension?.AfterTestActionAfterTest.AddHandler((sender, eventArgs) =>
+        {
+            TestLog.LogCurrentMethod($"AfterTestActionAfterTest({(eventArgs.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
         });
     }
 }
@@ -54,23 +62,23 @@ public class TestActionHooksTests
         var testResult = TestsUnderTest.Execute();
 
         Assert.That(testResult.Logs, Is.EqualTo([
-            "BeforeTestAction(Suite)",
+            "BeforeTestActionBeforeTest(Suite)",
             $"{nameof(LogTestActionAttribute.BeforeTest)}(Suite)",
-            "AfterTestAction(Suite)",
+            "AfterTestActionBeforeTest(Suite)",
 
-            "BeforeTestAction(Test)",
+            "BeforeTestActionBeforeTest(Test)",
             $"{nameof(LogTestActionAttribute.BeforeTest)}(Test)",
-            "AfterTestAction(Test)",
+            "AfterTestActionBeforeTest(Test)",
 
             nameof(TestClassWithTestAction.TestUnderTest),
 
-            "BeforeTestAction(Test)",
+            "BeforeTestActionAfterTest(Test)",
             $"{nameof(LogTestActionAttribute.AfterTest)}(Test)",
-            "AfterTestAction(Test)",
+            "AfterTestActionAfterTest(Test)",
 
-            "BeforeTestAction(Suite)",
+            "BeforeTestActionAfterTest(Suite)",
             $"{nameof(LogTestActionAttribute.AfterTest)}(Suite)",
-            "AfterTestAction(Suite)"
+            "AfterTestActionAfterTest(Suite)"
         ]));
     }
 }

@@ -38,13 +38,13 @@ namespace NUnit.Framework.Internal.Commands
         public void BeforeTest(Interfaces.ITest test)
         {
             var context = TestExecutionContext.CurrentContext;
-            context.HookExtension?.OnBeforeTestAction(context, new MethodWrapper(_action.GetType(), "BeforeTest"));
+            context.HookExtension?.OnBeforeTestActionBeforeTest(context, new TypeWrapper(_action.GetType()));
 
             BeforeTestWasRun = true;
             _action.BeforeTest(test);
 
             // H-TODO: add exception handling
-            context.HookExtension?.OnAfterTestAction(context, new MethodWrapper(_action.GetType(), "BeforeTest"));
+            context.HookExtension?.OnAfterTestActionBeforeTest(context, new TypeWrapper(_action.GetType()));
         }
 
         /// <summary>
@@ -55,13 +55,13 @@ namespace NUnit.Framework.Internal.Commands
         public void AfterTest(Interfaces.ITest test)
         {
             var context = TestExecutionContext.CurrentContext;
-            context.HookExtension?.OnBeforeTestAction(context, new MethodWrapper(_action.GetType(), "AfterTest"));
+            context.HookExtension?.OnBeforeTestActionAfterTest(context, new TypeWrapper(_action.GetType()));
 
             if (BeforeTestWasRun)
                 _action.AfterTest(test);
 
             // H-TODO: add exception handling
-            context.HookExtension?.OnAfterTestAction(context, new MethodWrapper(_action.GetType(), "AfterTest"));
+            context.HookExtension?.OnAfterTestActionAfterTest(context, new TypeWrapper(_action.GetType()));
         }
     }
 }

@@ -6,20 +6,20 @@ using NUnit.Framework.Interfaces;
 namespace NUnit.Framework.Internal.HookExtensions;
 
 /// <summary>
-/// Represents event arguments for test hook methods.
+/// Represents event arguments for type hook methods.
 /// </summary>
-public class MethodHookEventArgs : EventArgs
+public class TypeHookEventArgs : EventArgs
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MethodHookEventArgs"/> class.
+    /// Initializes a new instance of the <see cref="TypeHookEventArgs"/> class.
     /// </summary>
     /// <param name="context">The test execution context.</param>
-    /// <param name="method">The method information.</param>
+    /// <param name="type">The type information.</param>
     /// <param name="exceptionContext">The exception context that was thrown during the method execution, if any.</param>
-    public MethodHookEventArgs(TestExecutionContext context, IMethodInfo method, Exception? exceptionContext = null)
+    public TypeHookEventArgs(TestExecutionContext context, ITypeInfo type, Exception? exceptionContext = null)
     {
         Context = context;
-        Method = method;
+        Type = type;
         ExceptionContext = exceptionContext;
     }
 
@@ -29,9 +29,9 @@ public class MethodHookEventArgs : EventArgs
     public TestExecutionContext Context { get; }
 
     /// <summary>
-    /// Gets the method information.
+    /// Gets the type information.
     /// </summary>
-    public IMethodInfo Method { get; }
+    public ITypeInfo Type { get; }
 
     /// <summary>
     /// Gets the exception context that was thrown during the method execution, if any.
