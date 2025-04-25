@@ -107,12 +107,12 @@ internal class LoggerHook
         }
     }
 
-    public void BeforeTest(object? sender, TestHookEventArgs eventArgs)
+    public void BeforeTest(object? sender, MethodHookEventArgs eventArgs)
     {
         TestLog.Log($"- BeforeTestCase({eventArgs.Context.CurrentTest.MethodName})");
     }
 
-    public void AfterTest(object? sender, TestHookEventArgs eventArgs)
+    public void AfterTest(object? sender, MethodHookEventArgs eventArgs)
     {
         TestLog.Log($"- AfterTestCase({eventArgs.Context.CurrentTest.MethodName})");
     }
