@@ -63,11 +63,11 @@ internal class LoggerHook
     {
         if (eventArgs.Context.CurrentTest.IsSuite)
         {
-            BeforeOneTimeSetUp(eventArgs.Method.Name);
+            BeforeOneTimeSetUp(eventArgs.HookedMethod.Name);
         }
         else
         {
-            BeforeSetUp(eventArgs.Method.Name);
+            BeforeSetUp(eventArgs.HookedMethod.Name);
         }
     }
 
@@ -75,11 +75,11 @@ internal class LoggerHook
     {
         if (eventArgs.Context.CurrentTest.IsSuite)
         {
-            AfterOneTimeSetUp(eventArgs.Method.Name);
+            AfterOneTimeSetUp(eventArgs.HookedMethod.Name);
         }
         else
         {
-            AfterSetUp(eventArgs.Method.Name);
+            AfterSetUp(eventArgs.HookedMethod.Name);
         }
     }
 
@@ -87,11 +87,11 @@ internal class LoggerHook
     {
         if (eventArgs.Context.CurrentTest.IsSuite)
         {
-            BeforeOneTimeTearDown(eventArgs.Method.Name);
+            BeforeOneTimeTearDown(eventArgs.HookedMethod.Name);
         }
         else
         {
-            BeforeTearDown(eventArgs.Method.Name);
+            BeforeTearDown(eventArgs.HookedMethod.Name);
         }
     }
 
@@ -99,11 +99,11 @@ internal class LoggerHook
     {
         if (eventArgs.Context.CurrentTest.IsSuite)
         {
-            AfterOneTimeTearDown(eventArgs.Method.Name);
+            AfterOneTimeTearDown(eventArgs.HookedMethod.Name);
         }
         else
         {
-            AfterTearDown(eventArgs.Method.Name);
+            AfterTearDown(eventArgs.HookedMethod.Name);
         }
     }
 

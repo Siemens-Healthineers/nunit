@@ -14,12 +14,12 @@ public class MethodHookEventArgs : EventArgs
     /// Initializes a new instance of the <see cref="MethodHookEventArgs"/> class.
     /// </summary>
     /// <param name="context">The test execution context.</param>
-    /// <param name="method">The method information.</param>
-    /// <param name="exceptionContext">The exception context that was thrown during the method execution, if any.</param>
-    public MethodHookEventArgs(TestExecutionContext context, IMethodInfo method, Exception? exceptionContext = null)
+    /// <param name="hookedMethod">The hookedMethod information.</param>
+    /// <param name="exceptionContext">The exception context that was thrown during the hookedMethod execution, if any.</param>
+    public MethodHookEventArgs(TestExecutionContext context, IMethodInfo hookedMethod, Exception? exceptionContext = null)
     {
         Context = context;
-        Method = method;
+        HookedMethod = hookedMethod;
         ExceptionContext = exceptionContext;
     }
 
@@ -29,9 +29,9 @@ public class MethodHookEventArgs : EventArgs
     public TestExecutionContext Context { get; }
 
     /// <summary>
-    /// Gets the method information.
+    /// Gets the method information of the hooked method.
     /// </summary>
-    public IMethodInfo Method { get; }
+    public IMethodInfo HookedMethod { get; }
 
     /// <summary>
     /// Gets the exception context that was thrown during the method execution, if any.

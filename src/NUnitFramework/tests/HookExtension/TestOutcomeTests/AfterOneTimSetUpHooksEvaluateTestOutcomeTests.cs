@@ -140,7 +140,7 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
             if (!(fixtureName.Contains("4Passed") || fixtureName.Contains("4Warning")))
             {
                 TestLog.Log(AfterSetUpOutcomeLogger.OutcomeMismatch +
-                            $" -> Test Method of '{fixtureName}' executed unexpected!");
+                            $" -> Test HookedMethod of '{fixtureName}' executed unexpected!");
             }
         }
     }
