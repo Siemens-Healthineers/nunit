@@ -24,36 +24,38 @@ namespace NUnit.Framework.Internal.Commands
 
             BeforeTest = context =>
             {
+                var hookedMethodInfo = new MethodWrapper(action.GetType(), "BeforeTest");
                 try
                 {
-                    context.HookExtension?.OnBeforeTestActionBeforeTest(context, new TypeWrapper(action.GetType()));
+                    context.HookExtension?.OnBeforeTestActionBeforeTest(context, hookedMethodInfo);
 
                     action.BeforeTest(Test);
                 }
                 catch (Exception exception)
                 {
                     // H-TODO: add tests for exception handling
-                    context.HookExtension?.OnAfterTestActionBeforeTest(context, new TypeWrapper(action.GetType()), exception);
+                    context.HookExtension?.OnAfterTestActionBeforeTest(context, hookedMethodInfo, exception);
                     throw;
                 }
-                context.HookExtension?.OnAfterTestActionBeforeTest(context, new TypeWrapper(action.GetType()));
+                context.HookExtension?.OnAfterTestActionBeforeTest(context, hookedMethodInfo);
             };
 
             AfterTest = context =>
             {
+                var hookedMethodInfo = new MethodWrapper(action.GetType(), "AfterTest");
                 try
                 {
-                    context.HookExtension?.OnBeforeTestActionAfterTest(context, new TypeWrapper(action.GetType()));
+                    context.HookExtension?.OnBeforeTestActionAfterTest(context, hookedMethodInfo);
 
                     action.AfterTest(Test);
                 }
                 catch (Exception exception)
                 {
                     // H-TODO: add tests for exception handling
-                    context.HookExtension?.OnAfterTestActionAfterTest(context, new TypeWrapper(action.GetType()), exception);
+                    context.HookExtension?.OnAfterTestActionAfterTest(context, hookedMethodInfo, exception);
                     throw;
                 }
-                context.HookExtension?.OnAfterTestActionAfterTest(context, new TypeWrapper(action.GetType()));
+                context.HookExtension?.OnAfterTestActionAfterTest(context, hookedMethodInfo);
             };
         }
     }

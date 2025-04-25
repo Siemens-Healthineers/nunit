@@ -24,10 +24,10 @@ public class HookExtension
         BeforeAnyTearDowns = new AsyncEvent<MethodHookEventArgs>();
         AfterAnyTearDowns = new AsyncEvent<MethodHookEventArgs>();
 
-        BeforeTestActionBeforeTest = new AsyncEvent<TypeHookEventArgs>();
-        AfterTestActionBeforeTest = new AsyncEvent<TypeHookEventArgs>();
-        BeforeTestActionAfterTest = new AsyncEvent<TypeHookEventArgs>();
-        AfterTestActionAfterTest = new AsyncEvent<TypeHookEventArgs>();
+        BeforeTestActionBeforeTest = new AsyncEvent<MethodHookEventArgs>();
+        AfterTestActionBeforeTest = new AsyncEvent<MethodHookEventArgs>();
+        BeforeTestActionAfterTest = new AsyncEvent<MethodHookEventArgs>();
+        AfterTestActionAfterTest = new AsyncEvent<MethodHookEventArgs>();
     }
 
     /// <summary>
@@ -63,22 +63,22 @@ public class HookExtension
     /// <summary>
     /// Gets or sets the hook event that is triggered before a BeforeTest test action is executed.
     /// </summary>
-    public AsyncEvent<TypeHookEventArgs> BeforeTestActionBeforeTest { get; set; }
+    public AsyncEvent<MethodHookEventArgs> BeforeTestActionBeforeTest { get; set; }
 
     /// <summary>
     /// Gets or sets the hook event that is triggered after a BeforeTest test action is executed.
     /// </summary>
-    public AsyncEvent<TypeHookEventArgs> AfterTestActionBeforeTest { get; set; }
+    public AsyncEvent<MethodHookEventArgs> AfterTestActionBeforeTest { get; set; }
 
     /// <summary>
     /// Gets or sets the hook event that is triggered before a AfterTest test action is executed.
     /// </summary>
-    public AsyncEvent<TypeHookEventArgs> BeforeTestActionAfterTest { get; set; }
+    public AsyncEvent<MethodHookEventArgs> BeforeTestActionAfterTest { get; set; }
 
     /// <summary>
     /// Gets or sets the hook event that is triggered after a AfterTest test action is executed.
     /// </summary>
-    public AsyncEvent<TypeHookEventArgs> AfterTestActionAfterTest { get; set; }
+    public AsyncEvent<MethodHookEventArgs> AfterTestActionAfterTest { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="HookExtension"/> class by copying hooks from another instance.
@@ -92,10 +92,10 @@ public class HookExtension
         other.AfterTest.GetHandlers().ToList().ForEach(d => AfterTest.AddHandler((EventHandler<TestHookEventArgs>)d));
         other.BeforeAnyTearDowns.GetHandlers().ToList().ForEach(d => BeforeAnyTearDowns.AddHandler((EventHandler<MethodHookEventArgs>)d));
         other.AfterAnyTearDowns.GetHandlers().ToList().ForEach(d => AfterAnyTearDowns.AddHandler((EventHandler<MethodHookEventArgs>)d));
-        other.BeforeTestActionBeforeTest.GetHandlers().ToList().ForEach(d => BeforeTestActionBeforeTest.AddHandler((EventHandler<TypeHookEventArgs>)d));
-        other.AfterTestActionBeforeTest.GetHandlers().ToList().ForEach(d => AfterTestActionBeforeTest.AddHandler((EventHandler<TypeHookEventArgs>)d));
-        other.BeforeTestActionAfterTest.GetHandlers().ToList().ForEach(d => BeforeTestActionAfterTest.AddHandler((EventHandler<TypeHookEventArgs>)d));
-        other.AfterTestActionAfterTest.GetHandlers().ToList().ForEach(d => AfterTestActionAfterTest.AddHandler((EventHandler<TypeHookEventArgs>)d));
+        other.BeforeTestActionBeforeTest.GetHandlers().ToList().ForEach(d => BeforeTestActionBeforeTest.AddHandler((EventHandler<MethodHookEventArgs>)d));
+        other.AfterTestActionBeforeTest.GetHandlers().ToList().ForEach(d => AfterTestActionBeforeTest.AddHandler((EventHandler<MethodHookEventArgs>)d));
+        other.BeforeTestActionAfterTest.GetHandlers().ToList().ForEach(d => BeforeTestActionAfterTest.AddHandler((EventHandler<MethodHookEventArgs>)d));
+        other.AfterTestActionAfterTest.GetHandlers().ToList().ForEach(d => AfterTestActionAfterTest.AddHandler((EventHandler<MethodHookEventArgs>)d));
 
         other.BeforeAnySetUps.GetAsyncHandlers().ToList().ForEach(d => BeforeAnySetUps.AddAsyncHandler((AsyncEventHandler<MethodHookEventArgs>)d));
         other.AfterAnySetUps.GetAsyncHandlers().ToList().ForEach(d => AfterAnySetUps.AddAsyncHandler((AsyncEventHandler<MethodHookEventArgs>)d));
@@ -103,10 +103,10 @@ public class HookExtension
         other.AfterTest.GetAsyncHandlers().ToList().ForEach(d => AfterTest.AddAsyncHandler((AsyncEventHandler<TestHookEventArgs>)d));
         other.BeforeAnyTearDowns.GetAsyncHandlers().ToList().ForEach(d => BeforeAnyTearDowns.AddAsyncHandler((AsyncEventHandler<MethodHookEventArgs>)d));
         other.AfterAnyTearDowns.GetAsyncHandlers().ToList().ForEach(d => AfterAnyTearDowns.AddAsyncHandler((AsyncEventHandler<MethodHookEventArgs>)d));
-        other.BeforeTestActionBeforeTest.GetAsyncHandlers().ToList().ForEach(d => BeforeTestActionBeforeTest.AddAsyncHandler((AsyncEventHandler<TypeHookEventArgs>)d));
-        other.AfterTestActionBeforeTest.GetAsyncHandlers().ToList().ForEach(d => AfterTestActionBeforeTest.AddAsyncHandler((AsyncEventHandler<TypeHookEventArgs>)d));
-        other.BeforeTestActionAfterTest.GetAsyncHandlers().ToList().ForEach(d => BeforeTestActionAfterTest.AddAsyncHandler((AsyncEventHandler<TypeHookEventArgs>)d));
-        other.AfterTestActionAfterTest.GetAsyncHandlers().ToList().ForEach(d => AfterTestActionAfterTest.AddAsyncHandler((AsyncEventHandler<TypeHookEventArgs>)d));
+        other.BeforeTestActionBeforeTest.GetAsyncHandlers().ToList().ForEach(d => BeforeTestActionBeforeTest.AddAsyncHandler((AsyncEventHandler<MethodHookEventArgs>)d));
+        other.AfterTestActionBeforeTest.GetAsyncHandlers().ToList().ForEach(d => AfterTestActionBeforeTest.AddAsyncHandler((AsyncEventHandler<MethodHookEventArgs>)d));
+        other.BeforeTestActionAfterTest.GetAsyncHandlers().ToList().ForEach(d => BeforeTestActionAfterTest.AddAsyncHandler((AsyncEventHandler<MethodHookEventArgs>)d));
+        other.AfterTestActionAfterTest.GetAsyncHandlers().ToList().ForEach(d => AfterTestActionAfterTest.AddAsyncHandler((AsyncEventHandler<MethodHookEventArgs>)d));
     }
 
     internal void OnBeforeAnySetUps(TestExecutionContext context, IMethodInfo method)
@@ -139,24 +139,24 @@ public class HookExtension
         AfterAnyTearDowns.Invoke(this, new MethodHookEventArgs(context, method, exceptionContext));
     }
 
-    internal void OnBeforeTestActionBeforeTest(TestExecutionContext context, ITypeInfo testActionTypeInfo)
+    internal void OnBeforeTestActionBeforeTest(TestExecutionContext context, IMethodInfo hookedMethodInfo)
     {
-        BeforeTestActionBeforeTest.Invoke(this, new TypeHookEventArgs(context, testActionTypeInfo));
+        BeforeTestActionBeforeTest.Invoke(this, new MethodHookEventArgs(context, hookedMethodInfo));
     }
 
-    internal void OnAfterTestActionBeforeTest(TestExecutionContext context, ITypeInfo testActionTypeInfo, Exception? exceptionContext = null)
+    internal void OnAfterTestActionBeforeTest(TestExecutionContext context, IMethodInfo hookedMethodInfo, Exception? exceptionContext = null)
     {
-        AfterTestActionBeforeTest.Invoke(this, new TypeHookEventArgs(context, testActionTypeInfo, exceptionContext));
+        AfterTestActionBeforeTest.Invoke(this, new MethodHookEventArgs(context, hookedMethodInfo, exceptionContext));
     }
 
-    internal void OnBeforeTestActionAfterTest(TestExecutionContext context, ITypeInfo testActionTypeInfo)
+    internal void OnBeforeTestActionAfterTest(TestExecutionContext context, IMethodInfo hookedMethodInfo)
     {
-        BeforeTestActionAfterTest.Invoke(this, new TypeHookEventArgs(context, testActionTypeInfo));
+        BeforeTestActionAfterTest.Invoke(this, new MethodHookEventArgs(context, hookedMethodInfo));
     }
 
-    internal void OnAfterTestActionAfterTest(TestExecutionContext context, ITypeInfo testActionTypeInfo, Exception? exceptionContext = null)
+    internal void OnAfterTestActionAfterTest(TestExecutionContext context, IMethodInfo hookedMethodInfo, Exception? exceptionContext = null)
     {
-        AfterTestActionAfterTest.Invoke(this, new TypeHookEventArgs(context, testActionTypeInfo, exceptionContext));
+        AfterTestActionAfterTest.Invoke(this, new MethodHookEventArgs(context, hookedMethodInfo, exceptionContext));
     }
 }
 
