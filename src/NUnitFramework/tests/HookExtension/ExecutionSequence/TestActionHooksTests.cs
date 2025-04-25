@@ -9,21 +9,21 @@ public class TestActionLoggingHookExtension : NUnitAttribute, IApplyToContext
 {
     public void ApplyToContext(TestExecutionContext context)
     {
-        context.HookExtension?.BeforeTestActionBeforeTest.AddHandler((sender, eventArgs) =>
+        context.HookExtension?.BeforeTestActionBeforeTestHook.AddHandler((sender, eventArgs) =>
         {
-            TestLog.LogCurrentMethod($"BeforeTestActionBeforeTest({(eventArgs.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
+            TestLog.LogCurrentMethod($"BeforeTestActionBeforeTestHook({(eventArgs.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
         });
-        context.HookExtension?.AfterTestActionBeforeTest.AddHandler((sender, eventArgs) =>
+        context.HookExtension?.AfterTestActionBeforeTestHook.AddHandler((sender, eventArgs) =>
         {
-            TestLog.LogCurrentMethod($"AfterTestActionBeforeTest({(eventArgs.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
+            TestLog.LogCurrentMethod($"AfterTestActionBeforeTestHook({(eventArgs.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
         });
-        context.HookExtension?.BeforeTestActionAfterTest.AddHandler((sender, eventArgs) =>
+        context.HookExtension?.BeforeTestActionAfterTestHook.AddHandler((sender, eventArgs) =>
         {
-            TestLog.LogCurrentMethod($"BeforeTestActionAfterTest({(eventArgs.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
+            TestLog.LogCurrentMethod($"BeforeTestActionAfterTestHook({(eventArgs.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
         });
-        context.HookExtension?.AfterTestActionAfterTest.AddHandler((sender, eventArgs) =>
+        context.HookExtension?.AfterTestActionAfterTestHook.AddHandler((sender, eventArgs) =>
         {
-            TestLog.LogCurrentMethod($"AfterTestActionAfterTest({(eventArgs.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
+            TestLog.LogCurrentMethod($"AfterTestActionAfterTestHook({(eventArgs.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
         });
     }
 }
@@ -62,23 +62,23 @@ public class TestActionHooksTests
         var testResult = TestsUnderTest.Execute();
 
         Assert.That(testResult.Logs, Is.EqualTo([
-            "BeforeTestActionBeforeTest(Suite)",
+            "BeforeTestActionBeforeTestHook(Suite)",
             $"{nameof(LogTestActionAttribute.BeforeTest)}(Suite)",
-            "AfterTestActionBeforeTest(Suite)",
+            "AfterTestActionBeforeTestHook(Suite)",
 
-            "BeforeTestActionBeforeTest(Test)",
+            "BeforeTestActionBeforeTestHook(Test)",
             $"{nameof(LogTestActionAttribute.BeforeTest)}(Test)",
-            "AfterTestActionBeforeTest(Test)",
+            "AfterTestActionBeforeTestHook(Test)",
 
             nameof(TestClassWithTestAction.TestUnderTest),
 
-            "BeforeTestActionAfterTest(Test)",
+            "BeforeTestActionAfterTestHook(Test)",
             $"{nameof(LogTestActionAttribute.AfterTest)}(Test)",
-            "AfterTestActionAfterTest(Test)",
+            "AfterTestActionAfterTestHook(Test)",
 
-            "BeforeTestActionAfterTest(Suite)",
+            "BeforeTestActionAfterTestHook(Suite)",
             $"{nameof(LogTestActionAttribute.AfterTest)}(Suite)",
-            "AfterTestActionAfterTest(Suite)"
+            "AfterTestActionAfterTestHook(Suite)"
         ]));
     }
 }

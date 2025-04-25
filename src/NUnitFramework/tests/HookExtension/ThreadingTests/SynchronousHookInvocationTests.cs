@@ -14,14 +14,14 @@ namespace NUnit.Framework.Tests.HookExtension.ThreadingTests
     {
         public virtual void ApplyToContext(TestExecutionContext context)
         {
-            context?.HookExtension?.BeforeTest.AddHandler((sender, eventArgs) =>
+            context?.HookExtension?.BeforeTestHook.AddHandler((sender, eventArgs) =>
             {
                 TestExecutionContext.CurrentContext
                                     .CurrentTest.Properties
                                     .Add("BeforeTestHook_ThreadId", Thread.CurrentThread.ManagedThreadId);
             });
 
-            context?.HookExtension?.AfterTest.AddHandler((sender, eventArgs) =>
+            context?.HookExtension?.AfterTestHook.AddHandler((sender, eventArgs) =>
             {
                 TestExecutionContext.CurrentContext
                                     .CurrentTest.Properties

@@ -14,12 +14,12 @@ internal class ActivateHookLogging : NUnitAttribute, IApplyToContext
     public virtual void ApplyToContext(TestExecutionContext context)
     {
         LoggingHook = new LoggerHook();
-        context?.HookExtension?.BeforeAnySetUps.AddHandler((sender, eventArgs) => LoggingHook.BeforeAnySetUps(sender, eventArgs));
-        context?.HookExtension?.AfterAnySetUps.AddHandler((sender, eventArgs) => LoggingHook.AfterAnySetUps(sender, eventArgs));
-        context?.HookExtension?.BeforeTest.AddHandler((sender, eventArgs) => LoggingHook.BeforeTest(sender, eventArgs));
-        context?.HookExtension?.AfterTest.AddHandler((sender, eventArgs) => LoggingHook.AfterTest(sender, eventArgs));
-        context?.HookExtension?.BeforeAnyTearDowns.AddHandler((sender, eventArgs) => LoggingHook.BeforeAnyTearDowns(sender, eventArgs));
-        context?.HookExtension?.AfterAnyTearDowns.AddHandler((sender, eventArgs) => LoggingHook.AfterAnyTearDowns(sender, eventArgs));
+        context?.HookExtension?.BeforeAnySetUpsHook.AddHandler((sender, eventArgs) => LoggingHook.BeforeAnySetUps(sender, eventArgs));
+        context?.HookExtension?.AfterAnySetUpsHook.AddHandler((sender, eventArgs) => LoggingHook.AfterAnySetUps(sender, eventArgs));
+        context?.HookExtension?.BeforeTestHook.AddHandler((sender, eventArgs) => LoggingHook.BeforeTest(sender, eventArgs));
+        context?.HookExtension?.AfterTestHook.AddHandler((sender, eventArgs) => LoggingHook.AfterTest(sender, eventArgs));
+        context?.HookExtension?.BeforeAnyTearDownsHook.AddHandler((sender, eventArgs) => LoggingHook.BeforeAnyTearDowns(sender, eventArgs));
+        context?.HookExtension?.AfterAnyTearDownsHook.AddHandler((sender, eventArgs) => LoggingHook.AfterAnyTearDowns(sender, eventArgs));
     }
 }
 

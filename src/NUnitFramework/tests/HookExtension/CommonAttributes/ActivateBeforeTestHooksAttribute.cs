@@ -11,12 +11,12 @@ namespace NUnit.Framework.Tests.HookExtension.CommonAttributes
     {
         public virtual void ApplyToContext(TestExecutionContext context)
         {
-            context?.HookExtension?.BeforeTest.AddHandler((sender, eventArgs) =>
+            context?.HookExtension?.BeforeTestHook.AddHandler((sender, eventArgs) =>
             {
                 TestLog.LogCurrentMethod(HookIdentifiers.BeforeTestHook);
             });
 
-            context?.HookExtension?.BeforeTest.AddAsyncHandler(async (sender, eventArgs) =>
+            context?.HookExtension?.BeforeTestHook.AddAsyncHandler(async (sender, eventArgs) =>
             {
                 Thread.Sleep(1000);
                 TestLog.LogCurrentMethod(HookIdentifiers.BeforeTestHook);

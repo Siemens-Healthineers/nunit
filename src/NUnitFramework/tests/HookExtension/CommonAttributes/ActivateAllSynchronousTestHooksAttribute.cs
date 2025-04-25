@@ -10,32 +10,32 @@ namespace NUnit.Framework.Tests.HookExtension.CommonAttributes
     {
         public virtual void ApplyToContext(TestExecutionContext context)
         {
-            context?.HookExtension?.BeforeAnySetUps.AddHandler((sender, eventArgs) =>
+            context?.HookExtension?.BeforeAnySetUpsHook.AddHandler((sender, eventArgs) =>
             {
                 TestLog.LogCurrentMethod(HookIdentifiers.BeforeAnySetUpsHook);
             });
 
-            context?.HookExtension?.AfterAnySetUps.AddHandler((sender, eventArgs) =>
+            context?.HookExtension?.AfterAnySetUpsHook.AddHandler((sender, eventArgs) =>
             {
                 TestLog.LogCurrentMethod(HookIdentifiers.AfterAnySetUpsHook);
             });
 
-            context?.HookExtension?.BeforeTest.AddHandler((sender, eventArgs) =>
+            context?.HookExtension?.BeforeTestHook.AddHandler((sender, eventArgs) =>
             {
                 TestLog.LogCurrentMethod(HookIdentifiers.BeforeTestHook);
             });
 
-            context?.HookExtension?.AfterTest.AddHandler((sender, eventArgs) =>
+            context?.HookExtension?.AfterTestHook.AddHandler((sender, eventArgs) =>
             {
                 TestLog.LogCurrentMethod(HookIdentifiers.AfterTestHook);
             });
 
-            context?.HookExtension?.BeforeAnyTearDowns.AddHandler((sender, eventArgs) =>
+            context?.HookExtension?.BeforeAnyTearDownsHook.AddHandler((sender, eventArgs) =>
             {
                 TestLog.LogCurrentMethod(HookIdentifiers.BeforeAnyTearDownsHook);
             });
 
-            context?.HookExtension?.AfterAnyTearDowns.AddHandler((sender, eventArgs) =>
+            context?.HookExtension?.AfterAnyTearDownsHook.AddHandler((sender, eventArgs) =>
             {
                 TestLog.LogCurrentMethod(HookIdentifiers.AfterAnyTearDownsHook);
             });

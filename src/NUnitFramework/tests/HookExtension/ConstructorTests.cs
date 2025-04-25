@@ -11,19 +11,19 @@ namespace NUnit.Framework.Tests.HookExtension
 
             Assert.Multiple(() =>
             {
-                Assert.That(hookExt.BeforeAnySetUps.GetHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.AfterAnySetUps.GetHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.BeforeTest.GetHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.AfterTest.GetHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.BeforeAnyTearDowns.GetHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.AfterAnyTearDowns.GetHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.BeforeAnySetUpsHook.GetHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.AfterAnySetUpsHook.GetHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.BeforeTestHook.GetHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.AfterTestHook.GetHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.BeforeAnyTearDownsHook.GetHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.AfterAnyTearDownsHook.GetHandlers().Count, Is.EqualTo(0));
 
-                Assert.That(hookExt.BeforeAnySetUps.GetAsyncHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.AfterAnySetUps.GetAsyncHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.BeforeTest.GetAsyncHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.AfterTest.GetAsyncHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.BeforeAnyTearDowns.GetAsyncHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.AfterAnyTearDowns.GetAsyncHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.BeforeAnySetUpsHook.GetAsyncHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.AfterAnySetUpsHook.GetAsyncHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.BeforeTestHook.GetAsyncHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.AfterTestHook.GetAsyncHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.BeforeAnyTearDownsHook.GetAsyncHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.AfterAnyTearDownsHook.GetAsyncHandlers().Count, Is.EqualTo(0));
             });
         }
 
@@ -31,8 +31,8 @@ namespace NUnit.Framework.Tests.HookExtension
         public void CopyCtor_CallMultipleTimes_ShallNotIncreaseInvocationList()
         {
             var hookExt = new NUnit.Framework.Internal.HookExtensions.HookExtension();
-            hookExt.AfterTest.AddHandler((sender, args) => { });
-            hookExt.AfterTest.AddAsyncHandler(async (sender, args) => { });
+            hookExt.AfterTestHook.AddHandler((sender, args) => { });
+            hookExt.AfterTestHook.AddAsyncHandler(async (sender, args) => { });
 
             hookExt = new NUnit.Framework.Internal.HookExtensions.HookExtension(hookExt);
             hookExt = new NUnit.Framework.Internal.HookExtensions.HookExtension(hookExt);
@@ -41,24 +41,24 @@ namespace NUnit.Framework.Tests.HookExtension
             // initially assigned handlers shall be copied
             Assert.Multiple(() =>
             {
-                Assert.That(hookExt.AfterTest.GetHandlers().Count, Is.EqualTo(1));
-                Assert.That(hookExt.AfterTest.GetAsyncHandlers().Count, Is.EqualTo(1));
+                Assert.That(hookExt.AfterTestHook.GetHandlers().Count, Is.EqualTo(1));
+                Assert.That(hookExt.AfterTestHook.GetAsyncHandlers().Count, Is.EqualTo(1));
             });
 
             // all others shall stay empty
             Assert.Multiple(() =>
             {
-                Assert.That(hookExt.BeforeAnySetUps.GetHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.AfterAnySetUps.GetHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.BeforeTest.GetHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.BeforeAnyTearDowns.GetHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.AfterAnyTearDowns.GetHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.BeforeAnySetUpsHook.GetHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.AfterAnySetUpsHook.GetHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.BeforeTestHook.GetHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.BeforeAnyTearDownsHook.GetHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.AfterAnyTearDownsHook.GetHandlers().Count, Is.EqualTo(0));
 
-                Assert.That(hookExt.BeforeAnySetUps.GetAsyncHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.AfterAnySetUps.GetAsyncHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.BeforeTest.GetAsyncHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.BeforeAnyTearDowns.GetAsyncHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.AfterAnyTearDowns.GetAsyncHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.BeforeAnySetUpsHook.GetAsyncHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.AfterAnySetUpsHook.GetAsyncHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.BeforeTestHook.GetAsyncHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.BeforeAnyTearDownsHook.GetAsyncHandlers().Count, Is.EqualTo(0));
+                Assert.That(hookExt.AfterAnyTearDownsHook.GetAsyncHandlers().Count, Is.EqualTo(0));
             });
         }
     }

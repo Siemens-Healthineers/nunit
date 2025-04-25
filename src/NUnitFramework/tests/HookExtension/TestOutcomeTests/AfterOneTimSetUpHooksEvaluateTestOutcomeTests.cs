@@ -21,12 +21,12 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
         public void ApplyToContext(TestExecutionContext context)
         {
             TestResult beforeHookTestResult = null;
-            context.HookExtension?.BeforeAnySetUps.AddHandler((sender, eventArgs) =>
+            context.HookExtension?.BeforeAnySetUpsHook.AddHandler((sender, eventArgs) =>
             {
                 beforeHookTestResult = eventArgs.Context.CurrentResult.Clone();
             });
 
-            context.HookExtension?.AfterAnySetUps.AddHandler((sender, eventArgs) =>
+            context.HookExtension?.AfterAnySetUpsHook.AddHandler((sender, eventArgs) =>
             {
                 TestResult oneTimeSetUpTestResult 
                 = eventArgs.Context.CurrentResult.CalculateDeltaWithPrevious(beforeHookTestResult, eventArgs.ExceptionContext);

@@ -15,12 +15,12 @@ public class AfterTestOutcomeLogger : NUnitAttribute, IApplyToContext
     public void ApplyToContext(TestExecutionContext context)
     {
         TestResult beforeHookTestResult = null;
-        context.HookExtension?.BeforeTest.AddHandler((sender, eventArgs) =>
+        context.HookExtension?.BeforeTestHook.AddHandler((sender, eventArgs) =>
         {
             beforeHookTestResult = eventArgs.Context.CurrentResult.Clone();
         });
 
-        context.HookExtension?.AfterTest.AddHandler((sender, eventArgs) =>
+        context.HookExtension?.AfterTestHook.AddHandler((sender, eventArgs) =>
         {
             TestResult testResult
                 = eventArgs.Context.CurrentResult.CalculateDeltaWithPrevious(beforeHookTestResult, eventArgs.ExceptionContext);

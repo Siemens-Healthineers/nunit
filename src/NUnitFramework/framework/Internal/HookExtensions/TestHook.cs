@@ -10,7 +10,7 @@ namespace NUnit.Framework.Internal.HookExtensions
     /// <summary>
     /// Event that supports both synchronous and asynchronous handlers.
     /// </summary>
-    public sealed class AsyncEvent<TEventArgs>
+    public sealed class TestHook<TEventArgs>
     {
         private readonly List<Delegate> _handlers = new();
         private readonly List<Delegate> _asyncHandlers = new();
@@ -47,7 +47,7 @@ namespace NUnit.Framework.Internal.HookExtensions
                 return _asyncHandlers;
         }
 
-        internal Task Invoke(object? sender, TEventArgs e)
+        internal Task InvokeHandlers(object? sender, TEventArgs e)
         {
             if (!_handlers.Any() && !_asyncHandlers.Any())
             {

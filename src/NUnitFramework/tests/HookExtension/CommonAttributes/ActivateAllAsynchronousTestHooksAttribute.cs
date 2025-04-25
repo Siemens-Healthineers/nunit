@@ -11,37 +11,37 @@ namespace NUnit.Framework.Tests.HookExtension.CommonAttributes
     {
         public virtual void ApplyToContext(TestExecutionContext context)
         {
-            context?.HookExtension?.BeforeAnySetUps.AddAsyncHandler(async (sender, eventArgs) =>
+            context?.HookExtension?.BeforeAnySetUpsHook.AddAsyncHandler(async (sender, eventArgs) =>
             {
                 await Task.Delay(1000);
                 TestLog.LogCurrentMethod(HookIdentifiers.BeforeAnySetUpsHook);
             });
 
-            context?.HookExtension?.AfterAnySetUps.AddAsyncHandler(async (sender, eventArgs) =>
+            context?.HookExtension?.AfterAnySetUpsHook.AddAsyncHandler(async (sender, eventArgs) =>
             {
                 await Task.Delay(1000);
                 TestLog.LogCurrentMethod(HookIdentifiers.AfterAnySetUpsHook);
             });
 
-            context?.HookExtension?.BeforeTest.AddAsyncHandler(async (sender, eventArgs) =>
+            context?.HookExtension?.BeforeTestHook.AddAsyncHandler(async (sender, eventArgs) =>
             {
                 await Task.Delay(1000);
                 TestLog.LogCurrentMethod(HookIdentifiers.BeforeTestHook);
             });
 
-            context?.HookExtension?.AfterTest.AddAsyncHandler(async (sender, eventArgs) =>
+            context?.HookExtension?.AfterTestHook.AddAsyncHandler(async (sender, eventArgs) =>
             {
                 await Task.Delay(1000);
                 TestLog.LogCurrentMethod(HookIdentifiers.AfterTestHook);
             });
 
-            context?.HookExtension?.BeforeAnyTearDowns.AddAsyncHandler(async (sender, eventArgs) =>
+            context?.HookExtension?.BeforeAnyTearDownsHook.AddAsyncHandler(async (sender, eventArgs) =>
             {
                 await Task.Delay(1000);
                 TestLog.LogCurrentMethod(HookIdentifiers.BeforeAnyTearDownsHook);
             });
 
-            context?.HookExtension?.AfterAnyTearDowns.AddAsyncHandler(async (sender, eventArgs) =>
+            context?.HookExtension?.AfterAnyTearDownsHook.AddAsyncHandler(async (sender, eventArgs) =>
             {
                 await Task.Delay(1000);
                 TestLog.LogCurrentMethod(HookIdentifiers.AfterAnyTearDownsHook);

@@ -11,13 +11,13 @@ namespace NUnit.Framework.Tests.HookExtension.CommonAttributes
     {
         public virtual void ApplyToContext(TestExecutionContext context)
         {
-            TestExecutionContext.CurrentContext?.HookExtension?.BeforeTest.AddAsyncHandler(async (sender, eventArgs) =>
+            TestExecutionContext.CurrentContext?.HookExtension?.BeforeTestHook.AddAsyncHandler(async (sender, eventArgs) =>
             {
                 // Delay to ensure that handlers run longer than the test case
                 await Task.Delay(1000);
                 TestLog.LogCurrentMethod(HookIdentifiers.BeforeTestHook);
             });
-            TestExecutionContext.CurrentContext?.HookExtension?.BeforeTest.AddAsyncHandler(async (sender, eventArgs) =>
+            TestExecutionContext.CurrentContext?.HookExtension?.BeforeTestHook.AddAsyncHandler(async (sender, eventArgs) =>
             {
                 // Delay to ensure that handlers run longer than the test case
                 await Task.Delay(1000);

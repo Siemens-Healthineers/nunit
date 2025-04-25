@@ -20,12 +20,12 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
         public void ApplyToContext(TestExecutionContext context)
         {
             TestResult beforeHookTestResult = null;
-            context.HookExtension?.BeforeAnyTearDowns.AddHandler((sender, eventArgs) =>
+            context.HookExtension?.BeforeAnyTearDownsHook.AddHandler((sender, eventArgs) =>
             {
                 beforeHookTestResult = eventArgs.Context.CurrentResult.Clone();
             });
 
-            context.HookExtension?.AfterAnyTearDowns.AddHandler((sender, eventArgs) =>
+            context.HookExtension?.AfterAnyTearDownsHook.AddHandler((sender, eventArgs) =>
             {
                 TestResult oneTimeTearDownTestResult
                     = eventArgs.Context.CurrentResult.CalculateDeltaWithPrevious(beforeHookTestResult, eventArgs.ExceptionContext);
