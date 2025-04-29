@@ -22,6 +22,7 @@ public class TestRunResult
     public int Passed { get; set; }
     public int Failed { get; set; }
     public int Skipped { get; set; }
+    public int Inconclusive { get; set; }
     public List<TestCase> TestCases { get; set; }
 }
 
@@ -38,6 +39,7 @@ public class NUnitResultParser
             Passed = int.Parse(testRunElement.Attribute("passed").Value),
             Failed = int.Parse(testRunElement.Attribute("failed").Value),
             Skipped = int.Parse(testRunElement.Attribute("skipped").Value),
+            Inconclusive = int.Parse(testRunElement.Attribute("inconclusive").Value),
             TestCases = new List<TestCase>()
         };
 

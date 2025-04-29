@@ -58,8 +58,7 @@ namespace NUnit.Framework.Internal.Commands
                 }
                 catch (Exception ex)
                 {
-                    context.HookExtension?.OnAfterAnySetUps(context, setUpMethod, ex);
-                    throw;
+                    context.CurrentResult.RecordException(ex, FailureSite.SetUp);
                 }
                 context.HookExtension?.OnAfterAnySetUps(context, setUpMethod);
             }
@@ -105,7 +104,7 @@ namespace NUnit.Framework.Internal.Commands
                 }
                 catch (Exception ex)
                 {
-                    context.CurrentResult.RecordTearDownException(ex);
+                    context.CurrentResult.RecordException(ex, FailureSite.TearDown);
                 }
             }
         }

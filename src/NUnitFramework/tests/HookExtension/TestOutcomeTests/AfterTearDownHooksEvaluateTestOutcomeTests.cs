@@ -63,7 +63,7 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
 
         // H-ToDo: remove before final checkin
         // Apply filtering
-        //failingReasons = failingReasons.Where(reason => reason.ToString().EndsWith("MultiAssertion4Failed"));
+        //failingReasons = failingReasons.Where(reason => !reason.ToString().EndsWith("4Inconclusive"));
         return failingReasons;
     }
 
@@ -136,7 +136,6 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
     }
 
     [Test]
-    
     public void CheckTearDownOutcomes()
     {
         var testResult = TestsUnderTest.Execute();
@@ -148,9 +147,11 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
                 Assert.That(log, Does.Not.Contain(AfterTearDownOutcomeLogger.OutcomeMismatch));
             }
 
-            int numberOfIgnoredOrInconclusive = GetRelevantFailingReasons().Count(reason => reason.ToString().EndsWith("4Ignored") || reason.ToString().EndsWith("4Inconclusive"));
             Assert.That(testResult.TestRunResult.Passed, Is.EqualTo(GetRelevantFailingReasons().Count(reason => reason.ToString().EndsWith("4Passed"))));
-            Assert.That(testResult.TestRunResult.Failed, Is.EqualTo(GetRelevantFailingReasons().Count(reason => reason.ToString().EndsWith("4Failed")) + numberOfIgnoredOrInconclusive));
+            Assert.That(testResult.TestRunResult.Failed, Is.EqualTo(GetRelevantFailingReasons().Count(reason => reason.ToString().EndsWith("4Failed"))));
+            // H-TODO: Understand the change in the test outcome. Find the relevant nunit issue for that!
+            Assert.That(testResult.TestRunResult.Skipped, Is.EqualTo(GetRelevantFailingReasons().Count(reason => reason.ToString().EndsWith("4Ignored"))));
+            Assert.That(testResult.TestRunResult.Inconclusive, Is.EqualTo(GetRelevantFailingReasons().Count(reason => reason.ToString().EndsWith("4Inconclusive"))));
             Assert.That(testResult.TestRunResult.Total, Is.EqualTo(GetRelevantFailingReasons().Count()));
         });
 

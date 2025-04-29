@@ -64,6 +64,11 @@ namespace NUnit.Framework.Constraints
         private bool _ignoreWhiteSpace;
 
         /// <summary>
+        /// If true, all string comparisons will ignore line ending format (\r vs. \n vs. \r\n)
+        /// </summary>
+        private bool _ignoreLineEndingFormat;
+
+        /// <summary>
         /// If true, arrays will be treated as collections, allowing
         /// those of different dimensions to be compared
         /// </summary>
@@ -116,6 +121,16 @@ namespace NUnit.Framework.Constraints
         {
             get => _ignoreWhiteSpace;
             set => _ignoreWhiteSpace = value;
+        }
+
+        /// <summary>
+        /// Gets and sets a flag indicating whether line ending format (\r vs. \n vs. \r\n) should
+        /// be ignored in determining equality.
+        /// </summary>
+        public bool IgnoreLineEndingFormat
+        {
+            get => _ignoreLineEndingFormat;
+            set => _ignoreLineEndingFormat = value;
         }
 
         /// <summary>
@@ -192,7 +207,7 @@ namespace NUnit.Framework.Constraints
                 case EqualMethodResult.TypesNotSupported:
                     throw new NotSupportedException($"No comparer found for instances of type '{GetType(x)}' and '{GetType(y)}'");
                 case EqualMethodResult.ToleranceNotSupported:
-                    throw new NotSupportedException($"Specified Tolerance not supported for instances of type '{GetType(x)}' and '{GetType(y)}'");
+                    throw new NotSupportedException($"Specified Tolerance of type {tolerance.Amount.GetType()} not supported for instances of type '{GetType(x)}' and '{GetType(y)}'");
                 case EqualMethodResult.ComparedEqual:
                     return true;
                 case EqualMethodResult.ComparisonPending:

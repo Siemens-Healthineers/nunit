@@ -120,6 +120,46 @@ namespace NUnit.Framework.Tests.Constraints
         }
 
         [Test]
+        public void IgnoreLineEndingFormat()
+        {
+            var constraint = new EqualStringConstraint("Hello\r\nWorld").IgnoreLineEndingFormat;
+
+            var result = constraint.ApplyTo("Hello\nWorld");
+
+            Assert.That(result.IsSuccess, Is.True);
+        }
+
+        [Test]
+        public void IgnoreLineEndingFormatFail()
+        {
+            var constraint = new EqualStringConstraint("Hello World").IgnoreLineEndingFormat;
+
+            var result = constraint.ApplyTo("Hello World\n");
+
+            Assert.That(result.IsSuccess, Is.False);
+        }
+
+        [Test]
+        public void IgnoreLineEndingFormatAndIgnoreCase()
+        {
+            var constraint = new EqualStringConstraint("\rHello\nWorld\r\n").IgnoreLineEndingFormat.IgnoreCase;
+
+            var result = constraint.ApplyTo("\nhello\nworld\n");
+
+            Assert.That(result.IsSuccess, Is.True);
+        }
+
+        [Test]
+        public void IgnoreLineEndingFormatAndIgnoreWhiteSpace()
+        {
+            var constraint = new EqualStringConstraint("Hello World").IgnoreLineEndingFormat.IgnoreWhiteSpace;
+
+            var result = constraint.ApplyTo("Hello\r\nWorld\r\n");
+
+            Assert.That(result.IsSuccess, Is.True);
+        }
+
+        [Test]
         public void Bug524CharIntWithoutOverload()
         {
             char c = '\u0000';
@@ -480,13 +520,13 @@ namespace NUnit.Framework.Tests.Constraints
                     Assert.That(myDateTime, Is.EqualTo(nowOffset));
                     Assert.That(() => Assert.That(myDateTime, Is.EqualTo(nowUtc).Within(timeZoneOffset)),
                                 Throws.InstanceOf<NotSupportedException>()
-                                      .With.Message.Contains("Tolerance not supported"));
+                                      .With.Message.Contains("Tolerance"));
 
                     // Pre special DateTimeConstraints behaviour
                     Assert.That(myDateTime, new EqualConstraint(nowOffset));
                     Assert.That(() => Assert.That(myDateTime, new EqualConstraint(nowUtc).Within(timeZoneOffset)),
                                 Throws.InstanceOf<NotSupportedException>()
-                                      .With.Message.Contains("Tolerance not supported"));
+                                      .With.Message.Contains("Tolerance"));
                 }
             }
 
@@ -1084,6 +1124,20 @@ namespace NUnit.Framework.Tests.Constraints
                     // Issue 4964
                     Assert.That(2 + 3, Is.Not.EqualTo(4).Using(comparer));
                 });
+            }
+
+            [Test]
+            public void PrefersGenericProvidedEqualityComparer()
+            {
+                var comparer = EqualityComparer<int>.Default;
+                Assert.That(2 + 2, Is.EqualTo(4).Using(comparer));
+            }
+
+            [Test]
+            public void WillUseObjectEqualityComparer()
+            {
+                IEqualityComparer comparer = EqualityComparer<int>.Default;
+                Assert.That(2 + 2, Is.EqualTo(4).Using(comparer));
             }
 
             [Test]
