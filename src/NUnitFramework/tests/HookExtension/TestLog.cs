@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
-namespace NUnit.Framework.Tests.TestUtilities.TestsUnderTest;
+namespace NUnit.Framework.Tests.HookExtension;
 
 internal static class TestLog
 {
@@ -19,9 +19,7 @@ internal static class TestLog
             lock (logLock)
             {
                 if (_logs.Value == null)
-                {
                     _logs.Value = new List<string>();
-                }
                 return _logs.Value;
             }
         }

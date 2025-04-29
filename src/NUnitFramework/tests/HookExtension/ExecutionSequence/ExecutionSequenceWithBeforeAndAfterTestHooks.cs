@@ -1,31 +1,13 @@
 // Copyright (c) Charlie Poole, Rob Prouse and Contributors. MIT License - see LICENSE.txt
 
-using System;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using NUnitLite;
 
 namespace NUnit.Framework.Tests.HookExtension.ExecutionSequence
 {
-    [AttributeUsage(AttributeTargets.Class)]
-    internal class SomeTestActionAttribute : Attribute, ITestAction
-    {
-        public void BeforeTest(ITest test)
-        {
-            TestLog.LogCurrentMethod("BeforeTest_Action");
-        }
-
-        public void AfterTest(ITest test)
-        {
-            TestLog.LogCurrentMethod("AfterTest_Action");
-        }
-
-        public ActionTargets Targets { get; }
-    }
-
     [Explicit]
-    [SomeTestAction]
-    internal class ExecutionSequenceWithTestAction
+    internal class ExecutionSequenceWithBeforeAndAfterTestHooks
     {
         private sealed class ActivateAfterTestHooksAttribute : NUnitAttribute, IApplyToContext
         {
@@ -49,6 +31,18 @@ namespace NUnit.Framework.Tests.HookExtension.ExecutionSequence
             }
         }
 
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            TestLog.LogCurrentMethod();
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            TestLog.LogCurrentMethod();
+        }
+
         [Test]
         [ActivateBeforeTestHooks]
         [ActivateAfterTestHooks]
@@ -70,26 +64,28 @@ namespace NUnit.Framework.Tests.HookExtension.ExecutionSequence
         }
     }
 
-    internal class ExecutionSequenceWithTestActionTests
+    internal class ExecutionSequenceWithBeforeAndAfterTestHooksTests
     {
         [Test]
-        public void ExecutionSequenceWithTestActionTest()
+        public void ExecutionSequenceWithBeforeAndAfterTestHooksTest()
         {
             TestLog.Logs.Clear();
 
-            new AutoRun(typeof(ExecutionSequenceWithTestAction).Assembly).Execute([
+            new AutoRun(typeof(ExecutionSequenceWithBeforeAndAfterTestHooks).Assembly).Execute([
                 "--where",
-                $"class == {typeof(ExecutionSequenceWithTestAction).FullName}"
+                $"class == {typeof(ExecutionSequenceWithBeforeAndAfterTestHooks).FullName}"
             ]);
 
             Assert.That(TestLog.Logs, Is.EqualTo([
-                "BeforeTest_Action",
+                nameof(ExecutionSequenceWithBeforeAndAfterTestHooks.OneTimeSetUp),
+                nameof(ExecutionSequenceWithBeforeAndAfterTestHooks.Setup),
+                
                 "BeforeTestHook_Hook",
-                nameof(ExecutionSequenceWithTestAction.TestPasses),
-                "AfterTestHook_Hook",
-                nameof(ExecutionSequenceWithTestAction.TearDown),
-                "AfterTest_Action",
-                nameof(ExecutionSequenceWithTestAction.OneTimeTearDown)
+                nameof(ExecutionSequenceWithBeforeAndAfterTestHooks.TestPasses),
+                $"AfterTestHook_Hook",
+
+                nameof(ExecutionSequenceWithBeforeAndAfterTestHooks.TearDown),
+                nameof(ExecutionSequenceWithBeforeAndAfterTestHooks.OneTimeTearDown)
             ]));
 
             TestLog.Logs.Clear();

@@ -1,6 +1,6 @@
 // Copyright (c) Charlie Poole, Rob Prouse and Contributors. MIT License - see LICENSE.txt
 
-namespace NUnit.Framework.Tests.HookExtension
+namespace NUnit.Framework.Tests.HookExtension.HookCreation
 {
     internal class HookExtensionConstructorTests
     {
@@ -19,7 +19,7 @@ namespace NUnit.Framework.Tests.HookExtension
         [Test]
         public void CopyCtor_CallMultipleTimes_ShallNotIncreaseInvocationList()
         {
-            var hookExt = new NUnit.Framework.Internal.HookExtensions.HookExtension();
+            var hookExt = new Framework.Internal.HookExtensions.HookExtension();
             hookExt.AfterTestHook.AddHandler((sender, args) => { });
             
             hookExt = new Framework.Internal.HookExtensions.HookExtension(hookExt);
