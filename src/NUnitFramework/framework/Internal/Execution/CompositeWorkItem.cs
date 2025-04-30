@@ -221,7 +221,7 @@ namespace NUnit.Framework.Internal.Execution
             if (Test.TestType == "Theory")
                 command = new TheoryResultCommand(command);
 
-            // Create the AfterTestAction commands
+            // Create the AfterTestActionBeforeTestHook commands
             int index = actions.Count;
             while (--index >= 0)
                 command = new AfterTestActionCommand(command, actions[index]);

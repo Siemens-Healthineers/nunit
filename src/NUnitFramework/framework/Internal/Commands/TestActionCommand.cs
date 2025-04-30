@@ -1,5 +1,7 @@
 // Copyright (c) Charlie Poole, Rob Prouse and Contributors. MIT License - see LICENSE.txt
 
+using System;
+
 namespace NUnit.Framework.Internal.Commands
 {
     /// <summary>
@@ -20,14 +22,40 @@ namespace NUnit.Framework.Internal.Commands
             Guard.ArgumentValid(innerCommand.Test is TestMethod, "TestActionCommand may only apply to a TestMethod", nameof(innerCommand));
             Guard.ArgumentNotNull(action, nameof(action));
 
-            BeforeTest = _ =>
+            BeforeTest = context =>
             {
-                action.BeforeTest(Test);
+                var hookedMethodInfo = new MethodWrapper(action.GetType(), "BeforeTest");
+                try
+                {
+                    context.HookExtension?.OnBeforeTestActionBeforeTest(context, hookedMethodInfo);
+
+                    action.BeforeTest(Test);
+                }
+                catch (Exception exception)
+                {
+                    // H-TODO: add tests for exception handling
+                    context.HookExtension?.OnAfterTestActionBeforeTest(context, hookedMethodInfo, exception);
+                    throw;
+                }
+                context.HookExtension?.OnAfterTestActionBeforeTest(context, hookedMethodInfo);
             };
 
-            AfterTest = _ =>
+            AfterTest = context =>
             {
-                action.AfterTest(Test);
+                var hookedMethodInfo = new MethodWrapper(action.GetType(), "AfterTest");
+                try
+                {
+                    context.HookExtension?.OnBeforeTestActionAfterTest(context, hookedMethodInfo);
+
+                    action.AfterTest(Test);
+                }
+                catch (Exception exception)
+                {
+                    // H-TODO: add tests for exception handling
+                    context.HookExtension?.OnAfterTestActionAfterTest(context, hookedMethodInfo, exception);
+                    throw;
+                }
+                context.HookExtension?.OnAfterTestActionAfterTest(context, hookedMethodInfo);
             };
         }
     }
