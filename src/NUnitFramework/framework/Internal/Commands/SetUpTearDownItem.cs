@@ -49,14 +49,18 @@ namespace NUnit.Framework.Internal.Commands
         {
             _setUpWasRun = true;
 
-            try
+            foreach (IMethodInfo setUpMethod in _setUpMethods)
             {
-                foreach (IMethodInfo setUpMethod in _setUpMethods)
+                try
+                {
+                    context.HookExtension?.OnBeforeAnySetUps(context, setUpMethod);
                     RunSetUpOrTearDownMethod(context, setUpMethod);
-            }
-            catch (Exception ex)
-            {
-                context.CurrentResult.RecordException(ex, FailureSite.SetUp);
+                }
+                catch (Exception ex)
+                {
+                    context.CurrentResult.RecordException(ex, FailureSite.SetUp);
+                }
+                context.HookExtension?.OnAfterAnySetUps(context, setUpMethod);
             }
         }
 
@@ -79,7 +83,19 @@ namespace NUnit.Framework.Internal.Commands
                     // run the teardowns in reverse order to provide consistency.
                     var index = _tearDownMethods.Count;
                     while (--index >= 0)
-                        RunSetUpOrTearDownMethod(context, _tearDownMethods[index]);
+                    {
+                        try
+                        {
+                            context.HookExtension?.OnBeforeAnyTearDowns(context, _tearDownMethods[index]);
+                            RunSetUpOrTearDownMethod(context, _tearDownMethods[index]);
+                        }
+                        catch (Exception ex)
+                        {
+                            context.HookExtension?.OnAfterAnyTearDowns(context, _tearDownMethods[index], ex);
+                            throw;
+                        }
+                        context.HookExtension?.OnAfterAnyTearDowns(context, _tearDownMethods[index]);
+                    }
 
                     // If there are new assertion results here, they are warnings issued
                     // in teardown. Redo test completion so they are listed properly.

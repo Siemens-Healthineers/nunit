@@ -1,5 +1,7 @@
 // Copyright (c) Charlie Poole, Rob Prouse and Contributors. MIT License - see LICENSE.txt
 
+using System;
+
 namespace NUnit.Framework.Internal.Commands
 {
     /// <summary>
@@ -37,8 +39,22 @@ namespace NUnit.Framework.Internal.Commands
         /// <param name="test">The test to which the action applies</param>
         public void BeforeTest(Interfaces.ITest test)
         {
-            BeforeTestWasRun = true;
-            _action.BeforeTest(test);
+            var context = TestExecutionContext.CurrentContext;
+            var hookedMethodInfo = new MethodWrapper(_action.GetType(), "BeforeTest");
+            try
+            {
+                context.HookExtension?.OnBeforeTestActionBeforeTest(context, hookedMethodInfo);
+
+                BeforeTestWasRun = true;
+                _action.BeforeTest(test);
+            }
+            catch (Exception exception)
+            {
+                // H-TODO: add tests for exception handling
+                context.HookExtension?.OnAfterTestActionBeforeTest(context, hookedMethodInfo, exception);
+                throw;
+            }
+            context.HookExtension?.OnAfterTestActionBeforeTest(context, hookedMethodInfo);
         }
 
         /// <summary>
@@ -48,8 +64,22 @@ namespace NUnit.Framework.Internal.Commands
         /// <param name="test">The test to which the action applies</param>
         public void AfterTest(Interfaces.ITest test)
         {
-            if (BeforeTestWasRun)
-                _action.AfterTest(test);
+            var context = TestExecutionContext.CurrentContext;
+            var hookedMethodInfo = new MethodWrapper(_action.GetType(), "AfterTest");
+            try
+            {
+                context.HookExtension?.OnBeforeTestActionAfterTest(context, hookedMethodInfo);
+
+                if (BeforeTestWasRun)
+                    _action.AfterTest(test);
+            }
+            catch (Exception exception)
+            {
+                // H-TODO: add test for exception handling
+                context.HookExtension?.OnAfterTestActionAfterTest(context, hookedMethodInfo, exception);
+                throw;
+            }
+            context.HookExtension?.OnAfterTestActionAfterTest(context, hookedMethodInfo);
         }
     }
 }
