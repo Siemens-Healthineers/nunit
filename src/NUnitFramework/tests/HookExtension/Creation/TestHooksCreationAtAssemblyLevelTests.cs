@@ -17,16 +17,7 @@ namespace NUnit.Framework.Tests.HookExtension.Creation
         {
             public virtual void ApplyToContext(TestExecutionContext context)
             {
-                context?.HookExtension?.BeforeTestHook.AddHandler((sender, eventArgs) => { });
-            }
-        }
-
-        [AttributeUsage(AttributeTargets.Assembly)]
-        internal class ActivateAfterTestHooks : NUnitAttribute, IApplyToContext
-        {
-            public virtual void ApplyToContext(TestExecutionContext context)
-            {
-                context?.HookExtension?.AfterTestHook.AddHandler((sender, eventArgs) => { });
+                context.HookExtension.BeforeTestHook.AddHandler((sender, eventArgs) => { });
             }
         }
 
