@@ -4,20 +4,16 @@ using System;
 
 namespace NUnit.Framework.Internal.ExecutionHooks
 {
-    internal sealed class MethodHookEventArgs : EventArgs
+    /// <summary>
+    /// Eventargs for <see cref="ExecutionHooks"></see> that provides
+    /// access to <see cref="TestExecutionContext"></see>.
+    /// </summary>
+    /// <param name="context">The test execution context.</param>
+    public sealed class MethodHookEventArgs(TestExecutionContext context) : EventArgs
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MethodHookEventArgs"/> class.
-        /// </summary>
-        /// <param name="context">The test execution context.</param>
-        public MethodHookEventArgs(TestExecutionContext context)
-        {
-            Context = context;
-        }
-
         /// <summary>
         /// Gets the test execution context.
         /// </summary>
-        public TestExecutionContext Context { get; }
+        public TestExecutionContext Context { get; } = context;
     }
 }

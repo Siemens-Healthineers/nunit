@@ -8,9 +8,9 @@ namespace NUnit.Framework.Internal.ExecutionHooks
     /// <summary>
     /// Event that supports both synchronous and asynchronous handlers.
     /// </summary>
-    internal sealed class TestHook
+    internal sealed class TestHook<TEventArgs>
     {
-        private readonly List<EventHandler> _handlers;
+        private readonly List<EventHandler<MethodHookEventArgs>> _handlers;
 
         internal int Count
         {
@@ -25,21 +25,21 @@ namespace NUnit.Framework.Internal.ExecutionHooks
 
         public TestHook()
         {
-            _handlers = new List<EventHandler>();
+            _handlers = new List<EventHandler<MethodHookEventArgs>>();
         }
 
-        public TestHook(TestHook source)
+        public TestHook(TestHook<TEventArgs> source)
         {
-            _handlers = new List<EventHandler>(source._handlers);
+            _handlers = new List<EventHandler<MethodHookEventArgs>>(source._handlers);
         }
 
-        internal void AddHandler(EventHandler handler)
+        internal void AddHandler(EventHandler<MethodHookEventArgs> handler)
         {
             lock (_handlers)
                 _handlers.Add(handler);
         }
 
-        internal void InvokeHandlers(object? sender, EventArgs e)
+        internal void InvokeHandlers(object? sender, MethodHookEventArgs e)
         {
             foreach (var handler in GetHandlers())
             {
@@ -47,7 +47,7 @@ namespace NUnit.Framework.Internal.ExecutionHooks
             }
         }
 
-        private IReadOnlyList<EventHandler> GetHandlers()
+        private IReadOnlyList<EventHandler<MethodHookEventArgs>> GetHandlers()
         {
             lock (_handlers)
                 return _handlers.ToArray();

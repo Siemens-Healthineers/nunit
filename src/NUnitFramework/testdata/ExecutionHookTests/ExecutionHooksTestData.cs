@@ -142,6 +142,45 @@ namespace NUnit.TestData.ExecutionHookTests
         }
     }
 
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
+    public class LogTestActionAttribute : Attribute, ITestAction
+    {
+        public void BeforeTest(ITest test)
+        {
+            TestLog.LogCurrentMethodWithContextInfo(test.IsSuite ? "Suite" : "Test");
+        }
+
+        public void AfterTest(ITest test)
+        {
+            TestLog.LogCurrentMethodWithContextInfo(test.IsSuite ? "Suite" : "Test");
+        }
+
+        public ActionTargets Targets => ActionTargets.Test | ActionTargets.Suite;
+    }
+
+    public class TestActionLoggingHookExtensionAttribute : NUnitAttribute, IApplyToContext
+    {
+        public void ApplyToContext(TestExecutionContext context)
+        {
+            context.ExecutionHooks.AddBeforeTestActionBeforeTestHandler((sender, eventArgs) =>
+            {
+                TestLog.LogCurrentMethod($"BeforeTestActionBeforeTestHook({(eventArgs.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
+            });
+            context.ExecutionHooks.AddAfterTestActionBeforeTestHandler((sender, eventArgs) =>
+            {
+                TestLog.LogCurrentMethod($"AfterTestActionBeforeTestHook({(eventArgs.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
+            });
+            context.ExecutionHooks.AddBeforeTestActionAfterTestHandler((sender, eventArgs) =>
+            {
+                TestLog.LogCurrentMethod($"BeforeTestActionAfterTestHook({(eventArgs.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
+            });
+            context.ExecutionHooks.AddAfterTestActionAfterTestHandler((sender, eventArgs) =>
+            {
+                TestLog.LogCurrentMethod($"AfterTestActionAfterTestHook({(eventArgs.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
+            });
+        }
+    }
+
     [TestFixture]
     public class EmptyTestFor_TestFailsWithAssert_HooksProceedsToExecute
     {
@@ -471,6 +510,18 @@ namespace NUnit.TestData.ExecutionHookTests
         [ActivateBeforeTestHook]
         [ActivateAfterTestHook]
         public void EmptyTest()
+        {
+            TestLog.LogCurrentMethod();
+        }
+    }
+
+    [TestFixture]
+    [LogTestAction]
+    [TestActionLoggingHookExtension]
+    public class TestClassWithTestAction
+    {
+        [Test]
+        public void TestUnderTest()
         {
             TestLog.LogCurrentMethod();
         }
