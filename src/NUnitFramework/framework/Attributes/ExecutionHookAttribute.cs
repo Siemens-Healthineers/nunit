@@ -20,7 +20,7 @@ namespace NUnit.Framework
         /// <inheritdoc />
         public void ApplyToContext(TestExecutionContext context)
         {
-            if (IsMethodOverriden(nameof(BeforeTestHook)))
+            if (IsHookImplemented(nameof(BeforeTestHook)))
             {
                 context.ExecutionHooks.AddBeforeTestHandler((sender, eventArgs) =>
                 {
@@ -28,7 +28,7 @@ namespace NUnit.Framework
                 });
             }
 
-            if (IsMethodOverriden(nameof(AfterTestHook)))
+            if (IsHookImplemented(nameof(AfterTestHook)))
             {
                 context.ExecutionHooks.AddAfterTestHandler((sender, eventArgs) =>
                 {
@@ -37,11 +37,18 @@ namespace NUnit.Framework
             }
         }
 
-        private bool IsMethodOverriden(string methodName)
+        private bool IsHookImplemented(string methodName)
         {
             var thisMethod = GetType().GetMethod(methodName);
             var baseMethod = typeof(ExecutionHookAttribute).GetMethod(methodName);
-            return thisMethod?.DeclaringType != baseMethod?.DeclaringType;
+
+            // If either method is null, this method was not called for a hook method.
+            if (thisMethod is null || baseMethod is null)
+            {
+                return false;
+            }
+
+            return thisMethod.DeclaringType != baseMethod.DeclaringType;
         }
 
         /// <summary>
