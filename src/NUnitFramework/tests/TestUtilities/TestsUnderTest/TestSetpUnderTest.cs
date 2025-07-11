@@ -15,7 +15,7 @@ public class TestsUnderTest
     public static TestResult Execute(params string[] additionalParameters)
     {
         var type = new StackFrame(1, false).GetMethod()?.ReflectedType;
-        var testUnderTestClass = type?.GetNestedTypes().Single(x => x.GetCustomAttribute<TestSetupUnderTestAttribute>() != null);
+        var testUnderTestClass = type?.GetNestedTypes().Single(x => x.GetCustomAttribute<TestSetupUnderTestAttribute>() is object);
 
         TestLog.Logs.Clear();
         StringWriter consoleOutput = new StringWriter();

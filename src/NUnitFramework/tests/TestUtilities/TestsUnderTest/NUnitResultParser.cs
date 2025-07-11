@@ -7,13 +7,13 @@ namespace NUnit.Framework.Tests.TestUtilities.TestsUnderTest;
 
 public class TestCase
 {
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public string FullName { get; set; }
-    public string MethodName { get; set; }
-    public string ClassName { get; set; }
-    public string Result { get; set; }
-    public Dictionary<string, List<string>> Properties { get; set; }
+    public string Id { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string FullName { get; set; } = string.Empty;
+    public string MethodName { get; set; } = string.Empty;
+    public string ClassName { get; set; } = string.Empty;
+    public string Result { get; set; } = string.Empty;
+    public Dictionary<string, List<string>> Properties { get; set; } = new Dictionary<string, List<string>>();
 }
 
 public class TestRunResult
@@ -23,7 +23,7 @@ public class TestRunResult
     public int Failed { get; set; }
     public int Skipped { get; set; }
     public int Inconclusive { get; set; }
-    public List<TestCase> TestCases { get; set; }
+    public List<TestCase> TestCases { get; set; } = new List<TestCase>();
 }
 
 public class NUnitResultParser
@@ -35,11 +35,11 @@ public class NUnitResultParser
 
         var testRunResult = new TestRunResult
         {
-            Total = int.Parse(testRunElement.Attribute("total").Value),
-            Passed = int.Parse(testRunElement.Attribute("passed").Value),
-            Failed = int.Parse(testRunElement.Attribute("failed").Value),
-            Skipped = int.Parse(testRunElement.Attribute("skipped").Value),
-            Inconclusive = int.Parse(testRunElement.Attribute("inconclusive").Value),
+            Total = int.Parse(testRunElement!.Attribute("total")!.Value),
+            Passed = int.Parse(testRunElement.Attribute("passed")!.Value),
+            Failed = int.Parse(testRunElement.Attribute("failed")!.Value),
+            Skipped = int.Parse(testRunElement.Attribute("skipped")!.Value),
+            Inconclusive = int.Parse(testRunElement.Attribute("inconclusive")!.Value),
             TestCases = new List<TestCase>()
         };
 
@@ -49,8 +49,8 @@ public class NUnitResultParser
             var properties = new Dictionary<string, List<string>>();
             foreach (var propertyElement in testCaseElement.Descendants("property"))
             {
-                var name = propertyElement.Attribute("name").Value;
-                var value = propertyElement.Attribute("value").Value;
+                var name = propertyElement.Attribute("name")!.Value;
+                var value = propertyElement.Attribute("value")!.Value;
 
                 if (!properties.ContainsKey(name))
                 {
@@ -61,12 +61,12 @@ public class NUnitResultParser
 
             var testCase = new TestCase
             {
-                Id = testCaseElement.Attribute("id").Value,
-                Name = testCaseElement.Attribute("name").Value,
-                FullName = testCaseElement.Attribute("fullname").Value,
-                MethodName = testCaseElement.Attribute("methodname").Value,
-                ClassName = testCaseElement.Attribute("classname").Value,
-                Result = testCaseElement.Attribute("result").Value,
+                Id = testCaseElement.Attribute("id")!.Value,
+                Name = testCaseElement.Attribute("name")!.Value,
+                FullName = testCaseElement.Attribute("fullname")!.Value,
+                MethodName = testCaseElement.Attribute("methodname")!.Value,
+                ClassName = testCaseElement.Attribute("classname")!.Value,
+                Result = testCaseElement.Attribute("result")!.Value,
                 Properties = properties
             };
 

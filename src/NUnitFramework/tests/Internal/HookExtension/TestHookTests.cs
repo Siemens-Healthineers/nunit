@@ -12,8 +12,8 @@ namespace NUnit.Framework.Tests.Internal.HookExtension
         {
             var testHook = new TestHook<MethodHookEventArgs>();
             var exception = new Exception("Test exception");
-            var testMethodEventArgs = new MethodHookEventArgs(null, null);
-            testHook.AddAsyncHandler(async (sender, args) => throw exception);
+            var testMethodEventArgs = new MethodHookEventArgs(null!, null!);
+            testHook.AddAsyncHandler((sender, args) => throw exception);
             Assert.Throws<AggregateException>(() => testHook.InvokeHandlers(this, testMethodEventArgs).Wait());
         }
 
@@ -22,7 +22,7 @@ namespace NUnit.Framework.Tests.Internal.HookExtension
         {
             var testHook = new TestHook<MethodHookEventArgs>();
             var exception = new Exception("Test exception");
-            var testMethodEventArgs = new MethodHookEventArgs(null, null);
+            var testMethodEventArgs = new MethodHookEventArgs(null!, null!);
             testHook.AddHandler((sender, args) => throw exception);
             Assert.Throws<AggregateException>(() => testHook.InvokeHandlers(this, testMethodEventArgs).Wait());
         }

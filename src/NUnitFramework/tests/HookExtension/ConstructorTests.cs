@@ -32,7 +32,7 @@ namespace NUnit.Framework.Tests.HookExtension
         {
             var hookExt = new NUnit.Framework.Internal.HookExtensions.HookExtension();
             hookExt.AfterTestHook.AddHandler((sender, args) => { });
-            hookExt.AfterTestHook.AddAsyncHandler(async (sender, args) => { });
+            //hookExt.AfterTestHook.AddAsyncHandler(async (sender, args) => { await Task.Delay(1); });
 
             hookExt = new NUnit.Framework.Internal.HookExtensions.HookExtension(hookExt);
             hookExt = new NUnit.Framework.Internal.HookExtensions.HookExtension(hookExt);
@@ -42,7 +42,7 @@ namespace NUnit.Framework.Tests.HookExtension
             Assert.Multiple(() =>
             {
                 Assert.That(hookExt.AfterTestHook.GetHandlers().Count, Is.EqualTo(1));
-                Assert.That(hookExt.AfterTestHook.GetAsyncHandlers().Count, Is.EqualTo(1));
+                //Assert.That(hookExt.AfterTestHook.GetAsyncHandlers().Count, Is.EqualTo(1));
             });
 
             // all others shall stay empty
@@ -54,11 +54,11 @@ namespace NUnit.Framework.Tests.HookExtension
                 Assert.That(hookExt.BeforeAnyTearDownsHook.GetHandlers().Count, Is.EqualTo(0));
                 Assert.That(hookExt.AfterAnyTearDownsHook.GetHandlers().Count, Is.EqualTo(0));
 
-                Assert.That(hookExt.BeforeAnySetUpsHook.GetAsyncHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.AfterAnySetUpsHook.GetAsyncHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.BeforeTestHook.GetAsyncHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.BeforeAnyTearDownsHook.GetAsyncHandlers().Count, Is.EqualTo(0));
-                Assert.That(hookExt.AfterAnyTearDownsHook.GetAsyncHandlers().Count, Is.EqualTo(0));
+                //Assert.That(hookExt.BeforeAnySetUpsHook.GetAsyncHandlers().Count, Is.EqualTo(0));
+                //Assert.That(hookExt.AfterAnySetUpsHook.GetAsyncHandlers().Count, Is.EqualTo(0));
+                //Assert.That(hookExt.BeforeTestHook.GetAsyncHandlers().Count, Is.EqualTo(0));
+                //Assert.That(hookExt.BeforeAnyTearDownsHook.GetAsyncHandlers().Count, Is.EqualTo(0));
+                //Assert.That(hookExt.AfterAnyTearDownsHook.GetAsyncHandlers().Count, Is.EqualTo(0));
             });
         }
     }

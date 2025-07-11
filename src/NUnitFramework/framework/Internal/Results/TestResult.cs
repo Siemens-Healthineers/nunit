@@ -435,6 +435,7 @@ namespace NUnit.Framework.Internal
         /// in the after hook and use this result as the "TearDown result".
         /// </summary>
         /// <param name="previous">The previous TestResult to compare against.</param>
+        /// <param name="exceptionContext">An optional exception context to consider when calculating the delta.</param>
         /// <returns>A new TestResult representing the delta between the current and previous TestResults.</returns>
         public TestResult CalculateDeltaWithPrevious(TestResult previous, Exception? exceptionContext = null)
         {

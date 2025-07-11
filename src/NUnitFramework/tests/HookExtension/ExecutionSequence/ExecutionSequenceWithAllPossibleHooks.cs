@@ -49,7 +49,7 @@ namespace NUnit.Framework.Tests.HookExtension.ExecutionSequence
 
             Assert.That(testResult.Logs, Is.EqualTo([
                 nameof(TestUnderTest.OneTimeSetUp),
-                
+
                 HookIdentifiers.BeforeAnySetUpsHook,
                 nameof(TestUnderTest.Setup),
                 HookIdentifiers.AfterAnySetUpsHook,

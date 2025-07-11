@@ -10,7 +10,6 @@ using TestResult = NUnit.Framework.Internal.TestResult;
 
 namespace NUnit.Framework.Tests.HookExtension.TestOutcomeTests;
 
-
 public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
 {
     public class AfterSetUpOutcomeLogger : NUnitAttribute, IApplyToContext
@@ -20,7 +19,7 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
 
         public void ApplyToContext(TestExecutionContext context)
         {
-            TestResult beforeHookTestResult = null;
+            TestResult? beforeHookTestResult = null;
             context.HookExtension?.BeforeAnySetUpsHook.AddHandler((sender, eventArgs) =>
             {
                 beforeHookTestResult = eventArgs.Context.CurrentResult.Clone();
@@ -28,8 +27,8 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
 
             context.HookExtension?.AfterAnySetUpsHook.AddHandler((sender, eventArgs) =>
             {
-                TestResult oneTimeSetUpTestResult 
-                = eventArgs.Context.CurrentResult.CalculateDeltaWithPrevious(beforeHookTestResult, eventArgs.ExceptionContext);
+                TestResult oneTimeSetUpTestResult
+                = eventArgs.Context.CurrentResult.CalculateDeltaWithPrevious(beforeHookTestResult!, eventArgs.ExceptionContext);
 
                 string outcomeMatchStatement = oneTimeSetUpTestResult.ResultState switch
                 {
@@ -136,7 +135,7 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
         [Test]
         public void SomeTest()
         {
-            var fixtureName = TestContext.CurrentContext.Test.Parent.FullName;
+            var fixtureName = TestContext.CurrentContext.Test.Parent!.FullName;
             if (!(fixtureName.Contains("4Passed") || fixtureName.Contains("4Warning")))
             {
                 TestLog.Log(AfterSetUpOutcomeLogger.OutcomeMismatch +
@@ -146,7 +145,6 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
     }
 
     [Test]
-    
     public void CheckSetUpOutcomes()
     {
         var testResult = TestsUnderTest.Execute();

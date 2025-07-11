@@ -57,10 +57,10 @@ namespace NUnit.Framework.Tests.HookExtension.ExecutionSequence
 
             Assert.That(testResult.Logs, Is.EqualTo([
                 "BeforeTest_Action",
-                
+
                 HookIdentifiers.BeforeTestHook,
                 HookIdentifiers.BeforeTestHook,
-                
+
                 nameof(TestUnderTest.TestPasses),
 
                 HookIdentifiers.AfterTestHook,

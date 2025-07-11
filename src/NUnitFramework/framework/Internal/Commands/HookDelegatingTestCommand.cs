@@ -28,20 +28,20 @@ namespace NUnit.Framework.Internal.Commands
 
             try
             {
-                context.HookExtension?.OnBeforeTest(context, context.CurrentTest.Method);
+                context.HookExtension?.OnBeforeTest(context, context.CurrentTest.Method!);
                 innerCommand.Execute(context);
             }
             catch (Exception ex)
             {
                 afterTestExecutedWithExceptionContext = true;
-                context.HookExtension?.OnAfterTest(context, context.CurrentTest.Method, ex);
+                context.HookExtension?.OnAfterTest(context, context.CurrentTest.Method!, ex);
                 throw;
             }
 
             // Ensure that after test hooks are not again executed when there are exceptions from inner command
             if (!afterTestExecutedWithExceptionContext)
             {
-                context.HookExtension?.OnAfterTest(context, context.CurrentTest.Method);
+                context.HookExtension?.OnAfterTest(context, context.CurrentTest.Method!);
             }
 
             return context.CurrentResult;

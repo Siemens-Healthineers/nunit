@@ -19,7 +19,7 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
 
         public void ApplyToContext(TestExecutionContext context)
         {
-            TestResult beforeHookTestResult = null;
+            TestResult? beforeHookTestResult = null;
             context.HookExtension?.BeforeAnyTearDownsHook.AddHandler((sender, eventArgs) =>
             {
                 beforeHookTestResult = eventArgs.Context.CurrentResult.Clone();
@@ -28,10 +28,9 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
             context.HookExtension?.AfterAnyTearDownsHook.AddHandler((sender, eventArgs) =>
             {
                 TestResult oneTimeTearDownTestResult
-                    = eventArgs.Context.CurrentResult.CalculateDeltaWithPrevious(beforeHookTestResult, eventArgs.ExceptionContext);
+                    = eventArgs.Context.CurrentResult.CalculateDeltaWithPrevious(beforeHookTestResult!, eventArgs.ExceptionContext);
 
                 string outcomeMatchStatement = oneTimeTearDownTestResult.ResultState switch
-
                 {
                     ResultState { Status: TestStatus.Failed } when
                         eventArgs.Context.CurrentTest.FullName.Contains("4Failed") => OutcomeMatched,
@@ -96,7 +95,6 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
             _failingReason = failingReason;
         }
 
-
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
@@ -144,7 +142,6 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
     }
 
     [Test]
-    
     public void CheckOneTimeTearDownOutcomes()
     {
         var testResult = TestsUnderTest.Execute();

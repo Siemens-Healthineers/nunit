@@ -19,7 +19,7 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
 
         public void ApplyToContext(TestExecutionContext context)
         {
-            TestResult beforeHookTestResult = null;
+            TestResult? beforeHookTestResult = null;
             context.HookExtension?.BeforeAnyTearDownsHook.AddHandler((sender, eventArgs) =>
             {
                 beforeHookTestResult = eventArgs.Context.CurrentResult.Clone();
@@ -28,7 +28,7 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
             context.HookExtension?.AfterAnyTearDownsHook.AddHandler((sender, eventArgs) =>
             {
                 TestResult tearDownTestResult
-                    = eventArgs.Context.CurrentResult.CalculateDeltaWithPrevious(beforeHookTestResult, eventArgs.ExceptionContext);
+                    = eventArgs.Context.CurrentResult.CalculateDeltaWithPrevious(beforeHookTestResult!, eventArgs.ExceptionContext);
 
                 string outcomeMatchStatement = tearDownTestResult.ResultState switch
                 {

@@ -43,7 +43,7 @@ namespace NUnit.Framework.Tests.HookExtension.ExecutionSequence
                 HookIdentifiers.AfterTestHook,
                 HookIdentifiers.AfterTestHook,
                 HookIdentifiers.AfterTestHook,
-                
+
                 nameof(TestUnderTest.TearDown),
                 nameof(TestUnderTest.OneTimeTearDown)
             ]));

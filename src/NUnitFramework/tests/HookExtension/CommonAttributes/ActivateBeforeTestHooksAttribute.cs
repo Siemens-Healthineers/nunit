@@ -1,6 +1,6 @@
 // Copyright (c) Charlie Poole, Rob Prouse and Contributors. MIT License - see LICENSE.txt
 
-using System.Threading;
+using System.Threading.Tasks;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using NUnit.Framework.Tests.TestUtilities.TestsUnderTest;
@@ -18,7 +18,7 @@ namespace NUnit.Framework.Tests.HookExtension.CommonAttributes
 
             context?.HookExtension?.BeforeTestHook.AddAsyncHandler(async (sender, eventArgs) =>
             {
-                Thread.Sleep(1000);
+                await Task.Delay(100);
                 TestLog.LogCurrentMethod(HookIdentifiers.BeforeTestHook);
             });
         }

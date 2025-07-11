@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
-using NUnit.Framework.Legacy;
 using NUnit.Framework.Tests.TestUtilities.TestsUnderTest;
 
 namespace NUnit.Framework.Tests.HookExtension.ThreadingTests
@@ -88,7 +87,7 @@ namespace NUnit.Framework.Tests.HookExtension.ThreadingTests
 
             Assert.That(testResult.TestRunResult.Passed, Is.EqualTo(1));
             Assert.That(testResult.TestRunResult.Failed, Is.EqualTo(2));
-            
+
             foreach (var testCase in testResult.TestRunResult.TestCases)
             {
                 var testThreadId = int.Parse(testCase.Properties["TestThreadId"].First());
@@ -96,13 +95,12 @@ namespace NUnit.Framework.Tests.HookExtension.ThreadingTests
                 var beforeTestHook1ThreadId = int.Parse(testCase.Properties["BeforeTestHook_1_ThreadId"].First());
                 var beforeTestHook2ThreadId = int.Parse(testCase.Properties["BeforeTestHook_2_ThreadId"].First());
 
-                CollectionAssert.AllItemsAreUnique(new List<int>()
+                Assert.That(new List<int>()
                 {
                     testThreadId,
-                    
                     beforeTestHook1ThreadId,
                     beforeTestHook2ThreadId
-                });
+                }, Is.Unique);
             }
         }
     }

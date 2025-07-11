@@ -19,7 +19,7 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
 
         public void ApplyToContext(TestExecutionContext context)
         {
-            TestResult beforeHookTestResult = null;
+            TestResult? beforeHookTestResult = null;
             context.HookExtension?.BeforeAnySetUpsHook.AddHandler((sender, eventArgs) =>
             {
                 beforeHookTestResult = eventArgs.Context.CurrentResult.Clone();
@@ -28,7 +28,7 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
             context.HookExtension?.AfterAnySetUpsHook.AddHandler((sender, eventArgs) =>
             {
                 TestResult setUpTestResult
-                    = eventArgs.Context.CurrentResult.CalculateDeltaWithPrevious(beforeHookTestResult, eventArgs.ExceptionContext);
+                    = eventArgs.Context.CurrentResult.CalculateDeltaWithPrevious(beforeHookTestResult!, eventArgs.ExceptionContext);
 
                 string outcomeMatchStatement = setUpTestResult.ResultState switch
                 {
@@ -93,7 +93,6 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
             _failingReason = failingReason;
         }
 
-
         [SetUp]
         public void SetUp()
         {
@@ -137,7 +136,7 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
         [Test]
         public void SomeTest()
         {
-            var fixtureName = TestContext.CurrentContext.Test.Parent.FullName;
+            var fixtureName = TestContext.CurrentContext.Test.Parent!.FullName;
             if (!(fixtureName.Contains("4Passed") || fixtureName.Contains("4Warning")))
             {
                 TestLog.Log(AfterSetUpOutcomeLogger.OutcomeMismatch +

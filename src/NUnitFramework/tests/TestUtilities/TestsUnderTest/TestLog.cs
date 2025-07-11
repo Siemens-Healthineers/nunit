@@ -8,21 +8,21 @@ namespace NUnit.Framework.Tests.TestUtilities.TestsUnderTest;
 
 public static class TestLog
 {
-    private static readonly AsyncLocal<List<string>> _logs = new AsyncLocal<List<string>>();
-    private static readonly object logLock = new object();
+    private static readonly AsyncLocal<List<string>> Intlogs = new AsyncLocal<List<string>>();
+    private static readonly object LogLock = new object();
 
     // Each aync context gets its own instance of Logs
     public static List<string> Logs
     {
         get
         {
-            lock (logLock)
+            lock (LogLock)
             {
-                if (_logs.Value == null)
+                if (Intlogs.Value is null)
                 {
-                    _logs.Value = new List<string>();
+                    Intlogs.Value = new List<string>();
                 }
-                return _logs.Value;
+                return Intlogs.Value;
             }
         }
     }
