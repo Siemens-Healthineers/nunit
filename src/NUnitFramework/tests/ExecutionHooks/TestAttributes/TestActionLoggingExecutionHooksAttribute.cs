@@ -9,21 +9,21 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Common
     {
         public void ApplyToContext(TestExecutionContext context)
         {
-            context.ExecutionHooks.AddBeforeTestActionBeforeTestHandler((context) =>
+            context.ExecutionHooks.AddBeforeTestActionBeforeTestHandler((hookData) =>
             {
-                TestLog.LogCurrentMethod($"BeforeTestActionBeforeTestHook({(context.CurrentTest.IsSuite ? "Suite" : "Test")})");
+                TestLog.LogCurrentMethod($"BeforeTestActionBeforeTestHook({(hookData.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
             });
-            context.ExecutionHooks.AddAfterTestActionBeforeTestHandler((context) =>
+            context.ExecutionHooks.AddAfterTestActionBeforeTestHandler((hookData) =>
             {
-                TestLog.LogCurrentMethod($"AfterTestActionBeforeTestHook({(context.CurrentTest.IsSuite ? "Suite" : "Test")})");
+                TestLog.LogCurrentMethod($"AfterTestActionBeforeTestHook({(hookData.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
             });
-            context.ExecutionHooks.AddBeforeTestActionAfterTestHandler((context) =>
+            context.ExecutionHooks.AddBeforeTestActionAfterTestHandler((hookData) =>
             {
-                TestLog.LogCurrentMethod($"BeforeTestActionAfterTestHook({(context.CurrentTest.IsSuite ? "Suite" : "Test")})");
+                TestLog.LogCurrentMethod($"BeforeTestActionAfterTestHook({(hookData.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
             });
-            context.ExecutionHooks.AddAfterTestActionAfterTestHandler((context) =>
+            context.ExecutionHooks.AddAfterTestActionAfterTestHandler((hookData) =>
             {
-                TestLog.LogCurrentMethod($"AfterTestActionAfterTestHook({(context.CurrentTest.IsSuite ? "Suite" : "Test")})");
+                TestLog.LogCurrentMethod($"AfterTestActionAfterTestHook({(hookData.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
             });
         }
     }
