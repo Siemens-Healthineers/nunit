@@ -1,6 +1,7 @@
 // Copyright (c) Charlie Poole, Rob Prouse and Contributors. MIT License - see LICENSE.txt
 
 using System;
+using NUnit.Framework.Interfaces;
 
 namespace NUnit.Framework.Internal.Commands
 {
@@ -21,17 +22,22 @@ namespace NUnit.Framework.Internal.Commands
         /// <returns>The result of the test execution.</returns>
         public override TestResult Execute(TestExecutionContext context)
         {
+            //Ask Manfred about proposal for handling this possible null value
+            IMethodInfo hookedMethodInfo = context.CurrentTest.Method;
+            // IMethodInfo hookedMethodInfo = context.CurrentTest.Method ?? new MethodWrapper(GetType(), nameof(Execute));
+
             try
             {
-                context.ExecutionHooks.OnBeforeTest(context);
+                context.ExecutionHooks.OnBeforeTest(context, hookedMethodInfo);
                 innerCommand.Execute(context);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                context.ExecutionHooks.OnAfterTest(context);
+                context.ExecutionHooks.OnAfterTest(context, hookedMethodInfo, ex);
                 throw;
             }
-            context.ExecutionHooks.OnAfterTest(context);
+            context.ExecutionHooks.OnAfterTest(context, hookedMethodInfo);
+
             return context.CurrentResult;
         }
     }
