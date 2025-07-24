@@ -1,5 +1,7 @@
 // Copyright (c) Charlie Poole, Rob Prouse and Contributors. MIT License - see LICENSE.txt
 
+using System;
+
 namespace NUnit.Framework.Internal.Commands
 {
     /// <summary>
@@ -24,16 +26,19 @@ namespace NUnit.Framework.Internal.Commands
             {
                 if (context.ExecutionHooksEnabled)
                 {
+                    var hookedMethodInfo = new MethodWrapper(action.GetType(), "BeforeTest");
                     try
                     {
-                        context.ExecutionHooks.OnBeforeTestActionBeforeTest(context);
+                        context.ExecutionHooks.OnBeforeTestActionBeforeTest(context, hookedMethodInfo);
 
                         action.BeforeTest(Test);
                     }
-                    finally
+                    catch (Exception ex)
                     {
-                        context.ExecutionHooks.OnAfterTestActionBeforeTest(context);
+                        context.ExecutionHooks.OnAfterTestActionBeforeTest(context, hookedMethodInfo, ex);
+                        throw;
                     }
+                    context.ExecutionHooks.OnAfterTestActionBeforeTest(context, hookedMethodInfo);
                 }
                 else
                 {
@@ -45,16 +50,19 @@ namespace NUnit.Framework.Internal.Commands
             {
                 if (context.ExecutionHooksEnabled)
                 {
+                    var hookedMethodInfo = new MethodWrapper(action.GetType(), "AfterTest");
                     try
                     {
-                        context.ExecutionHooks.OnBeforeTestActionAfterTest(context);
+                        context.ExecutionHooks.OnBeforeTestActionAfterTest(context, hookedMethodInfo);
 
                         action.AfterTest(Test);
                     }
-                    finally
+                    catch (Exception ex)
                     {
-                        context.ExecutionHooks.OnAfterTestActionAfterTest(context);
+                        context.ExecutionHooks.OnAfterTestActionAfterTest(context, hookedMethodInfo, ex);
+                        throw;
                     }
+                    context.ExecutionHooks.OnAfterTestActionAfterTest(context, hookedMethodInfo);
                 }
                 else
                 {
