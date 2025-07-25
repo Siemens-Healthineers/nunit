@@ -579,10 +579,6 @@ namespace NUnit.Framework.Internal
             }
         }
 
-
-
-
-
         private string FailureSiteMessage(FailureSite site, string message)
         {
             return site switch
