@@ -1,12 +1,13 @@
 using System;
 using NUnit.Framework.Internal;
+using NUnit.Framework.Internal.ExecutionHooks;
 
 namespace NUnit.Framework.Tests.ExecutionHooks.Common
 {
     [AttributeUsage(AttributeTargets.Method)]
     internal sealed class ActivateSynchronousTestHookAttribute : ExecutionHookAttribute
     {
-        public override void BeforeTestHook(TestExecutionContext context)
+        public override void BeforeTestHook(HookData hookData)
         {
             TestLog.LogMessage(HookIdentifiers.BeforeTestHook);
 
@@ -15,7 +16,7 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Common
                 .Add("BeforeTestHook_ThreadId", Environment.CurrentManagedThreadId);
         }
 
-        public override void AfterTestHook(TestExecutionContext context)
+        public override void AfterTestHook(HookData hookData)
         {
             TestLog.LogMessage(HookIdentifiers.AfterTestHook);
 

@@ -7,10 +7,9 @@ using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using NUnit.Framework.Internal.Execution;
 using NUnit.Framework.Tests.TestUtilities;
-using NUnit.TestData.ExecutionHookTests;
 using TestResult = NUnit.Framework.Internal.TestResult;
 
-namespace NUnit.Framework.Tests.HookExtension.TestOutcomeTests;
+namespace NUnit.Framework.Tests.ExecutionHooks.TestOutcomeTests;
 
 public class AfterSetUpHooksEvaluateTestOutcomeTests
 {
