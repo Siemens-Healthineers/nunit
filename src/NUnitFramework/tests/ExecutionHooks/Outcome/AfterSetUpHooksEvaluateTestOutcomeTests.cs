@@ -74,6 +74,7 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
         return failingReasons;
     }
 
+    [Explicit($"This test should only be run as part of the {nameof(CheckSetUpOutcomes)} test")]
     [AfterSetUpOutcomeLogger]
     [TestFixtureSource(nameof(GetFixtureConfig))]
     public class TestsUnderTestsWithDifferentSetUpOutcome
@@ -149,9 +150,9 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
     [Test]
     public void CheckSetUpOutcomes()
     {
-        var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithDifferentSetUpOutcome));
+        var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithDifferentSetUpOutcome), TestFilter.Explicit);
         workItem.Execute();
-        
+
         Assert.Multiple(() =>
         {
             Assert.That(TestLog.Logs, Is.Not.Empty);

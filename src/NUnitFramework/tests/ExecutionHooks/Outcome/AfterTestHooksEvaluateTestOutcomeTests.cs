@@ -44,6 +44,7 @@ public class AfterTestHooksEvaluateTestOutcomeTests
         }
     }
 
+    [Explicit($"This test should only be run as part of the {nameof(CheckThatAfterTestHooksEvaluateTestOutcome)} test")]
     [AfterTestOutcomeLogger]
     [TestFixture]
     public class TestsUnderTestsWithMixedOutcome
@@ -88,7 +89,7 @@ public class AfterTestHooksEvaluateTestOutcomeTests
     [Test]
     public void CheckThatAfterTestHooksEvaluateTestOutcome()
     {
-        var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithMixedOutcome));
+        var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithMixedOutcome), TestFilter.Explicit);
         workItem.Execute();
 
         Assert.That(TestLog.Logs, Is.Not.Empty);

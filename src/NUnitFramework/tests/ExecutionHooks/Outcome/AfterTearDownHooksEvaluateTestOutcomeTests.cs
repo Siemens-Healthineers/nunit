@@ -68,7 +68,7 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
     }
 
     // H-TODO: enrich the test to also failing tests and setups
-
+    [Explicit($"This test should only be run as part of the {nameof(CheckTearDownOutcomes)} test")]
     [AfterTearDownOutcomeLogger]
     [TestFixtureSource(nameof(GetFixtureConfig))]
     public class TestsUnderTestsWithDifferentTearDownOutcome
@@ -137,7 +137,7 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
     [Test]
     public void CheckTearDownOutcomes()
     {
-        var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithDifferentTearDownOutcome));
+        var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithDifferentTearDownOutcome), TestFilter.Explicit);
         workItem.Execute();
 
         Assert.Multiple(() =>

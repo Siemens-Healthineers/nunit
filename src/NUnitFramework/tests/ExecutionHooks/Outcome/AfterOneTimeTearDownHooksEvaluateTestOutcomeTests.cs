@@ -76,7 +76,7 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
 
     // H-TODO: enrich the test to also failing tests and setups
     // H-TODO: enrich or write new test for exceptions from hooks
-
+    [Explicit($"This test should only be run as part of the {nameof(CheckOneTimeTearDownOutcomes)} test")]
     [AfterOneTimeTearDownOutcomeLogger]
     [TestFixtureSource(nameof(GetFixtureConfig))]
     public class TestsUnderTestsWithDifferentOneTimeTearDownOutcome
@@ -146,7 +146,7 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
     [Test]
     public void CheckOneTimeTearDownOutcomes()
     {
-        var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithDifferentOneTimeTearDownOutcome));
+        var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithDifferentOneTimeTearDownOutcome), TestFilter.Explicit);
         workItem.Execute();
 
         Assert.Multiple(() =>

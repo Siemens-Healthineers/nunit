@@ -73,6 +73,7 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
         return failingReasons;
     }
 
+    [Explicit($"This test should only be run as part of the {nameof(CheckSetUpOutcomes)} test")]
     [AfterSetUpOutcomeLogger]
     [TestFixtureSource(nameof(GetFixtureConfig))]
     public class TestsUnderTestsWithDifferentOntTimeSetUpOutcome
@@ -148,7 +149,7 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
 
     public void CheckSetUpOutcomes()
     {
-        var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithDifferentOntTimeSetUpOutcome));
+        var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithDifferentOntTimeSetUpOutcome), TestFilter.Explicit);
         workItem.Execute();
 
         Assert.Multiple(() =>
