@@ -439,7 +439,6 @@ namespace NUnit.Framework.Internal
         /// <returns>A new TestResult representing the delta between the current and previous TestResults.</returns>
         public TestResult CalculateDeltaWithPrevious(TestResult previous, Exception? exceptionContext = null)
         {
-            // H-TODO: test this method!!!
             var deltaResult = Clone();
 
             // Calculate the delta for ResultState
