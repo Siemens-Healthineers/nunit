@@ -8,8 +8,7 @@ using NUnit.Framework.Internal;
 using NUnit.Framework.Tests.TestUtilities;
 using TestResult = NUnit.Framework.Internal.TestResult;
 
-namespace NUnit.Framework.Tests.ExecutionHooks.TestOutcomeTests;
-
+namespace NUnit.Framework.Tests.ExecutionHooks.Outcome;
 
 public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
 {
@@ -63,34 +62,14 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
         None4Passed
     }
 
-    private static IEnumerable<FailingReason> GetRelevantFailingReasons()
-    {
-        var failingReasons = Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>();
-
-        // H-ToDo: remove before final checkin
-        // Apply filtering
-        //failingReasons = failingReasons.Where(reason => reason.ToString().EndsWith("4Warning"));
-        return failingReasons;
-    }
-
     [Explicit($"This test should only be run as part of the {nameof(CheckSetUpOutcomes)} test")]
     [AfterSetUpOutcomeLogger]
-    [TestFixtureSource(nameof(GetFixtureConfig))]
-    public class TestsUnderTestsWithDifferentOntTimeSetUpOutcome
+    [TestFixtureSource(nameof(GetReasonsToFail))]
+    public class TestsUnderTestsWithDifferentOntTimeSetUpOutcome(FailingReason failingReason)
     {
-        private readonly FailingReason _failingReason;
-
-        private static IEnumerable<TestFixtureData> GetFixtureConfig()
+        private static IEnumerable<TestFixtureData> GetReasonsToFail()
         {
-            foreach (var failingReason in GetRelevantFailingReasons())
-            {
-                yield return new TestFixtureData(failingReason);
-            }
-        }
-
-        public TestsUnderTestsWithDifferentOntTimeSetUpOutcome(FailingReason failingReason)
-        {
-            _failingReason = failingReason;
+            return Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Select(failingReason => new TestFixtureData(failingReason));
         }
 
         [OneTimeSetUp]
@@ -101,7 +80,7 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
 
         private void ExecuteFailingReason()
         {
-            switch (_failingReason)
+            switch (failingReason)
             {
                 case FailingReason.Assertion4Failed:
                     Assert.Fail("OneTimeSetUp fails by Assertion_Failed.");
@@ -160,10 +139,10 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
                 Assert.That(log, Does.Not.Contain(AfterSetUpOutcomeLogger.OutcomeMismatch));
             }
 
-            Assert.That(workItem.Result.PassCount, Is.EqualTo(GetRelevantFailingReasons().Count(reason => reason.ToString().EndsWith("4Passed") || reason.ToString().EndsWith("4Warning"))));
-            Assert.That(workItem.Result.FailCount, Is.EqualTo(GetRelevantFailingReasons().Count(reason => reason.ToString().EndsWith("4Failed"))));
-            Assert.That(workItem.Result.SkipCount, Is.EqualTo(GetRelevantFailingReasons().Count(reason => reason.ToString().EndsWith("4Ignored"))));
-            Assert.That(workItem.Result.TotalCount, Is.EqualTo(GetRelevantFailingReasons().Count()));
+            Assert.That(workItem.Result.PassCount, Is.EqualTo(Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Count(reason => reason.ToString().EndsWith("4Passed") || reason.ToString().EndsWith("4Warning"))));
+            Assert.That(workItem.Result.FailCount, Is.EqualTo(Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Count(reason => reason.ToString().EndsWith("4Failed"))));
+            Assert.That(workItem.Result.SkipCount, Is.EqualTo(Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Count(reason => reason.ToString().EndsWith("4Ignored"))));
+            Assert.That(workItem.Result.TotalCount, Is.EqualTo(Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Count()));
         });
 
         TestLog.Logs.Clear();
