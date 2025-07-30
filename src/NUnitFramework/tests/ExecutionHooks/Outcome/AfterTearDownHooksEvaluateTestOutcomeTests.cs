@@ -8,7 +8,7 @@ using NUnit.Framework.Internal;
 using NUnit.Framework.Tests.TestUtilities;
 using TestResult = NUnit.Framework.Internal.TestResult;
 
-namespace NUnit.Framework.Tests.ExecutionHooks.TestOutcomeTests;
+namespace NUnit.Framework.Tests.ExecutionHooks.Outcome;
 
 public class AfterTearDownHooksEvaluateTestOutcomeTests
 {
@@ -86,6 +86,7 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
         public TestsUnderTestsWithDifferentTearDownOutcome(FailingReason failingReason)
         {
             _failingReason = failingReason;
+            TestLog.Clear();
         }
 
         [TearDown]

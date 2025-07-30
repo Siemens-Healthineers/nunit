@@ -8,7 +8,7 @@ using NUnit.Framework.Internal;
 using NUnit.Framework.Tests.TestUtilities;
 using TestResult = NUnit.Framework.Internal.TestResult;
 
-namespace NUnit.Framework.Tests.ExecutionHooks.TestOutcomeTests;
+namespace NUnit.Framework.Tests.ExecutionHooks.Outcome;
 
 public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
 {
@@ -94,9 +94,9 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
         public TestsUnderTestsWithDifferentOneTimeTearDownOutcome(FailingReason failingReason)
         {
             _failingReason = failingReason;
+            TestLog.Clear();
         }
-
-
+        
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {

@@ -9,7 +9,7 @@ using NUnit.Framework.Internal.Execution;
 using NUnit.Framework.Tests.TestUtilities;
 using TestResult = NUnit.Framework.Internal.TestResult;
 
-namespace NUnit.Framework.Tests.ExecutionHooks.TestOutcomeTests;
+namespace NUnit.Framework.Tests.ExecutionHooks.Outcome;
 
 public class AfterSetUpHooksEvaluateTestOutcomeTests
 {
@@ -92,8 +92,8 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
         public TestsUnderTestsWithDifferentSetUpOutcome(FailingReason failingReason)
         {
             _failingReason = failingReason;
+            TestLog.Clear();
         }
-
 
         [SetUp]
         public void SetUp()

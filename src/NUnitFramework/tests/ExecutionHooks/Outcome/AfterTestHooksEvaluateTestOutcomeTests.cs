@@ -6,7 +6,7 @@ using NUnit.Framework.Internal.ExecutionHooks;
 using NUnit.Framework.Tests.TestUtilities;
 using TestResult = NUnit.Framework.Internal.TestResult;
 
-namespace NUnit.Framework.Tests.ExecutionHooks.TestOutcomeTests;
+namespace NUnit.Framework.Tests.ExecutionHooks.Outcome;
 
 public class AfterTestHooksEvaluateTestOutcomeTests
 {
@@ -49,6 +49,11 @@ public class AfterTestHooksEvaluateTestOutcomeTests
     [TestFixture]
     public class TestsUnderTestsWithMixedOutcome
     {
+        public TestsUnderTestsWithMixedOutcome()
+        {
+            TestLog.Clear();
+        }
+
         [Test]
         public void PassedTest() { }
 

@@ -65,11 +65,19 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
     [Explicit($"This test should only be run as part of the {nameof(CheckSetUpOutcomes)} test")]
     [AfterSetUpOutcomeLogger]
     [TestFixtureSource(nameof(GetReasonsToFail))]
-    public class TestsUnderTestsWithDifferentOntTimeSetUpOutcome(FailingReason failingReason)
+    public class TestsUnderTestsWithDifferentOntTimeSetUpOutcome
     {
+        private readonly FailingReason _failingReason;
+
         private static IEnumerable<TestFixtureData> GetReasonsToFail()
         {
             return Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Select(failingReason => new TestFixtureData(failingReason));
+        }
+
+        public TestsUnderTestsWithDifferentOntTimeSetUpOutcome(FailingReason failingReason)
+        {
+            _failingReason = failingReason;
+            TestLog.Clear();
         }
 
         [OneTimeSetUp]
@@ -80,7 +88,7 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
 
         private void ExecuteFailingReason()
         {
-            switch (failingReason)
+            switch (_failingReason)
             {
                 case FailingReason.Assertion4Failed:
                     Assert.Fail("OneTimeSetUp fails by Assertion_Failed.");
