@@ -49,11 +49,6 @@ public class AfterTestHooksEvaluateTestOutcomeTests
     [TestFixture]
     public class TestsUnderTestsWithMixedOutcome
     {
-        public TestsUnderTestsWithMixedOutcome()
-        {
-            TestLog.Clear();
-        }
-
         [Test]
         public void PassedTest() { }
 
@@ -94,6 +89,8 @@ public class AfterTestHooksEvaluateTestOutcomeTests
     [Test]
     public void CheckThatAfterTestHooksEvaluateTestOutcome()
     {
+        TestLog.Clear();
+
         var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithMixedOutcome), TestFilter.Explicit);
         workItem.Execute();
 
@@ -106,6 +103,6 @@ public class AfterTestHooksEvaluateTestOutcomeTests
             }
         });
 
-        TestLog.Logs.Clear();
+        TestLog.Clear();
     }
 }

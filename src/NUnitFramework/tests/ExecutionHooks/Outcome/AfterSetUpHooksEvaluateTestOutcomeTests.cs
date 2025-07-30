@@ -77,22 +77,14 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
     [Explicit($"This test should only be run as part of the {nameof(CheckSetUpOutcomes)} test")]
     [AfterSetUpOutcomeLogger]
     [TestFixtureSource(nameof(GetFixtureConfig))]
-    public class TestsUnderTestsWithDifferentSetUpOutcome
+    public class TestsUnderTestsWithDifferentSetUpOutcome(FailingReason failingReason)
     {
-        private readonly FailingReason _failingReason;
-
         private static IEnumerable<TestFixtureData> GetFixtureConfig()
         {
             foreach (var failingReason in GetRelevantFailingReasons())
             {
                 yield return new TestFixtureData(failingReason);
             }
-        }
-
-        public TestsUnderTestsWithDifferentSetUpOutcome(FailingReason failingReason)
-        {
-            _failingReason = failingReason;
-            TestLog.Clear();
         }
 
         [SetUp]
@@ -103,7 +95,7 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
 
         private void ExecuteFailingReason()
         {
-            switch (_failingReason)
+            switch (failingReason)
             {
                 case FailingReason.Assertion4Failed:
                     Assert.Fail("SetUp fails by Assertion_Failed.");
@@ -150,6 +142,8 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
     [Test]
     public void CheckSetUpOutcomes()
     {
+        TestLog.Clear();
+
         var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithDifferentSetUpOutcome), TestFilter.Explicit);
         workItem.Execute();
 
@@ -175,6 +169,6 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
             Assert.That(workItem.Result.TotalCount, Is.EqualTo(GetRelevantFailingReasons().Count()));
         });
 
-        TestLog.Logs.Clear();
+        TestLog.Clear();
     }
 }

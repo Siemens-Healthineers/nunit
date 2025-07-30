@@ -79,22 +79,14 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
     [Explicit($"This test should only be run as part of the {nameof(CheckOneTimeTearDownOutcomes)} test")]
     [AfterOneTimeTearDownOutcomeLogger]
     [TestFixtureSource(nameof(GetFixtureConfig))]
-    public class TestsUnderTestsWithDifferentOneTimeTearDownOutcome
+    public class TestsUnderTestsWithDifferentOneTimeTearDownOutcome(FailingReason failingReason)
     {
-        private readonly FailingReason _failingReason;
-
         private static IEnumerable<TestFixtureData> GetFixtureConfig()
         {
             foreach (var failingReason in GetRelevantFailingReasons())
             {
                 yield return new TestFixtureData(failingReason);
             }
-        }
-
-        public TestsUnderTestsWithDifferentOneTimeTearDownOutcome(FailingReason failingReason)
-        {
-            _failingReason = failingReason;
-            TestLog.Clear();
         }
         
         [OneTimeTearDown]
@@ -105,7 +97,7 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
 
         private void ExecuteFailingReason()
         {
-            switch (_failingReason)
+            switch (failingReason)
             {
                 case FailingReason.Assertion4Failed:
                     Assert.Fail("OneTimeTearDown fails by Assertion_Failed.");
@@ -146,6 +138,8 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
     [Test]
     public void CheckOneTimeTearDownOutcomes()
     {
+        TestLog.Clear();
+
         var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithDifferentOneTimeTearDownOutcome), TestFilter.Explicit);
         workItem.Execute();
 
@@ -161,6 +155,6 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
             Assert.That(workItem.Result.TotalCount, Is.EqualTo(GetRelevantFailingReasons().Count()));
         });
 
-        TestLog.Logs.Clear();
+        TestLog.Clear();
     }
 }

@@ -65,21 +65,13 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
     [Explicit($"This test should only be run as part of the {nameof(CheckSetUpOutcomes)} test")]
     [AfterSetUpOutcomeLogger]
     [TestFixtureSource(nameof(GetReasonsToFail))]
-    public class TestsUnderTestsWithDifferentOntTimeSetUpOutcome
+    public class TestsUnderTestsWithDifferentOntTimeSetUpOutcome(FailingReason failingReason)
     {
-        private readonly FailingReason _failingReason;
-
         private static IEnumerable<TestFixtureData> GetReasonsToFail()
         {
             return Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Select(failingReason => new TestFixtureData(failingReason));
         }
-
-        public TestsUnderTestsWithDifferentOntTimeSetUpOutcome(FailingReason failingReason)
-        {
-            _failingReason = failingReason;
-            TestLog.Clear();
-        }
-
+        
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
@@ -88,7 +80,7 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
 
         private void ExecuteFailingReason()
         {
-            switch (_failingReason)
+            switch (failingReason)
             {
                 case FailingReason.Assertion4Failed:
                     Assert.Fail("OneTimeSetUp fails by Assertion_Failed.");
@@ -136,6 +128,8 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
 
     public void CheckSetUpOutcomes()
     {
+        TestLog.Clear();
+
         var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithDifferentOntTimeSetUpOutcome), TestFilter.Explicit);
         workItem.Execute();
 
@@ -153,6 +147,6 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
             Assert.That(workItem.Result.TotalCount, Is.EqualTo(Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Count()));
         });
 
-        TestLog.Logs.Clear();
+        TestLog.Clear();
     }
 }

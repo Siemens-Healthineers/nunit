@@ -71,10 +71,8 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
     [Explicit($"This test should only be run as part of the {nameof(CheckTearDownOutcomes)} test")]
     [AfterTearDownOutcomeLogger]
     [TestFixtureSource(nameof(GetFixtureConfig))]
-    public class TestsUnderTestsWithDifferentTearDownOutcome
+    public class TestsUnderTestsWithDifferentTearDownOutcome(FailingReason failingReason)
     {
-        private readonly FailingReason _failingReason;
-
         private static IEnumerable<TestFixtureData> GetFixtureConfig()
         {
             foreach (var failingReason in GetRelevantFailingReasons())
@@ -82,13 +80,7 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
                 yield return new TestFixtureData(failingReason);
             }
         }
-
-        public TestsUnderTestsWithDifferentTearDownOutcome(FailingReason failingReason)
-        {
-            _failingReason = failingReason;
-            TestLog.Clear();
-        }
-
+        
         [TearDown]
         public void TearDown()
         {
@@ -97,7 +89,7 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
 
         private void ExecuteFailingReason()
         {
-            switch (_failingReason)
+            switch (failingReason)
             {
                 case FailingReason.Assertion4Failed:
                     Assert.Fail("TearDown fails by Assertion_Failed.");
@@ -138,6 +130,8 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
     [Test]
     public void CheckTearDownOutcomes()
     {
+        TestLog.Clear();
+
         var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithDifferentTearDownOutcome), TestFilter.Explicit);
         workItem.Execute();
 
@@ -157,6 +151,6 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
             Assert.That(workItem.Result.TotalCount, Is.EqualTo(GetRelevantFailingReasons().Count()));
         });
 
-        TestLog.Logs.Clear();
+        TestLog.Clear();
     }
 }
