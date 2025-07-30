@@ -99,7 +99,19 @@ namespace NUnit.Framework
         /// <inheritdoc />
         public TestCommand Wrap(TestCommand command)
         {
-            return command is HookDelegatingTestCommand ? command : new HookDelegatingTestCommand(command);
+            if (command is not TestMethodCommand testMethodCommand)
+            {
+                throw new NUnitException($"{nameof(ExecutionHookAttribute)} " +
+                    $"can only be applied to {nameof(TestMethodCommand)}. " +
+                    $"Received: {command.GetType().Name}.");
+            }
+
+            if (command is HookDelegatingTestMethodCommand)
+            {
+                return command;
+            }
+
+            return new HookDelegatingTestMethodCommand(testMethodCommand);
         }
 
         /// <inheritdoc />
