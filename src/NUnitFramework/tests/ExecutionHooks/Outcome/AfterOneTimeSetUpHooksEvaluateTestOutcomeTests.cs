@@ -19,7 +19,7 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
 
         public void ApplyToContext(TestExecutionContext context)
         {
-            TestResult beforeHookTestResult = null;
+            TestResult beforeHookTestResult = null!;
             context.ExecutionHooks.BeforeEverySetUp.AddHandler(hookData =>
             {
                 beforeHookTestResult = hookData.Context.CurrentResult.Clone();
@@ -71,12 +71,9 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
         {
             return Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Select(failingReason => new TestFixtureData(failingReason));
         }
-        
+
         [OneTimeSetUp]
-        public void OneTimeSetUp()
-        {
-            ExecuteFailingReason();
-        }
+        public void OneTimeSetUp() => ExecuteFailingReason();
 
         private void ExecuteFailingReason()
         {
@@ -141,10 +138,11 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
                 Assert.That(log, Does.Not.Contain(AfterSetUpOutcomeLogger.OutcomeMismatch));
             }
 
-            Assert.That(workItem.Result.PassCount, Is.EqualTo(Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Count(reason => reason.ToString().EndsWith("4Passed") || reason.ToString().EndsWith("4Warning"))));
-            Assert.That(workItem.Result.FailCount, Is.EqualTo(Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Count(reason => reason.ToString().EndsWith("4Failed"))));
-            Assert.That(workItem.Result.SkipCount, Is.EqualTo(Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Count(reason => reason.ToString().EndsWith("4Ignored"))));
-            Assert.That(workItem.Result.TotalCount, Is.EqualTo(Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Count()));
+            var failingReasons = Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>();
+            Assert.That(workItem.Result.PassCount, Is.EqualTo(failingReasons.Count(reason => reason.ToString().EndsWith("4Passed") || reason.ToString().EndsWith("4Warning"))));
+            Assert.That(workItem.Result.FailCount, Is.EqualTo(failingReasons.Count(reason => reason.ToString().EndsWith("4Failed"))));
+            Assert.That(workItem.Result.SkipCount, Is.EqualTo(failingReasons.Count(reason => reason.ToString().EndsWith("4Ignored"))));
+            Assert.That(workItem.Result.TotalCount, Is.EqualTo(failingReasons.Count()));
         });
 
         TestLog.Clear();
