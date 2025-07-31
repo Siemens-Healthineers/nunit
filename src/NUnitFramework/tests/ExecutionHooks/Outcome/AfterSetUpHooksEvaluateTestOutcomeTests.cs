@@ -20,7 +20,7 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
 
         public void ApplyToContext(TestExecutionContext context)
         {
-            TestResult beforeHookTestResult = null;
+            TestResult? beforeHookTestResult = null;
             context.ExecutionHooks.BeforeEverySetUp.AddHandler((hookData) =>
             {
                 beforeHookTestResult = hookData.Context.CurrentResult.Clone();
@@ -28,6 +28,8 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
 
             context.ExecutionHooks.AfterEverySetUp.AddHandler((hookData) =>
             {
+                Assert.That(beforeHookTestResult, Is.Not.Null, "BeforeEverySetUp was not called before AfterEverySetUp.");
+
                 TestResult setUpTestResult
                     = hookData.Context.CurrentResult.CalculateDeltaWithPrevious(beforeHookTestResult, hookData.ExceptionContext);
 

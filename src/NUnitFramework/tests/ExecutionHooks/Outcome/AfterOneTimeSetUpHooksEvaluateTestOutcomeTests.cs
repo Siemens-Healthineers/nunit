@@ -19,7 +19,7 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
 
         public void ApplyToContext(TestExecutionContext context)
         {
-            TestResult beforeHookTestResult = null;
+            TestResult? beforeHookTestResult = null;
             context.ExecutionHooks.BeforeEverySetUp.AddHandler(hookData =>
             {
                 beforeHookTestResult = hookData.Context.CurrentResult.Clone();
@@ -27,6 +27,8 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
 
             context.ExecutionHooks.AfterEverySetUp.AddHandler(hookData =>
             {
+                Assert.That(beforeHookTestResult, Is.Not.Null, "BeforeEverySetUp was not called before AfterEverySetUp.");
+
                 TestResult oneTimeSetUpTestResult
                 = hookData.Context.CurrentResult.CalculateDeltaWithPrevious(beforeHookTestResult, hookData.ExceptionContext);
 
@@ -71,7 +73,7 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
         {
             return Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Select(failingReason => new TestFixtureData(failingReason));
         }
-        
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
