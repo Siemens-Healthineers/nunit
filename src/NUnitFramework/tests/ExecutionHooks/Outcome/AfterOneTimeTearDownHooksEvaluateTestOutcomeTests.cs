@@ -32,7 +32,6 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
                     = hookData.Context.CurrentResult.CalculateDeltaWithPrevious(beforeHookTestResult, hookData.ExceptionContext);
 
                 string outcomeMatchStatement = oneTimeTearDownTestResult.ResultState switch
-
                 {
                     ResultState { Status: TestStatus.Failed } when
                         hookData.Context.CurrentTest.FullName.Contains("4Failed") => OutcomeMatched,

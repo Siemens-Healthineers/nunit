@@ -117,6 +117,8 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
         [Test]
         public void SomeTest()
         {
+            Assert.That(TestContext.CurrentContext.Test.Parent, Is.Not.Null);
+
             var fixtureName = TestContext.CurrentContext.Test.Parent.FullName;
             if (!(fixtureName.Contains("4Passed") || fixtureName.Contains("4Warning")))
             {

@@ -53,7 +53,9 @@ public class AfterTestHooksEvaluateTestOutcomeTests
     public class TestsUnderTestsWithMixedOutcome
     {
         [Test]
-        public void PassedTest() { }
+        public void PassedTest()
+        {
+        }
 
         [Test]
         public void FailedTestByAssertion()

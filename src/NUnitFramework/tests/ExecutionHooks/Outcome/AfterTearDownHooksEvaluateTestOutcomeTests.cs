@@ -82,7 +82,7 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
                 yield return new TestFixtureData(failingReason);
             }
         }
-        
+
         [TearDown]
         public void TearDown()
         {
