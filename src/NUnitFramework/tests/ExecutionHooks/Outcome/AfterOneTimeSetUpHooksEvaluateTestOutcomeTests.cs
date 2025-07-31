@@ -19,7 +19,7 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
 
         public void ApplyToContext(TestExecutionContext context)
         {
-            TestResult beforeHookTestResult = null!;
+            TestResult? beforeHookTestResult = null;
             context.ExecutionHooks.BeforeEverySetUp.AddHandler(hookData =>
             {
                 beforeHookTestResult = hookData.Context.CurrentResult.Clone();
@@ -27,6 +27,8 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
 
             context.ExecutionHooks.AfterEverySetUp.AddHandler(hookData =>
             {
+                Assert.That(beforeHookTestResult, Is.Not.Null, "BeforeEverySetUp was not called before AfterEverySetUp.");
+
                 TestResult oneTimeSetUpTestResult
                 = hookData.Context.CurrentResult.CalculateDeltaWithPrevious(beforeHookTestResult, hookData.ExceptionContext);
 
@@ -112,6 +114,8 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
         [Test]
         public void SomeTest()
         {
+            Assert.That(TestContext.CurrentContext.Test.Parent, Is.Not.Null);
+
             var fixtureName = TestContext.CurrentContext.Test.Parent.FullName;
             if (!(fixtureName.Contains("4Passed") || fixtureName.Contains("4Warning")))
             {

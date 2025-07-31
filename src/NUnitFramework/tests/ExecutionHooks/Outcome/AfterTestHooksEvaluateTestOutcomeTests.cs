@@ -14,17 +14,20 @@ public class AfterTestHooksEvaluateTestOutcomeTests
     {
         internal static readonly string OutcomeMatched = "Outcome Matched";
         internal static readonly string OutcomeMismatch = "Outcome Mismatch!!!";
-        TestResult beforeHookTestResult = null;
+        private TestResult? _beforeHookTestResult = null;
 
         public override void BeforeTestHook(HookData hookData)
         {
-            beforeHookTestResult = hookData.Context.CurrentResult.Clone();
+            _beforeHookTestResult = hookData.Context.CurrentResult.Clone();
         }
 
         public override void AfterTestHook(HookData hookData)
         {
+            Assert.That(_beforeHookTestResult, Is.Not.Null, "BeforeTestHook was not called before AfterTestHook.");
+            Assert.That(hookData.Context.CurrentTest.MethodName, Is.Not.Null, "Hook was not called on a method.");
+
             TestResult testResult
-                    = hookData.Context.CurrentResult.CalculateDeltaWithPrevious(beforeHookTestResult, hookData.ExceptionContext);
+                    = hookData.Context.CurrentResult.CalculateDeltaWithPrevious(_beforeHookTestResult, hookData.ExceptionContext);
 
             string outcomeMatchStatement = testResult.ResultState switch
             {
@@ -50,7 +53,9 @@ public class AfterTestHooksEvaluateTestOutcomeTests
     public class TestsUnderTestsWithMixedOutcome
     {
         [Test]
-        public void PassedTest() { }
+        public void PassedTest()
+        {
+        }
 
         [Test]
         public void FailedTestByAssertion()

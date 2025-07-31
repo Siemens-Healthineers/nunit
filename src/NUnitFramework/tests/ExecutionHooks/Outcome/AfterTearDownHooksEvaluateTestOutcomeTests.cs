@@ -19,7 +19,7 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
 
         public void ApplyToContext(TestExecutionContext context)
         {
-            TestResult beforeHookTestResult = null;
+            TestResult? beforeHookTestResult = null;
             context.ExecutionHooks.BeforeEveryTearDown.AddHandler((hookData) =>
             {
                 beforeHookTestResult = hookData.Context.CurrentResult.Clone();
@@ -27,6 +27,8 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
 
             context.ExecutionHooks.AfterEveryTearDown.AddHandler((hookData) =>
             {
+                Assert.That(beforeHookTestResult, Is.Not.Null, "BeforeEveryTearDown was not called before AfterEveryTearDown.");
+
                 TestResult tearDownTestResult
                     = hookData.Context.CurrentResult.CalculateDeltaWithPrevious(beforeHookTestResult, hookData.ExceptionContext);
 
@@ -80,7 +82,7 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
                 yield return new TestFixtureData(failingReason);
             }
         }
-        
+
         [TearDown]
         public void TearDown()
         {
