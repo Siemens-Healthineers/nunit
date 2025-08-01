@@ -63,36 +63,20 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
         None4Passed
     }
 
-    private static IEnumerable<FailingReason> GetRelevantFailingReasons()
-    {
-        var failingReasons = Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>();
-
-        // H-ToDo: remove before final checkin
-        // Apply filtering
-        //failingReasons = failingReasons.Where(reason => reason.ToString().EndsWith("Exception4Failed"));
-        return failingReasons;
-    }
-
     // H-TODO: enrich the test to also failing tests and setups
     // H-TODO: enrich or write new test for exceptions from hooks
     [Explicit($"This test should only be run as part of the {nameof(CheckOneTimeTearDownOutcomes)} test")]
     [AfterOneTimeTearDownOutcomeLogger]
-    [TestFixtureSource(nameof(GetFixtureConfig))]
+    [TestFixtureSource(nameof(GetReasonsToFail))]
     public class TestsUnderTestsWithDifferentOneTimeTearDownOutcome(FailingReason failingReason)
     {
-        private static IEnumerable<TestFixtureData> GetFixtureConfig()
+        private static IEnumerable<TestFixtureData> GetReasonsToFail()
         {
-            foreach (var failingReason in GetRelevantFailingReasons())
-            {
-                yield return new TestFixtureData(failingReason);
-            }
+            return Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Select(failingReason => new TestFixtureData(failingReason));
         }
 
         [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            ExecuteFailingReason();
-        }
+        public void OneTimeTearDown() => ExecuteFailingReason();
 
         private void ExecuteFailingReason()
         {
@@ -150,8 +134,9 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
                 Assert.That(log, Does.Not.Contain(AfterOneTimeTearDownOutcomeLogger.OutcomeMismatch));
             }
 
-            Assert.That(workItem.Result.PassCount, Is.EqualTo(GetRelevantFailingReasons().Count()));
-            Assert.That(workItem.Result.TotalCount, Is.EqualTo(GetRelevantFailingReasons().Count()));
+            var numberOfTests = Enum.GetValues(typeof(AfterOneTimeSetUpHooksEvaluateTestOutcomeTests.FailingReason)).Cast<AfterOneTimeSetUpHooksEvaluateTestOutcomeTests.FailingReason>().Count();
+            Assert.That(workItem.Result.PassCount, Is.EqualTo(numberOfTests));
+            Assert.That(workItem.Result.TotalCount, Is.EqualTo(numberOfTests));
         });
 
         TestLog.Clear();
