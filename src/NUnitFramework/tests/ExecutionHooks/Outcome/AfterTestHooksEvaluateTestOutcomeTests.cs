@@ -14,7 +14,7 @@ public class AfterTestHooksEvaluateTestOutcomeTests
     {
         internal static readonly string OutcomeMatched = "Outcome Matched";
         internal static readonly string OutcomeMismatch = "Outcome Mismatch!!!";
-        private TestResult? _beforeHookTestResult = null;
+        private TestResult? _beforeHookTestResult;
 
         public override void BeforeTestHook(HookData hookData)
         {
@@ -31,13 +31,13 @@ public class AfterTestHooksEvaluateTestOutcomeTests
 
             string outcomeMatchStatement = testResult.ResultState switch
             {
-                ResultState { Status: TestStatus.Failed } when
+                { Status: TestStatus.Failed } when
                     hookData.Context.CurrentTest.MethodName.StartsWith("FailedTest") => OutcomeMatched,
-                ResultState { Status: TestStatus.Passed } when
+                { Status: TestStatus.Passed } when
                     hookData.Context.CurrentTest.MethodName.StartsWith("PassedTest") => OutcomeMatched,
-                ResultState { Status: TestStatus.Skipped } when
+                { Status: TestStatus.Skipped } when
                     hookData.Context.CurrentTest.MethodName.StartsWith("TestIgnored") => OutcomeMatched,
-                ResultState { Status: TestStatus.Warning } when
+                { Status: TestStatus.Warning } when
                     hookData.Context.CurrentTest.MethodName.StartsWith("WarningTest") => OutcomeMatched,
                 _ => OutcomeMismatch
             };

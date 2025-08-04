@@ -34,11 +34,11 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
 
                 string outcomeMatchStatement = tearDownTestResult.ResultState switch
                 {
-                    ResultState { Status: TestStatus.Failed } when hookData.Context.CurrentTest.FullName.Contains("4Failed") => OutcomeMatched,
-                    ResultState { Status: TestStatus.Passed } when hookData.Context.CurrentTest.FullName.Contains("4Passed") => OutcomeMatched,
-                    ResultState { Status: TestStatus.Skipped } when hookData.Context.CurrentTest.FullName.Contains("4Ignored") => OutcomeMatched,
-                    ResultState { Status: TestStatus.Inconclusive } when hookData.Context.CurrentTest.FullName.Contains("4Inconclusive") => OutcomeMatched,
-                    ResultState { Status: TestStatus.Warning } when hookData.Context.CurrentTest.FullName.Contains("4Warning") => OutcomeMatched,
+                    { Status: TestStatus.Failed } when hookData.Context.CurrentTest.FullName.Contains("4Failed") => OutcomeMatched,
+                    { Status: TestStatus.Passed } when hookData.Context.CurrentTest.FullName.Contains("4Passed") => OutcomeMatched,
+                    { Status: TestStatus.Skipped } when hookData.Context.CurrentTest.FullName.Contains("4Ignored") => OutcomeMatched,
+                    { Status: TestStatus.Inconclusive } when hookData.Context.CurrentTest.FullName.Contains("4Inconclusive") => OutcomeMatched,
+                    { Status: TestStatus.Warning } when hookData.Context.CurrentTest.FullName.Contains("4Warning") => OutcomeMatched,
                     _ => OutcomeMismatch
                 };
 
@@ -59,35 +59,18 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
         None4Passed
     }
 
-    private static IEnumerable<FailingReason> GetRelevantFailingReasons()
-    {
-        var failingReasons = Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>();
-
-        // H-ToDo: remove before final checkin
-        // Apply filtering
-        //failingReasons = failingReasons.Where(reason => !reason.ToString().EndsWith("4Inconclusive"));
-        return failingReasons;
-    }
-
-    // H-TODO: enrich the test to also failing tests and setups
     [Explicit($"This test should only be run as part of the {nameof(CheckTearDownOutcomes)} test")]
     [AfterTearDownOutcomeLogger]
-    [TestFixtureSource(nameof(GetFixtureConfig))]
+    [TestFixtureSource(nameof(GetReasonsToFail))]
     public class TestsUnderTestsWithDifferentTearDownOutcome(FailingReason failingReason)
     {
-        private static IEnumerable<TestFixtureData> GetFixtureConfig()
+        private static IEnumerable<TestFixtureData> GetReasonsToFail()
         {
-            foreach (var failingReason in GetRelevantFailingReasons())
-            {
-                yield return new TestFixtureData(failingReason);
-            }
+            return Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Select(failingReason => new TestFixtureData(failingReason));
         }
 
         [TearDown]
-        public void TearDown()
-        {
-            ExecuteFailingReason();
-        }
+        public void TearDown() => ExecuteFailingReason();
 
         private void ExecuteFailingReason()
         {
@@ -145,12 +128,12 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
                 Assert.That(log, Does.Not.Contain(AfterTearDownOutcomeLogger.OutcomeMismatch));
             }
 
-            Assert.That(workItem.Result.PassCount, Is.EqualTo(GetRelevantFailingReasons().Count(reason => reason.ToString().EndsWith("4Passed"))));
-            Assert.That(workItem.Result.FailCount, Is.EqualTo(GetRelevantFailingReasons().Count(reason => reason.ToString().EndsWith("4Failed"))));
-            // H-TODO: Understand the change in the test outcome. Find the relevant nunit issue for that!
-            Assert.That(workItem.Result.SkipCount, Is.EqualTo(GetRelevantFailingReasons().Count(reason => reason.ToString().EndsWith("4Ignored"))));
-            Assert.That(workItem.Result.InconclusiveCount, Is.EqualTo(GetRelevantFailingReasons().Count(reason => reason.ToString().EndsWith("4Inconclusive"))));
-            Assert.That(workItem.Result.TotalCount, Is.EqualTo(GetRelevantFailingReasons().Count()));
+            var failingReasons = Enum.GetValues(typeof(AfterOneTimeSetUpHooksEvaluateTestOutcomeTests.FailingReason)).Cast<AfterOneTimeSetUpHooksEvaluateTestOutcomeTests.FailingReason>().ToList();
+            Assert.That(workItem.Result.PassCount, Is.EqualTo(failingReasons.Count(reason => reason.ToString().EndsWith("4Passed"))));
+            Assert.That(workItem.Result.FailCount, Is.EqualTo(failingReasons.Count(reason => reason.ToString().EndsWith("4Failed"))));
+            Assert.That(workItem.Result.SkipCount, Is.EqualTo(failingReasons.Count(reason => reason.ToString().EndsWith("4Ignored"))));
+            Assert.That(workItem.Result.InconclusiveCount, Is.EqualTo(failingReasons.Count(reason => reason.ToString().EndsWith("4Inconclusive"))));
+            Assert.That(workItem.Result.TotalCount, Is.EqualTo(failingReasons.Count));
         });
 
         TestLog.Clear();

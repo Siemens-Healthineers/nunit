@@ -33,15 +33,15 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
 
                 string outcomeMatchStatement = oneTimeTearDownTestResult.ResultState switch
                 {
-                    ResultState { Status: TestStatus.Failed } when
+                    { Status: TestStatus.Failed } when
                         hookData.Context.CurrentTest.FullName.Contains("4Failed") => OutcomeMatched,
-                    ResultState { Status: TestStatus.Passed } when
+                    { Status: TestStatus.Passed } when
                         hookData.Context.CurrentTest.FullName.Contains("4Passed") => OutcomeMatched,
-                    ResultState { Status: TestStatus.Skipped } when
+                    { Status: TestStatus.Skipped } when
                         hookData.Context.CurrentTest.FullName.Contains("4Ignored") => OutcomeMatched,
-                    ResultState { Status: TestStatus.Inconclusive } when
+                    { Status: TestStatus.Inconclusive } when
                        hookData.Context.CurrentTest.FullName.Contains("4Inconclusive") => OutcomeMatched,
-                    ResultState { Status: TestStatus.Warning } when
+                    { Status: TestStatus.Warning } when
                         hookData.Context.CurrentTest.FullName.Contains("4Warning") => OutcomeMatched,
                     _ => OutcomeMismatch
                 };
@@ -63,8 +63,6 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
         None4Passed
     }
 
-    // H-TODO: enrich the test to also failing tests and setups
-    // H-TODO: enrich or write new test for exceptions from hooks
     [Explicit($"This test should only be run as part of the {nameof(CheckOneTimeTearDownOutcomes)} test")]
     [AfterOneTimeTearDownOutcomeLogger]
     [TestFixtureSource(nameof(GetReasonsToFail))]
