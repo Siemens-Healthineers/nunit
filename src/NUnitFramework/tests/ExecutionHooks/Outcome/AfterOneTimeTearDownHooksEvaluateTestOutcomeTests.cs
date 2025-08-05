@@ -126,9 +126,9 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
         var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithDifferentOneTimeTearDownOutcome), TestFilter.Explicit);
         workItem.Execute();
 
+        Assert.That(currentTestLogs, Is.Not.Empty);
         Assert.Multiple(() =>
         {
-            Assert.That(currentTestLogs, Is.Not.Empty);
             foreach (var log in currentTestLogs)
             {
                 Assert.That(log, Does.Not.Contain(AfterOneTimeTearDownOutcomeLogger.OutcomeMismatch));

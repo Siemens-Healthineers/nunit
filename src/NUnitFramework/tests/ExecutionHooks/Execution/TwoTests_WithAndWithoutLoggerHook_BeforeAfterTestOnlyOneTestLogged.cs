@@ -34,16 +34,13 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Execution
             var workItem = TestBuilder.CreateWorkItem(typeof(TestUnderTest), TestFilter.Explicit);
             workItem.Execute();
 
-            Assert.Multiple(() =>
-            {
-                Assert.That(currentTestLogs, Is.Not.Empty);
-                Assert.That(currentTestLogs, Is.EqualTo([
-                    $"{HookIdentifiers.BeforeTestHook}({nameof(TestUnderTest.TestWithHookLogging)})",
-                    nameof(TestUnderTest.TestWithHookLogging),
-                    $"{HookIdentifiers.AfterTestHook}({nameof(TestUnderTest.TestWithHookLogging)})",
-                    nameof(TestUnderTest.TestWithoutHookLogging)
-                ]));
-            });
+            Assert.That(currentTestLogs, Is.Not.Empty);
+            Assert.That(currentTestLogs, Is.EqualTo([
+                $"{HookIdentifiers.BeforeTestHook}({nameof(TestUnderTest.TestWithHookLogging)})",
+                nameof(TestUnderTest.TestWithHookLogging),
+                $"{HookIdentifiers.AfterTestHook}({nameof(TestUnderTest.TestWithHookLogging)})",
+                nameof(TestUnderTest.TestWithoutHookLogging)
+            ]));
         }
     }
 }

@@ -53,18 +53,15 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Execution
             var workItem = TestBuilder.CreateWorkItem(typeof(TestWithAfterTestHookOnMethod), TestFilter.Explicit);
             workItem.Execute();
 
-            Assert.Multiple(() =>
-            {
-                Assert.That(currentTestLogs, Is.Not.Empty);
-                Assert.That(currentTestLogs, Is.EqualTo([
-                    nameof(TestWithAfterTestHookOnMethod.OneTimeSetUp),
-                    nameof(TestWithAfterTestHookOnMethod.SetUp),
-                    nameof(TestWithAfterTestHookOnMethod.EmptyTest),
-                    nameof(ActivateAfterTestHookAttribute),
-                    nameof(TestWithAfterTestHookOnMethod.TearDown),
-                    nameof(TestWithAfterTestHookOnMethod.OneTimeTearDown)
-                ]));
-            });
+            Assert.That(currentTestLogs, Is.Not.Empty);
+            Assert.That(currentTestLogs, Is.EqualTo([
+                nameof(TestWithAfterTestHookOnMethod.OneTimeSetUp),
+                nameof(TestWithAfterTestHookOnMethod.SetUp),
+                nameof(TestWithAfterTestHookOnMethod.EmptyTest),
+                nameof(ActivateAfterTestHookAttribute),
+                nameof(TestWithAfterTestHookOnMethod.TearDown),
+                nameof(TestWithAfterTestHookOnMethod.OneTimeTearDown)
+            ]));
         }
     }
 }

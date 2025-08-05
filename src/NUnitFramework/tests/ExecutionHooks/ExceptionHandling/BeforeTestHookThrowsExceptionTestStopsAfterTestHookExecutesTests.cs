@@ -54,18 +54,15 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExceptionHandling
             var workItem = TestBuilder.CreateWorkItem(typeof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook), TestFilter.Explicit);
             workItem.Execute();
 
-            Assert.Multiple(() =>
-            {
-                Assert.That(currentTestLogs, Is.Not.Empty);
-                Assert.That(currentTestLogs, Is.EqualTo([
-                    nameof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook.OneTimeSetUp),
-                    nameof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook.SetUp),
-                    nameof(ActivateBeforeTestHookThrowingExceptionAttribute),
-                    nameof(ActivateAfterTestHookAttribute),
-                    nameof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook.TearDown),
-                    nameof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook.OneTimeTearDown)
-                ]));
-            });
+            Assert.That(currentTestLogs, Is.Not.Empty);
+            Assert.That(currentTestLogs, Is.EqualTo([
+                nameof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook.OneTimeSetUp),
+                nameof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook.SetUp),
+                nameof(ActivateBeforeTestHookThrowingExceptionAttribute),
+                nameof(ActivateAfterTestHookAttribute),
+                nameof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook.TearDown),
+                nameof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook.OneTimeTearDown)
+            ]));
         }
     }
 }

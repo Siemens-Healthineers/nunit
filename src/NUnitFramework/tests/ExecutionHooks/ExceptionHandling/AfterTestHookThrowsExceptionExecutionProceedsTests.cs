@@ -8,7 +8,8 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExceptionHandling
 {
     internal class AfterTestHookThrowsExceptionExecutionProceedsTests
     {
-        [Explicit($"This test should only be run as part of the {nameof(AfterTestHookThrowsException_ExecutionProceeds)} test")]
+        [Explicit(
+            $"This test should only be run as part of the {nameof(AfterTestHookThrowsException_ExecutionProceeds)} test")]
         public class TestWithTestHooksOnMethodAndErrorOnAfterTestHook
         {
             [OneTimeSetUp]
@@ -51,22 +52,20 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExceptionHandling
             var currentTestLogs = TestLog.Logs;
             currentTestLogs.Clear();
 
-            var workItem = TestBuilder.CreateWorkItem(typeof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook), TestFilter.Explicit);
+            var workItem = TestBuilder.CreateWorkItem(typeof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook),
+                TestFilter.Explicit);
             workItem.Execute();
 
-            Assert.Multiple(() =>
-            {
-                Assert.That(currentTestLogs, Is.Not.Empty);
-                Assert.That(currentTestLogs, Is.EqualTo([
-                    nameof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook.OneTimeSetUp),
-                    nameof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook.SetUp),
-                    nameof(ActivateBeforeTestHookAttribute),
-                    nameof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook.EmptyTest),
-                    nameof(ActivateAfterTestHookThrowingExceptionAttribute),
-                    nameof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook.TearDown),
-                    nameof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook.OneTimeTearDown)
-                ]));
-            });
+            Assert.That(currentTestLogs, Is.Not.Empty);
+            Assert.That(currentTestLogs, Is.EqualTo([
+                nameof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook.OneTimeSetUp),
+                nameof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook.SetUp),
+                nameof(ActivateBeforeTestHookAttribute),
+                nameof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook.EmptyTest),
+                nameof(ActivateAfterTestHookThrowingExceptionAttribute),
+                nameof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook.TearDown),
+                nameof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook.OneTimeTearDown)
+            ]));
         }
     }
 }
