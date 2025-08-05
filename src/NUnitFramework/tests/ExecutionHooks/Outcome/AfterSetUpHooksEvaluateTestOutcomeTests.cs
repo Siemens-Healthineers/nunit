@@ -42,7 +42,7 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
                     { Status: TestStatus.Skipped } when
                         hookData.Context.CurrentTest.FullName.Contains("4Ignored") => OutcomeMatched,
                     { Status: TestStatus.Inconclusive } when
-                        hookData.Context.CurrentTest.FullName.Contains("4Inconclusive") => OutcomeMatched,
+                        hookData.Context.CurrentTest.FullName.Contains("4Passed") => OutcomeMatched,
                     { Status: TestStatus.Warning } when
                         hookData.Context.CurrentTest.FullName.Contains("4Warning") => OutcomeMatched,
                     _ => OutcomeMismatch
@@ -72,7 +72,7 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
     {
         private static IEnumerable<TestFixtureData> GetReasonsToFail()
         {
-            return Enum.GetValues(typeof(AfterOneTimeSetUpHooksEvaluateTestOutcomeTests.FailingReason)).Cast<AfterOneTimeSetUpHooksEvaluateTestOutcomeTests.FailingReason>().Select(failingReason => new TestFixtureData(failingReason));
+            return Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Select(failingReason => new TestFixtureData(failingReason));
         }
 
         [SetUp]
@@ -149,7 +149,7 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
                     Does.Contain(resultString == "Skipped" ? "Ignored" : resultString));
             }
 
-            var failingReasons = Enum.GetValues(typeof(AfterOneTimeSetUpHooksEvaluateTestOutcomeTests.FailingReason)).Cast<AfterOneTimeSetUpHooksEvaluateTestOutcomeTests.FailingReason>().ToList();
+            var failingReasons = Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().ToList();
             Assert.That(workItem.Result.PassCount, Is.EqualTo(failingReasons.Count(reason => reason.ToString().EndsWith("4Passed"))));
             Assert.That(workItem.Result.FailCount, Is.EqualTo(failingReasons.Count(reason => reason.ToString().EndsWith("4Failed"))));
             Assert.That(workItem.Result.SkipCount, Is.EqualTo(failingReasons.Count(reason => reason.ToString().EndsWith("4Ignored"))));
