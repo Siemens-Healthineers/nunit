@@ -427,11 +427,11 @@ namespace NUnit.Framework.Internal
 
         /// <summary>
         /// Calculates the delta between the current TestResult and a previous TestResult.
-        /// This method should be used in the context of hook extensions if you need to
+        /// This method should be used in the context of execution hooks if you need to
         /// get the test result for a hooked method.
         /// Example: The test result for SetUp, TestMethod and TearDown is the same instance.
         /// If you need to know the separated test outcome for the TearDown method, you can
-        /// create a clone of the TestResult in the before hook and calculate the delta the
+        /// create a clone of the TestResult in the before hook and calculate the delta
         /// in the after hook and use this result as the "TearDown result".
         /// </summary>
         /// <param name="previous">The previous TestResult to compare against.</param>

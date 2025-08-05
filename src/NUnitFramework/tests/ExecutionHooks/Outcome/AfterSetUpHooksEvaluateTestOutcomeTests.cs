@@ -20,7 +20,7 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
 
         public void ApplyToContext(TestExecutionContext context)
         {
-            TestResult beforeHookTestResult = null;
+            TestResult? beforeHookTestResult = null;
             context.ExecutionHooks.BeforeEverySetUp.AddHandler((hookData) =>
             {
                 beforeHookTestResult = hookData.Context.CurrentResult.Clone();
@@ -28,20 +28,22 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
 
             context.ExecutionHooks.AfterEverySetUp.AddHandler((hookData) =>
             {
+                Assert.That(beforeHookTestResult, Is.Not.Null, "BeforeEverySetUp was not called before AfterEverySetUp.");
+
                 TestResult setUpTestResult
                     = hookData.Context.CurrentResult.CalculateDeltaWithPrevious(beforeHookTestResult, hookData.ExceptionContext);
 
                 string outcomeMatchStatement = setUpTestResult.ResultState switch
                 {
-                    ResultState { Status: TestStatus.Failed } when
+                    { Status: TestStatus.Failed } when
                         hookData.Context.CurrentTest.FullName.Contains("4Failed") => OutcomeMatched,
-                    ResultState { Status: TestStatus.Passed } when
+                    { Status: TestStatus.Passed } when
                         hookData.Context.CurrentTest.FullName.Contains("4Passed") => OutcomeMatched,
-                    ResultState { Status: TestStatus.Skipped } when
+                    { Status: TestStatus.Skipped } when
                         hookData.Context.CurrentTest.FullName.Contains("4Ignored") => OutcomeMatched,
-                    ResultState { Status: TestStatus.Inconclusive } when
+                    { Status: TestStatus.Inconclusive } when
                         hookData.Context.CurrentTest.FullName.Contains("4Inconclusive") => OutcomeMatched,
-                    ResultState { Status: TestStatus.Warning } when
+                    { Status: TestStatus.Warning } when
                         hookData.Context.CurrentTest.FullName.Contains("4Warning") => OutcomeMatched,
                     _ => OutcomeMismatch
                 };
@@ -62,36 +64,19 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
         Warning4Warning, // Warn counts on OneTimeSetUp level as passed and on SetUp level as warning!
         None4Passed
     }
-    private static IEnumerable<FailingReason> GetRelevantFailingReasons()
-    {
-        var failingReasons = Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>();
-
-        // H-ToDo: remove before final checkin
-        // Apply filtering
-        // H-TODO: understand this behavior change! Before it was inconclusive4Inconclusive! Find the nunit issue that caused this change!
-        //failingReasons = failingReasons.Where(reason => reason.ToString().EndsWith("Inconclusive4Passed"));
-        failingReasons = failingReasons.Where(reason => !reason.ToString().EndsWith("Inconclusive4Passed"));
-        return failingReasons;
-    }
 
     [Explicit($"This test should only be run as part of the {nameof(CheckSetUpOutcomes)} test")]
     [AfterSetUpOutcomeLogger]
-    [TestFixtureSource(nameof(GetFixtureConfig))]
+    [TestFixtureSource(nameof(GetReasonsToFail))]
     public class TestsUnderTestsWithDifferentSetUpOutcome(FailingReason failingReason)
     {
-        private static IEnumerable<TestFixtureData> GetFixtureConfig()
+        private static IEnumerable<TestFixtureData> GetReasonsToFail()
         {
-            foreach (var failingReason in GetRelevantFailingReasons())
-            {
-                yield return new TestFixtureData(failingReason);
-            }
+            return Enum.GetValues(typeof(AfterOneTimeSetUpHooksEvaluateTestOutcomeTests.FailingReason)).Cast<AfterOneTimeSetUpHooksEvaluateTestOutcomeTests.FailingReason>().Select(failingReason => new TestFixtureData(failingReason));
         }
 
         [SetUp]
-        public void SetUp()
-        {
-            ExecuteFailingReason();
-        }
+        public void SetUp() => ExecuteFailingReason();
 
         private void ExecuteFailingReason()
         {
@@ -130,6 +115,8 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
         [Test]
         public void SomeTest()
         {
+            Assert.That(TestContext.CurrentContext.Test.Parent, Is.Not.Null);
+
             var fixtureName = TestContext.CurrentContext.Test.Parent.FullName;
             if (!(fixtureName.Contains("4Passed") || fixtureName.Contains("4Warning")))
             {
@@ -161,11 +148,11 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
                     Does.Contain(resultString == "Skipped" ? "Ignored" : resultString));
             }
 
-            //// H-TODO: This asserts checks the assumption that an Assert.Warn will have a passed outcome.
-            Assert.That(workItem.Result.PassCount, Is.EqualTo(GetRelevantFailingReasons().Count(reason => reason.ToString().EndsWith("4Passed"))));
-            Assert.That(workItem.Result.FailCount, Is.EqualTo(GetRelevantFailingReasons().Count(reason => reason.ToString().EndsWith("4Failed"))));
-            Assert.That(workItem.Result.SkipCount, Is.EqualTo(GetRelevantFailingReasons().Count(reason => reason.ToString().EndsWith("4Ignored"))));
-            Assert.That(workItem.Result.TotalCount, Is.EqualTo(GetRelevantFailingReasons().Count()));
+            var failingReasons = Enum.GetValues(typeof(AfterOneTimeSetUpHooksEvaluateTestOutcomeTests.FailingReason)).Cast<AfterOneTimeSetUpHooksEvaluateTestOutcomeTests.FailingReason>().ToList();
+            Assert.That(workItem.Result.PassCount, Is.EqualTo(failingReasons.Count(reason => reason.ToString().EndsWith("4Passed"))));
+            Assert.That(workItem.Result.FailCount, Is.EqualTo(failingReasons.Count(reason => reason.ToString().EndsWith("4Failed"))));
+            Assert.That(workItem.Result.SkipCount, Is.EqualTo(failingReasons.Count(reason => reason.ToString().EndsWith("4Ignored"))));
+            Assert.That(workItem.Result.TotalCount, Is.EqualTo(failingReasons.Count));
         });
 
         TestLog.Clear();

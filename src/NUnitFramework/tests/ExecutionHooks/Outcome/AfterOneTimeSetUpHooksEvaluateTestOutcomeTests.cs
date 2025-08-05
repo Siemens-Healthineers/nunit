@@ -19,7 +19,7 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
 
         public void ApplyToContext(TestExecutionContext context)
         {
-            TestResult beforeHookTestResult = null;
+            TestResult? beforeHookTestResult = null;
             context.ExecutionHooks.BeforeEverySetUp.AddHandler(hookData =>
             {
                 beforeHookTestResult = hookData.Context.CurrentResult.Clone();
@@ -27,20 +27,22 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
 
             context.ExecutionHooks.AfterEverySetUp.AddHandler(hookData =>
             {
+                Assert.That(beforeHookTestResult, Is.Not.Null, "BeforeEverySetUp was not called before AfterEverySetUp.");
+
                 TestResult oneTimeSetUpTestResult
                 = hookData.Context.CurrentResult.CalculateDeltaWithPrevious(beforeHookTestResult, hookData.ExceptionContext);
 
                 string outcomeMatchStatement = oneTimeSetUpTestResult.ResultState switch
                 {
-                    ResultState { Status: TestStatus.Failed } when
+                    { Status: TestStatus.Failed } when
                         hookData.Context.CurrentTest.FullName.Contains("4Failed") => OutcomeMatched,
-                    ResultState { Status: TestStatus.Passed } when
+                    { Status: TestStatus.Passed } when
                         hookData.Context.CurrentTest.FullName.Contains("4Passed") => OutcomeMatched,
-                    ResultState { Status: TestStatus.Skipped } when
+                    { Status: TestStatus.Skipped } when
                         hookData.Context.CurrentTest.FullName.Contains("4Ignored") => OutcomeMatched,
-                    ResultState { Status: TestStatus.Inconclusive } when
+                    { Status: TestStatus.Inconclusive } when
                         hookData.Context.CurrentTest.FullName.Contains("4Inconclusive") => OutcomeMatched,
-                    ResultState { Status: TestStatus.Warning } when
+                    { Status: TestStatus.Warning } when
                         hookData.Context.CurrentTest.FullName.Contains("4Warning") => OutcomeMatched,
                     _ => OutcomeMismatch
                 };
@@ -65,18 +67,15 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
     [Explicit($"This test should only be run as part of the {nameof(CheckSetUpOutcomes)} test")]
     [AfterSetUpOutcomeLogger]
     [TestFixtureSource(nameof(GetReasonsToFail))]
-    public class TestsUnderTestsWithDifferentOntTimeSetUpOutcome(FailingReason failingReason)
+    public class TestsUnderTestsWithDifferentOneTimeSetUpOutcome(FailingReason failingReason)
     {
         private static IEnumerable<TestFixtureData> GetReasonsToFail()
         {
             return Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Select(failingReason => new TestFixtureData(failingReason));
         }
-        
+
         [OneTimeSetUp]
-        public void OneTimeSetUp()
-        {
-            ExecuteFailingReason();
-        }
+        public void OneTimeSetUp() => ExecuteFailingReason();
 
         private void ExecuteFailingReason()
         {
@@ -115,6 +114,8 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
         [Test]
         public void SomeTest()
         {
+            Assert.That(TestContext.CurrentContext.Test.Parent, Is.Not.Null);
+
             var fixtureName = TestContext.CurrentContext.Test.Parent.FullName;
             if (!(fixtureName.Contains("4Passed") || fixtureName.Contains("4Warning")))
             {
@@ -140,10 +141,11 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
                 Assert.That(log, Does.Not.Contain(AfterSetUpOutcomeLogger.OutcomeMismatch));
             }
 
-            Assert.That(workItem.Result.PassCount, Is.EqualTo(Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Count(reason => reason.ToString().EndsWith("4Passed") || reason.ToString().EndsWith("4Warning"))));
-            Assert.That(workItem.Result.FailCount, Is.EqualTo(Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Count(reason => reason.ToString().EndsWith("4Failed"))));
-            Assert.That(workItem.Result.SkipCount, Is.EqualTo(Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Count(reason => reason.ToString().EndsWith("4Ignored"))));
-            Assert.That(workItem.Result.TotalCount, Is.EqualTo(Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().Count()));
+            var failingReasons = Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().ToList();
+            Assert.That(workItem.Result.PassCount, Is.EqualTo(failingReasons.Count(reason => reason.ToString().EndsWith("4Passed") || reason.ToString().EndsWith("4Warning"))));
+            Assert.That(workItem.Result.FailCount, Is.EqualTo(failingReasons.Count(reason => reason.ToString().EndsWith("4Failed"))));
+            Assert.That(workItem.Result.SkipCount, Is.EqualTo(failingReasons.Count(reason => reason.ToString().EndsWith("4Ignored"))));
+            Assert.That(workItem.Result.TotalCount, Is.EqualTo(failingReasons.Count));
         });
 
         TestLog.Clear();

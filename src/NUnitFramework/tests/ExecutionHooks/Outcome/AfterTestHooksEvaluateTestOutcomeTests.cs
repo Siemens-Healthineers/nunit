@@ -14,27 +14,30 @@ public class AfterTestHooksEvaluateTestOutcomeTests
     {
         internal static readonly string OutcomeMatched = "Outcome Matched";
         internal static readonly string OutcomeMismatch = "Outcome Mismatch!!!";
-        TestResult beforeHookTestResult = null;
+        private TestResult? _beforeHookTestResult;
 
         public override void BeforeTestHook(HookData hookData)
         {
-            beforeHookTestResult = hookData.Context.CurrentResult.Clone();
+            _beforeHookTestResult = hookData.Context.CurrentResult.Clone();
         }
 
         public override void AfterTestHook(HookData hookData)
         {
+            Assert.That(_beforeHookTestResult, Is.Not.Null, "BeforeTestHook was not called before AfterTestHook.");
+            Assert.That(hookData.Context.CurrentTest.MethodName, Is.Not.Null, "Hook was not called on a method.");
+
             TestResult testResult
-                    = hookData.Context.CurrentResult.CalculateDeltaWithPrevious(beforeHookTestResult, hookData.ExceptionContext);
+                    = hookData.Context.CurrentResult.CalculateDeltaWithPrevious(_beforeHookTestResult, hookData.ExceptionContext);
 
             string outcomeMatchStatement = testResult.ResultState switch
             {
-                ResultState { Status: TestStatus.Failed } when
+                { Status: TestStatus.Failed } when
                     hookData.Context.CurrentTest.MethodName.StartsWith("FailedTest") => OutcomeMatched,
-                ResultState { Status: TestStatus.Passed } when
+                { Status: TestStatus.Passed } when
                     hookData.Context.CurrentTest.MethodName.StartsWith("PassedTest") => OutcomeMatched,
-                ResultState { Status: TestStatus.Skipped } when
+                { Status: TestStatus.Skipped } when
                     hookData.Context.CurrentTest.MethodName.StartsWith("TestIgnored") => OutcomeMatched,
-                ResultState { Status: TestStatus.Warning } when
+                { Status: TestStatus.Warning } when
                     hookData.Context.CurrentTest.MethodName.StartsWith("WarningTest") => OutcomeMatched,
                 _ => OutcomeMismatch
             };
@@ -50,7 +53,9 @@ public class AfterTestHooksEvaluateTestOutcomeTests
     public class TestsUnderTestsWithMixedOutcome
     {
         [Test]
-        public void PassedTest() { }
+        public void PassedTest()
+        {
+        }
 
         [Test]
         public void FailedTestByAssertion()
