@@ -48,22 +48,28 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Execution
         [Test]
         public void ExecutionProceedsAfterTheAfterTestHookCompletes2()
         {
-            TestLog.Clear();
+            // Capture current context logs reference
+            var currentTestLogs = TestLog.Logs;
+            currentTestLogs.Clear();
 
             var workItem = TestBuilder.CreateWorkItem(typeof(TestWithTestHooksAndClassTestActionAttribute), TestFilter.Explicit);
             workItem.Execute();
 
-            Assert.That(TestLog.Logs, Is.EqualTo([
-                nameof(TestWithTestHooksAndClassTestActionAttribute.OneTimeSetUp),
-                SimpleTestActionAttribute.LogStringForBeforeTest,
-                nameof(TestWithTestHooksAndClassTestActionAttribute.SetUp),
-                nameof(ActivateBeforeTestHookAttribute),
-                nameof(TestWithTestHooksAndClassTestActionAttribute.EmptyTest),
-                nameof(ActivateAfterTestHookAttribute),
-                nameof(TestWithTestHooksAndClassTestActionAttribute.TearDown),
-                SimpleTestActionAttribute.LogStringForAfterTest,
-                nameof(TestWithTestHooksAndClassTestActionAttribute.OneTimeTearDown)
-            ]));
+            Assert.Multiple(() =>
+            {
+                Assert.That(currentTestLogs, Is.Not.Empty);
+                Assert.That(currentTestLogs, Is.EqualTo([
+                    nameof(TestWithTestHooksAndClassTestActionAttribute.OneTimeSetUp),
+                    SimpleTestActionAttribute.LogStringForBeforeTest,
+                    nameof(TestWithTestHooksAndClassTestActionAttribute.SetUp),
+                    nameof(ActivateBeforeTestHookAttribute),
+                    nameof(TestWithTestHooksAndClassTestActionAttribute.EmptyTest),
+                    nameof(ActivateAfterTestHookAttribute),
+                    nameof(TestWithTestHooksAndClassTestActionAttribute.TearDown),
+                    SimpleTestActionAttribute.LogStringForAfterTest,
+                    nameof(TestWithTestHooksAndClassTestActionAttribute.OneTimeTearDown)
+                ]));
+            });
         }
     }
 }

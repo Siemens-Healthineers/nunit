@@ -119,15 +119,17 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
     [Test]
     public void CheckOneTimeTearDownOutcomes()
     {
-        TestLog.Clear();
+        // Capture current context logs reference
+        var currentTestLogs = TestLog.Logs;
+        currentTestLogs.Clear();
 
         var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithDifferentOneTimeTearDownOutcome), TestFilter.Explicit);
         workItem.Execute();
 
         Assert.Multiple(() =>
         {
-            Assert.That(TestLog.Logs, Is.Not.Empty);
-            foreach (string log in TestLog.Logs)
+            Assert.That(currentTestLogs, Is.Not.Empty);
+            foreach (var log in currentTestLogs)
             {
                 Assert.That(log, Does.Not.Contain(AfterOneTimeTearDownOutcomeLogger.OutcomeMismatch));
             }
@@ -136,7 +138,5 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
             Assert.That(workItem.Result.PassCount, Is.EqualTo(numberOfTests));
             Assert.That(workItem.Result.TotalCount, Is.EqualTo(numberOfTests));
         });
-
-        TestLog.Clear();
     }
 }

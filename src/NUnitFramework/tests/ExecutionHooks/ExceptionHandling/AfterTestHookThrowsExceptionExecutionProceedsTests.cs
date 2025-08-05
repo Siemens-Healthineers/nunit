@@ -47,20 +47,26 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExceptionHandling
         [Test]
         public void AfterTestHookThrowsException_ExecutionProceeds()
         {
-            TestLog.Clear();
+            // Capture current context logs reference
+            var currentTestLogs = TestLog.Logs;
+            currentTestLogs.Clear();
 
             var workItem = TestBuilder.CreateWorkItem(typeof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook), TestFilter.Explicit);
             workItem.Execute();
 
-            Assert.That(TestLog.Logs, Is.EqualTo([
-                nameof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook.OneTimeSetUp),
-                nameof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook.SetUp),
-                nameof(ActivateBeforeTestHookAttribute),
-                nameof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook.EmptyTest),
-                nameof(ActivateAfterTestHookThrowingExceptionAttribute),
-                nameof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook.TearDown),
-                nameof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook.OneTimeTearDown)
-            ]));
+            Assert.Multiple(() =>
+            {
+                Assert.That(currentTestLogs, Is.Not.Empty);
+                Assert.That(currentTestLogs, Is.EqualTo([
+                    nameof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook.OneTimeSetUp),
+                    nameof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook.SetUp),
+                    nameof(ActivateBeforeTestHookAttribute),
+                    nameof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook.EmptyTest),
+                    nameof(ActivateAfterTestHookThrowingExceptionAttribute),
+                    nameof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook.TearDown),
+                    nameof(TestWithTestHooksOnMethodAndErrorOnAfterTestHook.OneTimeTearDown)
+                ]));
+            });
         }
     }
 }
