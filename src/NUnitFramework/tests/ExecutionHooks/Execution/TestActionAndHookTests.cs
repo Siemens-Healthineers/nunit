@@ -48,12 +48,11 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Execution
         [Test]
         public void ExecutionProceedsAfterTheAfterTestHookCompletes2()
         {
-            TestLog.Clear();
-
             var workItem = TestBuilder.CreateWorkItem(typeof(TestWithTestHooksAndClassTestActionAttribute), TestFilter.Explicit);
             workItem.Execute();
+            var testLogs = TestLog.FetchLogsForTest(workItem.Test);
 
-            Assert.That(TestLog.Logs, Is.EqualTo([
+            Assert.That(testLogs, Is.EqualTo([
                 nameof(TestWithTestHooksAndClassTestActionAttribute.OneTimeSetUp),
                 SimpleTestActionAttribute.LogStringForBeforeTest,
                 nameof(TestWithTestHooksAndClassTestActionAttribute.SetUp),
@@ -64,6 +63,8 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Execution
                 SimpleTestActionAttribute.LogStringForAfterTest,
                 nameof(TestWithTestHooksAndClassTestActionAttribute.OneTimeTearDown)
             ]));
+
+            TestLog.Clear();
         }
     }
 }

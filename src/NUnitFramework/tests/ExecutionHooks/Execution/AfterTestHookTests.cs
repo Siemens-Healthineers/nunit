@@ -46,12 +46,11 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Execution
         [Test]
         public void ExecutionProceedsAfterTheAfterTestHookCompletes()
         {
-            TestLog.Clear();
-
             var workItem = TestBuilder.CreateWorkItem(typeof(TestWithAfterTestHookOnMethod), TestFilter.Explicit);
             workItem.Execute();
+            var testLogs = TestLog.FetchLogsForTest(workItem.Test);
 
-            Assert.That(TestLog.Logs, Is.EqualTo([
+            Assert.That(testLogs, Is.EqualTo([
                 nameof(TestWithAfterTestHookOnMethod.OneTimeSetUp),
                 nameof(TestWithAfterTestHookOnMethod.SetUp),
                 nameof(TestWithAfterTestHookOnMethod.EmptyTest),
@@ -59,6 +58,8 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Execution
                 nameof(TestWithAfterTestHookOnMethod.TearDown),
                 nameof(TestWithAfterTestHookOnMethod.OneTimeTearDown)
             ]));
+
+            TestLog.Clear();
         }
     }
 }

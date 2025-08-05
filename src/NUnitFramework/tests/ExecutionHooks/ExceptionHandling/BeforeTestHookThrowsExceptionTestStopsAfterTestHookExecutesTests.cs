@@ -47,13 +47,12 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExceptionHandling
         [Test]
         public void BeforeTestHookThrowsException_TestStops_AfterTestHookExecutes()
         {
-            TestLog.Clear();
-
             var workItem = TestBuilder.CreateWorkItem(typeof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook), TestFilter.Explicit);
             workItem.Execute();
+            var testLogs = TestLog.FetchLogsForTest(workItem.Test);
 
             // no test is executed
-            Assert.That(TestLog.Logs, Is.EqualTo([
+            Assert.That(testLogs, Is.EqualTo([
                 nameof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook.OneTimeSetUp),
                 nameof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook.SetUp),
                 nameof(ActivateBeforeTestHookThrowingExceptionAttribute),
@@ -61,6 +60,8 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExceptionHandling
                 nameof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook.TearDown),
                 nameof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook.OneTimeTearDown)
             ]));
+
+            TestLog.Clear();
         }
     }
 }

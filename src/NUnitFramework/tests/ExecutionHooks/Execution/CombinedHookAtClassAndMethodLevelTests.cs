@@ -55,12 +55,11 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Execution
         [Test]
         public void ExecutionProceedsAfterBothTestHookCompletes()
         {
-            TestLog.Clear();
-
             var workItem = TestBuilder.CreateWorkItem(typeof(TestClassWithTestHooksOneTestWithoutAndOneWithMethodTestHooks), TestFilter.Explicit);
             workItem.Execute();
+            var testLogs = TestLog.FetchLogsForTest(workItem.Test);
 
-            Assert.That(TestLog.Logs, Is.EqualTo([
+            Assert.That(testLogs, Is.EqualTo([
                 nameof(TestClassWithTestHooksOneTestWithoutAndOneWithMethodTestHooks.OneTimeSetUp),
 
                 // Test with hooks starts
@@ -87,6 +86,8 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Execution
 
                 nameof(TestClassWithTestHooksOneTestWithoutAndOneWithMethodTestHooks.OneTimeTearDown)
             ]));
+
+            TestLog.Clear();
         }
     }
 }

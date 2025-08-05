@@ -128,15 +128,14 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
 
     public void CheckSetUpOutcomes()
     {
-        TestLog.Clear();
-
         var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithDifferentOntTimeSetUpOutcome), TestFilter.Explicit);
         workItem.Execute();
+        var testLogs = TestLog.FetchLogsForTest(workItem.Test);
 
         Assert.Multiple(() =>
         {
-            Assert.That(TestLog.Logs, Is.Not.Empty);
-            foreach (string log in TestLog.Logs)
+            Assert.That(testLogs, Is.Not.Empty);
+            foreach (string log in testLogs)
             {
                 Assert.That(log, Does.Not.Contain(AfterSetUpOutcomeLogger.OutcomeMismatch));
             }

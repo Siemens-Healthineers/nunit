@@ -48,12 +48,11 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExceptionHandling
         [Test]
         public void TestFailsWithAssert_HooksProceedsToExecute()
         {
-            TestLog.Clear();
-
             var workItem = TestBuilder.CreateWorkItem(typeof(FailingTestWithTestHookOnMethod), TestFilter.Explicit);
             workItem.Execute();
+            var testLogs = TestLog.FetchLogsForTest(workItem.Test);
 
-            Assert.That(TestLog.Logs, Is.EqualTo([
+            Assert.That(testLogs, Is.EqualTo([
                 nameof(FailingTestWithTestHookOnMethod.OneTimeSetUp),
                 nameof(FailingTestWithTestHookOnMethod.SetUp),
                 nameof(ActivateBeforeTestHookAttribute),
@@ -62,6 +61,8 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExceptionHandling
                 nameof(FailingTestWithTestHookOnMethod.TearDown),
                 nameof(FailingTestWithTestHookOnMethod.OneTimeTearDown)
             ]));
+
+            TestLog.Clear();
         }
     }
 }

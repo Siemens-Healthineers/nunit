@@ -37,12 +37,11 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExecutionSequence
         [Test]
         public void TestProceedsAfterAllAfterTestHooksExecute()
         {
-            TestLog.Clear();
-
             var workItem = TestBuilder.CreateWorkItem(typeof(ExecutionProceedsOnlyAfterAllAfterTestHooksExecute_TestUnderTest), TestFilter.Explicit);
             workItem.Execute();
+            var testLogs = TestLog.FetchLogsForTest(workItem.Test);
 
-            Assert.That(TestLog.Logs, Is.EqualTo([
+            Assert.That(testLogs, Is.EqualTo([
                 nameof(ExecutionProceedsOnlyAfterAllAfterTestHooksExecute_TestUnderTest.TestPasses),
 
                 nameof(ActivateAfterTestHookAttribute),
@@ -54,7 +53,7 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExecutionSequence
                 nameof(ExecutionProceedsOnlyAfterAllAfterTestHooksExecute_TestUnderTest.OneTimeTearDown)
             ]));
 
-            TestLog.Logs.Clear();
+            TestLog.Clear();
         }
     }
 }

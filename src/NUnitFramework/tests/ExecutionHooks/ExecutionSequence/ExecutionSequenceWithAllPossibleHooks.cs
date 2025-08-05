@@ -83,12 +83,11 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExecutionSequence
         [Test]
         public void TestProceedsAfterAllAfterTestHooksExecute()
         {
-            TestLog.Clear();
-
             var workItem = TestBuilder.CreateWorkItem(typeof(TestUnderTest), TestFilter.Explicit);
             workItem.Execute();
+            var testLogs = TestLog.FetchLogsForTest(workItem.Test);
 
-            Assert.That(TestLog.Logs, Is.EqualTo([
+            Assert.That(testLogs, Is.EqualTo([
                 nameof(TestUnderTestBase.OneTimeSetUpBase),
                 nameof(TestUnderTest.OneTimeSetUp),
 
@@ -135,6 +134,8 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExecutionSequence
                 nameof(TestUnderTest.OneTimeTearDown),
                 nameof(TestUnderTestBase.OneTimeTearDownBase),
             ]));
+
+            TestLog.Clear();
         }
     }
 }

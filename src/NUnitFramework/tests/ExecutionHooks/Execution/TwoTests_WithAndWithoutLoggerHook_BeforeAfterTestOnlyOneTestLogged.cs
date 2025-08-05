@@ -27,17 +27,18 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Execution
         [Test]
         public void CheckLoggingTest()
         {
-            TestLog.Clear();
-
             var workItem = TestBuilder.CreateWorkItem(typeof(TestUnderTest), TestFilter.Explicit);
             workItem.Execute();
+            var testLogs = TestLog.FetchLogsForTest(workItem.Test);
 
-            Assert.That(TestLog.Logs, Is.EqualTo([
+            Assert.That(testLogs, Is.EqualTo([
                 $"{HookIdentifiers.BeforeTestHook}({nameof(TestUnderTest.TestWithHookLogging)})",
                 nameof(TestUnderTest.TestWithHookLogging),
                 $"{HookIdentifiers.AfterTestHook}({nameof(TestUnderTest.TestWithHookLogging)})",
                 nameof(TestUnderTest.TestWithoutHookLogging)
             ]));
+
+            TestLog.Clear();
         }
     }
 }

@@ -89,15 +89,14 @@ public class AfterTestHooksEvaluateTestOutcomeTests
     [Test]
     public void CheckThatAfterTestHooksEvaluateTestOutcome()
     {
-        TestLog.Clear();
-
         var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithMixedOutcome), TestFilter.Explicit);
         workItem.Execute();
+        var testLogs = TestLog.FetchLogsForTest(workItem.Test);
 
-        Assert.That(TestLog.Logs, Is.Not.Empty);
+        Assert.That(testLogs, Is.Not.Empty);
         Assert.Multiple(() =>
         {
-            foreach (string logLine in TestLog.Logs)
+            foreach (string logLine in testLogs)
             {
                 Assert.That(logLine, Does.StartWith(AfterTestOutcomeLogger.OutcomeMatched));
             }

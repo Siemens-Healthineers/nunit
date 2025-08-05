@@ -1,5 +1,6 @@
 // Copyright (c) Charlie Poole, Rob Prouse and Contributors. MIT License - see LICENSE.txt
 
+using System.Linq;
 using NUnit.Framework.Internal;
 using NUnit.Framework.Tests.ExecutionHooks.Common;
 using NUnit.Framework.Tests.TestUtilities;
@@ -49,12 +50,12 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Execution
         [Test]
         public void ExecutionProceedsAfterBothTestHookCompletes()
         {
-            TestLog.Clear();
-
             var workItem = TestBuilder.CreateWorkItem(typeof(TestWithNormalAndLongRunningTestHooks), TestFilter.Explicit);
             workItem.Execute();
+            var childIds = workItem.Test.Tests.Select(x => x.Id).ToList();
+            var testLogs = TestLog.FetchLogsForTest(workItem.Test);
 
-            Assert.That(TestLog.Logs, Is.EqualTo([
+            Assert.That(testLogs, Is.EqualTo([
                 nameof(TestWithNormalAndLongRunningTestHooks.OneTimeSetUp),
                 nameof(TestWithNormalAndLongRunningTestHooks.SetUp),
 
@@ -69,6 +70,8 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Execution
                 nameof(TestWithNormalAndLongRunningTestHooks.TearDown),
                 nameof(TestWithNormalAndLongRunningTestHooks.OneTimeTearDown)
             ]));
+
+            TestLog.Clear();
         }
     }
 }

@@ -24,12 +24,11 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExecutionSequence
         [Test]
         public void TestActionHooksCalledBeforeAndAfterTestAction()
         {
-            TestLog.Clear();
-
             var workItem = TestBuilder.CreateWorkItem(typeof(TestClassWithTestAction), TestFilter.Explicit);
             workItem.Execute();
+            var testLogs = TestLog.FetchLogsForTest(workItem.Test);
 
-            Assert.That(TestLog.Logs, Is.EqualTo([
+            Assert.That(testLogs, Is.EqualTo([
                 "BeforeTestActionBeforeTestHook(Suite)",
                 $"{nameof(LogTestActionAttribute.BeforeTest)}(Suite)",
                 "AfterTestActionBeforeTestHook(Suite)",
@@ -48,6 +47,8 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExecutionSequence
                 $"{nameof(LogTestActionAttribute.AfterTest)}(Suite)",
                 "AfterTestActionAfterTestHook(Suite)"
             ]));
+
+            TestLog.Clear();
         }
     }
 }
