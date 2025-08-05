@@ -46,19 +46,25 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Execution
         [Test]
         public void ExecutionProceedsAfterBeforeTestHookCompletes()
         {
-            TestLog.Clear();
+            // Capture current context logs reference
+            var currentTestLogs = TestLog.Logs;
+            currentTestLogs.Clear();
 
             var workItem = TestBuilder.CreateWorkItem(typeof(TestWithBeforeTestHookOnMethod), TestFilter.Explicit);
             workItem.Execute();
 
-            Assert.That(TestLog.Logs, Is.EqualTo([
-                nameof(TestWithBeforeTestHookOnMethod.OneTimeSetUp),
-                nameof(TestWithBeforeTestHookOnMethod.SetUp),
-                nameof(ActivateBeforeTestHookAttribute),
-                nameof(TestWithBeforeTestHookOnMethod.EmptyTest),
-                nameof(TestWithBeforeTestHookOnMethod.TearDown),
-                nameof(TestWithBeforeTestHookOnMethod.OneTimeTearDown)
-            ]));
+            Assert.Multiple(() =>
+            {
+                Assert.That(currentTestLogs, Is.Not.Empty);
+                Assert.That(currentTestLogs, Is.EqualTo([
+                    nameof(TestWithBeforeTestHookOnMethod.OneTimeSetUp),
+                    nameof(TestWithBeforeTestHookOnMethod.SetUp),
+                    nameof(ActivateBeforeTestHookAttribute),
+                    nameof(TestWithBeforeTestHookOnMethod.EmptyTest),
+                    nameof(TestWithBeforeTestHookOnMethod.TearDown),
+                    nameof(TestWithBeforeTestHookOnMethod.OneTimeTearDown)
+                ]));
+            });
         }
     }
 }

@@ -49,26 +49,32 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Execution
         [Test]
         public void ExecutionProceedsAfterBothTestHookCompletes()
         {
-            TestLog.Clear();
+            // Capture current context logs reference
+            var currentTestLogs = TestLog.Logs;
+            currentTestLogs.Clear();
 
             var workItem = TestBuilder.CreateWorkItem(typeof(TestWithNormalAndLongRunningTestHooks), TestFilter.Explicit);
             workItem.Execute();
 
-            Assert.That(TestLog.Logs, Is.EqualTo([
-                nameof(TestWithNormalAndLongRunningTestHooks.OneTimeSetUp),
-                nameof(TestWithNormalAndLongRunningTestHooks.SetUp),
+            Assert.Multiple(() =>
+            {
+                Assert.That(currentTestLogs, Is.Not.Empty);
+                Assert.That(currentTestLogs, Is.EqualTo([
+                        nameof(TestWithNormalAndLongRunningTestHooks.OneTimeSetUp),
+                        nameof(TestWithNormalAndLongRunningTestHooks.SetUp),
 
-                nameof(ActivateLongRunningBeforeTestHookAttribute),
-                nameof(ActivateBeforeTestHookAttribute),
+                        nameof(ActivateLongRunningBeforeTestHookAttribute),
+                        nameof(ActivateBeforeTestHookAttribute),
 
-                nameof(TestWithNormalAndLongRunningTestHooks.EmptyTest),
+                        nameof(TestWithNormalAndLongRunningTestHooks.EmptyTest),
 
-                nameof(ActivateAfterTestHookAttribute),
-                nameof(ActivateLongRunningAfterTestHookAttribute),
+                        nameof(ActivateAfterTestHookAttribute),
+                        nameof(ActivateLongRunningAfterTestHookAttribute),
 
-                nameof(TestWithNormalAndLongRunningTestHooks.TearDown),
-                nameof(TestWithNormalAndLongRunningTestHooks.OneTimeTearDown)
-            ]));
+                        nameof(TestWithNormalAndLongRunningTestHooks.TearDown),
+                        nameof(TestWithNormalAndLongRunningTestHooks.OneTimeTearDown)
+                ]));
+            });
         }
     }
 }

@@ -94,20 +94,20 @@ public class AfterTestHooksEvaluateTestOutcomeTests
     [Test]
     public void CheckThatAfterTestHooksEvaluateTestOutcome()
     {
-        TestLog.Clear();
+        // Capture current context logs reference
+        var currentTestLogs = TestLog.Logs;
+        currentTestLogs.Clear();
 
         var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithMixedOutcome), TestFilter.Explicit);
         workItem.Execute();
 
-        Assert.That(TestLog.Logs, Is.Not.Empty);
         Assert.Multiple(() =>
         {
-            foreach (string logLine in TestLog.Logs)
+            Assert.That(currentTestLogs, Is.Not.Empty);
+            foreach (var logLine in currentTestLogs)
             {
                 Assert.That(logLine, Does.StartWith(AfterTestOutcomeLogger.OutcomeMatched));
             }
         });
-
-        TestLog.Clear();
     }
 }

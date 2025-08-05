@@ -8,7 +8,8 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExceptionHandling
 {
     internal class TestThrowsExceptionHooksProceedsToExecuteTests
     {
-        [Explicit($"This test should only be run as part of the {nameof(TestThrowsException_HooksProceedsToExecute)} test")]
+        [Explicit(
+            $"This test should only be run as part of the {nameof(TestThrowsException_HooksProceedsToExecute)} test")]
         public class TestWithTestHooksOnMethod
         {
             [OneTimeSetUp]
@@ -47,20 +48,26 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExceptionHandling
         [Test]
         public void TestThrowsException_HooksProceedsToExecute()
         {
-            TestLog.Clear();
+            // Capture current context logs reference
+            var currentTestLogs = TestLog.Logs;
+            currentTestLogs.Clear();
 
             var workItem = TestBuilder.CreateWorkItem(typeof(TestWithTestHooksOnMethod), TestFilter.Explicit);
             workItem.Execute();
 
-            Assert.That(TestLog.Logs, Is.EqualTo([
-                nameof(TestWithTestHooksOnMethod.OneTimeSetUp),
-                nameof(TestWithTestHooksOnMethod.SetUp),
-                nameof(ActivateBeforeTestHookAttribute),
-                nameof(TestWithTestHooksOnMethod.EmptyTest),
-                nameof(ActivateAfterTestHookAttribute),
-                nameof(TestWithTestHooksOnMethod.TearDown),
-                nameof(TestWithTestHooksOnMethod.OneTimeTearDown)
-            ]));
+            Assert.Multiple(() =>
+            {
+                Assert.That(currentTestLogs, Is.Not.Empty);
+                Assert.That(currentTestLogs, Is.EqualTo([
+                    nameof(TestWithTestHooksOnMethod.OneTimeSetUp),
+                    nameof(TestWithTestHooksOnMethod.SetUp),
+                    nameof(ActivateBeforeTestHookAttribute),
+                    nameof(TestWithTestHooksOnMethod.EmptyTest),
+                    nameof(ActivateAfterTestHookAttribute),
+                    nameof(TestWithTestHooksOnMethod.TearDown),
+                    nameof(TestWithTestHooksOnMethod.OneTimeTearDown)
+                ]));
+            });
         }
     }
 }

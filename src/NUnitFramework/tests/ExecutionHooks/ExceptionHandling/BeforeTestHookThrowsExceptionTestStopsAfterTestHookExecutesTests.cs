@@ -47,20 +47,25 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExceptionHandling
         [Test]
         public void BeforeTestHookThrowsException_TestStops_AfterTestHookExecutes()
         {
-            TestLog.Clear();
+            // Capture current context logs reference
+            var currentTestLogs = TestLog.Logs;
+            currentTestLogs.Clear();
 
             var workItem = TestBuilder.CreateWorkItem(typeof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook), TestFilter.Explicit);
             workItem.Execute();
 
-            // no test is executed
-            Assert.That(TestLog.Logs, Is.EqualTo([
-                nameof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook.OneTimeSetUp),
-                nameof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook.SetUp),
-                nameof(ActivateBeforeTestHookThrowingExceptionAttribute),
-                nameof(ActivateAfterTestHookAttribute),
-                nameof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook.TearDown),
-                nameof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook.OneTimeTearDown)
-            ]));
+            Assert.Multiple(() =>
+            {
+                Assert.That(currentTestLogs, Is.Not.Empty);
+                Assert.That(currentTestLogs, Is.EqualTo([
+                    nameof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook.OneTimeSetUp),
+                    nameof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook.SetUp),
+                    nameof(ActivateBeforeTestHookThrowingExceptionAttribute),
+                    nameof(ActivateAfterTestHookAttribute),
+                    nameof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook.TearDown),
+                    nameof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook.OneTimeTearDown)
+                ]));
+            });
         }
     }
 }

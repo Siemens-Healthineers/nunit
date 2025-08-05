@@ -20,13 +20,6 @@ namespace NUnit.Framework.Tests.ExecutionHooks
                     return LocalLogs.Value ??= new List<string>();
                 }
             }
-            private set
-            {
-                lock (LogLock)
-                {
-                    LocalLogs.Value = value;
-                }
-            }
         }
 
         public static void LogCurrentMethod([CallerMemberName] string callerMethodName = "")
@@ -42,11 +35,6 @@ namespace NUnit.Framework.Tests.ExecutionHooks
         public static void LogMessage(string message)
         {
             Logs.Add(message);
-        }
-
-        public static void Clear()
-        {
-            Logs.Clear();
         }
     }
 }

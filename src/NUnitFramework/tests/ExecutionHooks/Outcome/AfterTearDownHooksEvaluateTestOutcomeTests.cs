@@ -115,15 +115,17 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
     [Test]
     public void CheckTearDownOutcomes()
     {
-        TestLog.Clear();
+        // Capture current context logs reference
+        var currentTestLogs = TestLog.Logs;
+        currentTestLogs.Clear();
 
         var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithDifferentTearDownOutcome), TestFilter.Explicit);
         workItem.Execute();
 
         Assert.Multiple(() =>
         {
-            Assert.That(TestLog.Logs, Is.Not.Empty);
-            foreach (string log in TestLog.Logs)
+            Assert.That(currentTestLogs, Is.Not.Empty);
+            foreach (var log in currentTestLogs)
             {
                 Assert.That(log, Does.Not.Contain(AfterTearDownOutcomeLogger.OutcomeMismatch));
             }
@@ -135,7 +137,5 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
             Assert.That(workItem.Result.InconclusiveCount, Is.EqualTo(failingReasons.Count(reason => reason.ToString().EndsWith("4Inconclusive"))));
             Assert.That(workItem.Result.TotalCount, Is.EqualTo(failingReasons.Count));
         });
-
-        TestLog.Clear();
     }
 }

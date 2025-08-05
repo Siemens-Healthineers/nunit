@@ -27,17 +27,23 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Execution
         [Test]
         public void CheckLoggingTest()
         {
-            TestLog.Clear();
+            // Capture current context logs reference
+            var currentTestLogs = TestLog.Logs;
+            currentTestLogs.Clear();
 
             var workItem = TestBuilder.CreateWorkItem(typeof(TestUnderTest), TestFilter.Explicit);
             workItem.Execute();
 
-            Assert.That(TestLog.Logs, Is.EqualTo([
-                $"{HookIdentifiers.BeforeTestHook}({nameof(TestUnderTest.TestWithHookLogging)})",
-                nameof(TestUnderTest.TestWithHookLogging),
-                $"{HookIdentifiers.AfterTestHook}({nameof(TestUnderTest.TestWithHookLogging)})",
-                nameof(TestUnderTest.TestWithoutHookLogging)
-            ]));
+            Assert.Multiple(() =>
+            {
+                Assert.That(currentTestLogs, Is.Not.Empty);
+                Assert.That(currentTestLogs, Is.EqualTo([
+                    $"{HookIdentifiers.BeforeTestHook}({nameof(TestUnderTest.TestWithHookLogging)})",
+                    nameof(TestUnderTest.TestWithHookLogging),
+                    $"{HookIdentifiers.AfterTestHook}({nameof(TestUnderTest.TestWithHookLogging)})",
+                    nameof(TestUnderTest.TestWithoutHookLogging)
+                ]));
+            });
         }
     }
 }
