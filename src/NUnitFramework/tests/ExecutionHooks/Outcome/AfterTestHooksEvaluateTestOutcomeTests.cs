@@ -101,9 +101,9 @@ public class AfterTestHooksEvaluateTestOutcomeTests
         var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithMixedOutcome), TestFilter.Explicit);
         workItem.Execute();
 
+        Assert.That(currentTestLogs, Is.Not.Empty);
         Assert.Multiple(() =>
         {
-            Assert.That(currentTestLogs, Is.Not.Empty);
             foreach (var logLine in currentTestLogs)
             {
                 Assert.That(logLine, Does.StartWith(AfterTestOutcomeLogger.OutcomeMatched));

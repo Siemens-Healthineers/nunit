@@ -31,17 +31,14 @@ public class ExecutionProceedsOnlyAfterAllBeforeTestHooksExecute
 
         var workItem = TestBuilder.CreateWorkItem(typeof(TestUnderTest), TestFilter.Explicit);
         workItem.Execute();
-        
-        Assert.Multiple(() =>
-        {
-            Assert.That(currentTestLogs, Is.Not.Empty);
-            Assert.That(currentTestLogs, Is.EqualTo([
-                nameof(ActivateLongRunningBeforeTestHookAttribute),
-                nameof(ActivateBeforeTestHookAttribute),
-                nameof(ActivateBeforeTestHookAttribute),
-                nameof(ActivateBeforeTestHookAttribute),
-                nameof(TestUnderTest.SomeTest)
-            ]));
-        });
+
+        Assert.That(currentTestLogs, Is.Not.Empty);
+        Assert.That(currentTestLogs, Is.EqualTo([
+            nameof(ActivateLongRunningBeforeTestHookAttribute),
+            nameof(ActivateBeforeTestHookAttribute),
+            nameof(ActivateBeforeTestHookAttribute),
+            nameof(ActivateBeforeTestHookAttribute),
+            nameof(TestUnderTest.SomeTest)
+        ]));
     }
 }

@@ -41,24 +41,22 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExecutionSequence
             var currentTestLogs = TestLog.Logs;
             currentTestLogs.Clear();
 
-            var workItem = TestBuilder.CreateWorkItem(typeof(ExecutionProceedsOnlyAfterAllAfterTestHooksExecute_TestUnderTest), TestFilter.Explicit);
+            var workItem = TestBuilder.CreateWorkItem(
+                typeof(ExecutionProceedsOnlyAfterAllAfterTestHooksExecute_TestUnderTest), TestFilter.Explicit);
             workItem.Execute();
 
-            Assert.Multiple(() =>
-            {
-                Assert.That(currentTestLogs, Is.Not.Empty);
-                Assert.That(currentTestLogs, Is.EqualTo([
-                    nameof(ExecutionProceedsOnlyAfterAllAfterTestHooksExecute_TestUnderTest.TestPasses),
+            Assert.That(currentTestLogs, Is.Not.Empty);
+            Assert.That(currentTestLogs, Is.EqualTo([
+                nameof(ExecutionProceedsOnlyAfterAllAfterTestHooksExecute_TestUnderTest.TestPasses),
 
-                    nameof(ActivateAfterTestHookAttribute),
-                    nameof(ActivateAfterTestHookAttribute),
-                    nameof(ActivateAfterTestHookAttribute),
-                    nameof(ActivateAfterTestHookThrowingExceptionAttribute),
+                nameof(ActivateAfterTestHookAttribute),
+                nameof(ActivateAfterTestHookAttribute),
+                nameof(ActivateAfterTestHookAttribute),
+                nameof(ActivateAfterTestHookThrowingExceptionAttribute),
 
-                    nameof(ExecutionProceedsOnlyAfterAllAfterTestHooksExecute_TestUnderTest.TearDown),
-                    nameof(ExecutionProceedsOnlyAfterAllAfterTestHooksExecute_TestUnderTest.OneTimeTearDown)
-                ]));
-            });
+                nameof(ExecutionProceedsOnlyAfterAllAfterTestHooksExecute_TestUnderTest.TearDown),
+                nameof(ExecutionProceedsOnlyAfterAllAfterTestHooksExecute_TestUnderTest.OneTimeTearDown)
+            ]));
         }
     }
 }

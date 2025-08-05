@@ -90,57 +90,54 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExecutionSequence
             var workItem = TestBuilder.CreateWorkItem(typeof(TestUnderTest), TestFilter.Explicit);
             workItem.Execute();
 
-            Assert.Multiple(() =>
-            {
-                Assert.That(currentTestLogs, Is.Not.Empty);
-                Assert.That(currentTestLogs, Is.EqualTo([
-                        nameof(TestUnderTestBase.OneTimeSetUpBase),
-                        nameof(TestUnderTest.OneTimeSetUp),
+            Assert.That(currentTestLogs, Is.Not.Empty);
+            Assert.That(currentTestLogs, Is.EqualTo([
+                nameof(TestUnderTestBase.OneTimeSetUpBase),
+                nameof(TestUnderTest.OneTimeSetUp),
 
-                        HookIdentifiers.BeforeEverySetUpHook,
-                        nameof(TestUnderTestBase.SetupBase),
-                        HookIdentifiers.AfterEverySetUpHook,
+                HookIdentifiers.BeforeEverySetUpHook,
+                nameof(TestUnderTestBase.SetupBase),
+                HookIdentifiers.AfterEverySetUpHook,
 
-                        HookIdentifiers.BeforeEverySetUpHook,
-                        nameof(TestUnderTest.Setup),
-                        HookIdentifiers.AfterEverySetUpHook,
+                HookIdentifiers.BeforeEverySetUpHook,
+                nameof(TestUnderTest.Setup),
+                HookIdentifiers.AfterEverySetUpHook,
 
-                        HookIdentifiers.BeforeTestHook,
-                        nameof(TestUnderTest.TestPasses),
-                        HookIdentifiers.AfterTestHook,
+                HookIdentifiers.BeforeTestHook,
+                nameof(TestUnderTest.TestPasses),
+                HookIdentifiers.AfterTestHook,
 
-                        HookIdentifiers.BeforeEveryTearDownHook,
-                        nameof(TestUnderTest.TearDown),
-                        HookIdentifiers.AfterEveryTearDownHook,
+                HookIdentifiers.BeforeEveryTearDownHook,
+                nameof(TestUnderTest.TearDown),
+                HookIdentifiers.AfterEveryTearDownHook,
 
-                        HookIdentifiers.BeforeEveryTearDownHook,
-                        nameof(TestUnderTestBase.TearDownBase),
-                        HookIdentifiers.AfterEveryTearDownHook,
+                HookIdentifiers.BeforeEveryTearDownHook,
+                nameof(TestUnderTestBase.TearDownBase),
+                HookIdentifiers.AfterEveryTearDownHook,
 
-                        HookIdentifiers.BeforeEverySetUpHook,
-                        nameof(TestUnderTestBase.SetupBase),
-                        HookIdentifiers.AfterEverySetUpHook,
+                HookIdentifiers.BeforeEverySetUpHook,
+                nameof(TestUnderTestBase.SetupBase),
+                HookIdentifiers.AfterEverySetUpHook,
 
-                        HookIdentifiers.BeforeEverySetUpHook,
-                        nameof(TestUnderTest.Setup),
-                        HookIdentifiers.AfterEverySetUpHook,
+                HookIdentifiers.BeforeEverySetUpHook,
+                nameof(TestUnderTest.Setup),
+                HookIdentifiers.AfterEverySetUpHook,
 
-                        HookIdentifiers.BeforeTestHook,
-                        nameof(TestUnderTest.TestFails),
-                        HookIdentifiers.AfterTestHook,
+                HookIdentifiers.BeforeTestHook,
+                nameof(TestUnderTest.TestFails),
+                HookIdentifiers.AfterTestHook,
 
-                        HookIdentifiers.BeforeEveryTearDownHook,
-                        nameof(TestUnderTest.TearDown),
-                        HookIdentifiers.AfterEveryTearDownHook,
+                HookIdentifiers.BeforeEveryTearDownHook,
+                nameof(TestUnderTest.TearDown),
+                HookIdentifiers.AfterEveryTearDownHook,
 
-                        HookIdentifiers.BeforeEveryTearDownHook,
-                        nameof(TestUnderTestBase.TearDownBase),
-                        HookIdentifiers.AfterEveryTearDownHook,
+                HookIdentifiers.BeforeEveryTearDownHook,
+                nameof(TestUnderTestBase.TearDownBase),
+                HookIdentifiers.AfterEveryTearDownHook,
 
-                        nameof(TestUnderTest.OneTimeTearDown),
-                        nameof(TestUnderTestBase.OneTimeTearDownBase),
-                ]));
-            });
+                nameof(TestUnderTest.OneTimeTearDown),
+                nameof(TestUnderTestBase.OneTimeTearDownBase),
+            ]));
         }
     }
 }
