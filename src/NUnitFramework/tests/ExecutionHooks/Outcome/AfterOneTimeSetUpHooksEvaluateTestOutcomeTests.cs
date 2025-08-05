@@ -67,7 +67,7 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
     [Explicit($"This test should only be run as part of the {nameof(CheckSetUpOutcomes)} test")]
     [AfterSetUpOutcomeLogger]
     [TestFixtureSource(nameof(GetReasonsToFail))]
-    public class TestsUnderTestsWithDifferentOntTimeSetUpOutcome(FailingReason failingReason)
+    public class TestsUnderTestsWithDifferentOneTimeSetUpOutcome(FailingReason failingReason)
     {
         private static IEnumerable<TestFixtureData> GetReasonsToFail()
         {
@@ -131,7 +131,7 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
     {
         TestLog.Clear();
 
-        var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithDifferentOntTimeSetUpOutcome), TestFilter.Explicit);
+        var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithDifferentOneTimeSetUpOutcome), TestFilter.Explicit);
         workItem.Execute();
 
         Assert.Multiple(() =>
