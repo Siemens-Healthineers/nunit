@@ -264,11 +264,12 @@ public class AfterTestActionHooksEvaluateTestOutcomeTests
 
         var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithMixedOutcome_ForBeforeTest), TestFilter.Explicit);
         workItem.Execute();
+        var currentTestLogs = TestLog.Logs(workItem.Test);
 
-        Assert.That(TestLog.Logs, Is.Not.Empty);
+        Assert.That(currentTestLogs, Is.Not.Empty);
         Assert.Multiple(() =>
         {
-            foreach (string logLine in TestLog.Logs)
+            foreach (string logLine in currentTestLogs)
             {
                 Assert.That(logLine, Does.StartWith(TestActionOutcomeLogger.OutcomeMatched));
             }
@@ -284,11 +285,12 @@ public class AfterTestActionHooksEvaluateTestOutcomeTests
 
         var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithMixedOutcome_ForAfterTest), TestFilter.Explicit);
         workItem.Execute();
+        var currentTestLogs = TestLog.Logs(workItem.Test);
 
-        Assert.That(TestLog.Logs, Is.Not.Empty);
+        Assert.That(currentTestLogs, Is.Not.Empty);
         Assert.Multiple(() =>
         {
-            foreach (string logLine in TestLog.Logs)
+            foreach (string logLine in currentTestLogs)
             {
                 Assert.That(logLine, Does.StartWith(TestActionOutcomeLogger.OutcomeMatched));
             }

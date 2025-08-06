@@ -116,11 +116,12 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
     public void CheckTearDownOutcomes()
     {
         // Capture current context logs reference
-        var currentTestLogs = TestLog.Logs;
-        currentTestLogs.Clear();
+        //var currentTestLogs = TestLog.Logs;
+        //currentTestLogs.Clear();
 
         var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithDifferentTearDownOutcome), TestFilter.Explicit);
         workItem.Execute();
+        var currentTestLogs = TestLog.Logs(workItem.Test);
 
         Assert.That(currentTestLogs, Is.Not.Empty);
         Assert.Multiple(() =>

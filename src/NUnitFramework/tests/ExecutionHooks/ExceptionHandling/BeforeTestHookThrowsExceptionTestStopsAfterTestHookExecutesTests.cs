@@ -48,11 +48,11 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExceptionHandling
         public void BeforeTestHookThrowsException_TestStops_AfterTestHookExecutes()
         {
             // Capture current context logs reference
-            var currentTestLogs = TestLog.Logs;
-            currentTestLogs.Clear();
+            //currentTestLogs.Clear();
 
             var workItem = TestBuilder.CreateWorkItem(typeof(TestWithTestHooksOnMethodAndErrorOnBeforeTestHook), TestFilter.Explicit);
             workItem.Execute();
+            var currentTestLogs = TestLog.Logs(workItem.Test);
 
             Assert.That(currentTestLogs, Is.Not.Empty);
             Assert.That(currentTestLogs, Is.EqualTo([

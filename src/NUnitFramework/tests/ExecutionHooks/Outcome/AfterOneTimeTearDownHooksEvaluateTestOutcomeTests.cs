@@ -120,11 +120,12 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
     public void CheckOneTimeTearDownOutcomes()
     {
         // Capture current context logs reference
-        var currentTestLogs = TestLog.Logs;
-        currentTestLogs.Clear();
+        //var currentTestLogs = TestLog.Logs;
+        //currentTestLogs.Clear();
 
         var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithDifferentOneTimeTearDownOutcome), TestFilter.Explicit);
         workItem.Execute();
+        var currentTestLogs = TestLog.Logs(workItem.Test);
 
         Assert.That(currentTestLogs, Is.Not.Empty);
         Assert.Multiple(() =>
