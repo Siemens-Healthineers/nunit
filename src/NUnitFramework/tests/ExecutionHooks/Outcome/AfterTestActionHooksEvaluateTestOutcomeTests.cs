@@ -258,6 +258,10 @@ public class AfterTestActionHooksEvaluateTestOutcomeTests
     [Test]
     public void CheckThatAfterTestActionBeforeTestHooksEvaluateTestOutcome()
     {
+        // Capture current context logs reference
+        var currentTestLogs = TestLog.Logs;
+        currentTestLogs.Clear();
+
         var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithMixedOutcome_ForBeforeTest), TestFilter.Explicit);
         workItem.Execute();
 
@@ -274,6 +278,10 @@ public class AfterTestActionHooksEvaluateTestOutcomeTests
     [Test]
     public void CheckThatAfterTestActionAfterTestHooksEvaluateTestOutcome()
     {
+        // Capture current context logs reference
+        var currentTestLogs = TestLog.Logs;
+        currentTestLogs.Clear();
+
         var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithMixedOutcome_ForAfterTest), TestFilter.Explicit);
         workItem.Execute();
 
