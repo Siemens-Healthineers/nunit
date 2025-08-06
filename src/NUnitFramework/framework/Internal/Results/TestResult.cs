@@ -461,12 +461,6 @@ namespace NUnit.Framework.Internal
                 deltaResult.RecordAssertion(assertion);
             }
 
-            // Calculate the delta for Output
-            if (Output != previous.Output)
-            {
-                deltaResult.OutWriter.Write(Output.Substring(previous.Output.Length));
-            }
-
             // consider the exception context and warnings
             if (exceptionContext is not null)
             {
