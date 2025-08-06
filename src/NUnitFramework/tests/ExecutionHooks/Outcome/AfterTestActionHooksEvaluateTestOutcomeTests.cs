@@ -258,8 +258,6 @@ public class AfterTestActionHooksEvaluateTestOutcomeTests
     [Test]
     public void CheckThatAfterTestActionBeforeTestHooksEvaluateTestOutcome()
     {
-        TestLog.Clear();
-
         var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithMixedOutcome_ForBeforeTest), TestFilter.Explicit);
         workItem.Execute();
 
@@ -271,15 +269,11 @@ public class AfterTestActionHooksEvaluateTestOutcomeTests
                 Assert.That(logLine, Does.StartWith(TestActionOutcomeLogger.OutcomeMatched));
             }
         });
-
-        TestLog.Clear();
     }
 
     [Test]
     public void CheckThatAfterTestActionAfterTestHooksEvaluateTestOutcome()
     {
-        TestLog.Clear();
-
         var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithMixedOutcome_ForAfterTest), TestFilter.Explicit);
         workItem.Execute();
 
@@ -291,7 +285,5 @@ public class AfterTestActionHooksEvaluateTestOutcomeTests
                 Assert.That(logLine, Does.StartWith(TestActionOutcomeLogger.OutcomeMatched));
             }
         });
-
-        TestLog.Clear();
     }
 }
