@@ -25,10 +25,6 @@ public class ExecutionProceedsOnlyAfterAllBeforeTestHooksExecute
     [Test]
     public void CheckThatLongRunningBeforeTestHooksCompleteBeforeTest()
     {
-        // Capture current context logs reference
-        //var currentTestLogs = TestLog.Logs;
-        //currentTestLogs.Clear();
-
         var workItem = TestBuilder.CreateWorkItem(typeof(TestUnderTest), TestFilter.Explicit);
         workItem.Execute();
         var currentTestLogs = TestLog.Logs(workItem.Test);

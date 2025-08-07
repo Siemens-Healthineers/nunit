@@ -48,10 +48,6 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExceptionHandling
         [Test]
         public void TestFailsWithAssert_HooksProceedsToExecute()
         {
-            // Capture current context logs reference
-            //ar currentTestLogs = TestLog.Logs;
-            //currentTestLogs.Clear();
-
             var workItem = TestBuilder.CreateWorkItem(typeof(FailingTestWithTestHookOnMethod), TestFilter.Explicit);
             workItem.Execute();
             var currentTestLogs = TestLog.Logs(workItem.Test);

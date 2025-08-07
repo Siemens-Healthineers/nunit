@@ -40,12 +40,6 @@ namespace NUnit.Framework.Tests.ExecutionHooks
             return props.Get(TestLogPropertyKey) as string ?? string.Empty;
         }
 
-        public static void Clear()
-        {
-            var props = GetBaseParent().Properties;
-            props.Set(TestLogPropertyKey, string.Empty);
-        }
-
         public static void LogToPropertyBag(string s)
         {
             if (string.IsNullOrEmpty(s))

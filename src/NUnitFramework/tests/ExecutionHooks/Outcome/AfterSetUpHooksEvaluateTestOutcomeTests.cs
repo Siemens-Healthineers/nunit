@@ -129,10 +129,6 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
     [Test]
     public void CheckSetUpOutcomes()
     {
-        // Capture current context logs reference
-        //var currentTestLogs = TestLog.Logs;
-        //currentTestLogs.Clear();
-
         var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithDifferentSetUpOutcome), TestFilter.Explicit);
         workItem.Execute();
         var currentTestLogs = TestLog.Logs(workItem.Test);

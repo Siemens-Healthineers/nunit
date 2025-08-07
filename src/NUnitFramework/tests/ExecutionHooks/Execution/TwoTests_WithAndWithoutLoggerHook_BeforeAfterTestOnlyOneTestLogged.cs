@@ -27,10 +27,6 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Execution
         [Test]
         public void CheckLoggingTest()
         {
-            // Capture current context logs reference
-            //var currentTestLogs = TestLog.Logs;
-            //currentTestLogs.Clear();
-
             var workItem = TestBuilder.CreateWorkItem(typeof(TestUnderTest), TestFilter.Explicit);
             workItem.Execute();
             var currentTestLogs = TestLog.Logs(workItem.Test);

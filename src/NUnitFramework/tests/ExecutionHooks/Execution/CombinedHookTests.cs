@@ -49,10 +49,6 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Execution
         [Test]
         public void ExecutionProceedsAfterBothTestHookCompletes()
         {
-            // Capture current context logs reference
-            //var currentTestLogs = TestLog.Logs;
-            //currentTestLogs.Clear();
-
             var workItem =
                 TestBuilder.CreateWorkItem(typeof(TestWithNormalAndLongRunningTestHooks), TestFilter.Explicit);
             workItem.Execute();
