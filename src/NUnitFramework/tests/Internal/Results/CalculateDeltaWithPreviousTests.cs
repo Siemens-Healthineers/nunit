@@ -52,7 +52,7 @@ namespace NUnit.Framework.Tests.Internal.Results
         }
 
         [Test]
-        public void CalculateDeltaWithPrevious_DifferentResultStates_ReturnsCurrentState()
+        public void CalculateDeltaWithPrevious_EnsureStatesHaveNotChanged_AlarmOnChange()
         {
             List<TestStatus> allStates =
                 Enum.GetValues(typeof(TestStatus))
@@ -60,7 +60,19 @@ namespace NUnit.Framework.Tests.Internal.Results
                 .ToList();
 
             Assert.That(allStates, Has.Count.EqualTo(5),
-                "TestStatus enum seems to have unexpected number of values.");
+                "TestStatus enum seems to have unexpected number of values." +
+                "Please ensure that this change is reflected in the test cases: " +
+                $"{nameof(CalculateDeltaWithPrevious_DifferentResultStates_ReturnsCurrentState)} and " +
+                $"{nameof(CalculateDeltaWithPrevious_SameResultStates_ReturnsPassed)}.");
+        }
+
+        [Test]
+        public void CalculateDeltaWithPrevious_DifferentResultStates_ReturnsCurrentState()
+        {
+            List<TestStatus> allStates =
+                Enum.GetValues(typeof(TestStatus))
+                .Cast<TestStatus>()
+                .ToList();
 
             foreach (var previousState in allStates)
             {
@@ -89,9 +101,6 @@ namespace NUnit.Framework.Tests.Internal.Results
                 Enum.GetValues(typeof(TestStatus))
                 .Cast<TestStatus>()
                 .ToList();
-
-            Assert.That(allStates, Has.Count.EqualTo(5),
-                "TestStatus enum seems to have unexpected number of values.");
 
             foreach (var state in allStates)
             {
