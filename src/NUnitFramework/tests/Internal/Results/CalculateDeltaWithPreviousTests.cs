@@ -157,7 +157,7 @@ namespace NUnit.Framework.Tests.Internal.Results
             Assert.Multiple(() =>
             {
                 Assert.That(delta.AssertionResults, Has.Count.EqualTo(1));
-                Assert.That(delta.AssertionResults[0].Message, Is.EqualTo("Second assertion"));
+                Assert.That(delta.AssertionResults[0].Message, Is.EqualTo(assertion2.Message));
                 Assert.That(delta.ResultState, Is.EqualTo(ResultState.Failure));
             });
         }
@@ -172,7 +172,7 @@ namespace NUnit.Framework.Tests.Internal.Results
             Assert.Multiple(() =>
             {
                 Assert.That(delta.ResultState.Status, Is.EqualTo(TestStatus.Failed));
-                Assert.That(delta.Message, Does.Contain("Test exception"));
+                Assert.That(delta.Message, Does.Contain(exception.Message));
             });
         }
 
