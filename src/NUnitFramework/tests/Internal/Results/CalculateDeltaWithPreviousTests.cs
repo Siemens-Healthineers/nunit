@@ -30,7 +30,9 @@ namespace NUnit.Framework.Tests.Internal.Results
 
             var delta = _currentResult.CalculateDeltaWithPrevious(_previousResult);
 
+
             Assert.That(delta.ResultState, Is.EqualTo(ResultState.Success));
+            Assert.That(delta.ResultState.Label, Is.Empty);
         }
 
         [Test]
@@ -44,6 +46,7 @@ namespace NUnit.Framework.Tests.Internal.Results
             Assert.Multiple(() =>
             {
                 Assert.That(delta.ResultState, Is.EqualTo(ResultState.Failure));
+                Assert.That(delta.ResultState.Label, Is.Empty);
                 Assert.That(delta.Message, Is.EqualTo("Test failed"));
             });
         }
@@ -69,7 +72,11 @@ namespace NUnit.Framework.Tests.Internal.Results
                         _currentResult.SetResult(new ResultState(currentState));
                         var delta = _currentResult.CalculateDeltaWithPrevious(_previousResult);
 
-                        Assert.That(delta.ResultState.Status, Is.EqualTo(currentState));
+                        Assert.Multiple(() =>
+                        {
+                            Assert.That(delta.ResultState.Status, Is.EqualTo(currentState));
+                            Assert.That(delta.ResultState.Label, Is.EqualTo(_currentResult.ResultState.Label));
+                        });
                     }
                 }
             }
@@ -92,7 +99,11 @@ namespace NUnit.Framework.Tests.Internal.Results
                 _currentResult.SetResult(new ResultState(state));
                 var delta = _currentResult.CalculateDeltaWithPrevious(_previousResult);
 
-                Assert.That(delta.ResultState.Status, Is.EqualTo(TestStatus.Passed));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(delta.ResultState.Status, Is.EqualTo(TestStatus.Passed));
+                    Assert.That(delta.ResultState.Label, Is.Empty);
+                });
             }
         }
 
@@ -108,6 +119,7 @@ namespace NUnit.Framework.Tests.Internal.Results
             {
                 Assert.That(delta.AssertCount, Is.EqualTo(3), "Should show only the new assertions");
                 Assert.That(delta.ResultState, Is.EqualTo(ResultState.Success));
+                Assert.That(delta.ResultState.Label, Is.Empty);
             });
         }
 
@@ -124,6 +136,7 @@ namespace NUnit.Framework.Tests.Internal.Results
             {
                 Assert.That(delta.Output, Is.EqualTo("Previous output" + "New output"));
                 Assert.That(delta.ResultState, Is.EqualTo(ResultState.Success));
+                Assert.That(delta.ResultState.Label, Is.Empty);
             });
         }
 
@@ -139,6 +152,7 @@ namespace NUnit.Framework.Tests.Internal.Results
             {
                 Assert.That(delta.Output, Is.EqualTo("Previous output"));
                 Assert.That(delta.ResultState, Is.EqualTo(ResultState.Success));
+                Assert.That(delta.ResultState.Label, Is.Empty);
             });
         }
 
@@ -159,6 +173,7 @@ namespace NUnit.Framework.Tests.Internal.Results
                 Assert.That(delta.AssertionResults, Has.Count.EqualTo(1));
                 Assert.That(delta.AssertionResults[0].Message, Is.EqualTo(assertion2.Message));
                 Assert.That(delta.ResultState, Is.EqualTo(ResultState.Failure));
+                Assert.That(delta.ResultState.Label, Is.Empty);
             });
         }
 
@@ -172,6 +187,7 @@ namespace NUnit.Framework.Tests.Internal.Results
             Assert.Multiple(() =>
             {
                 Assert.That(delta.ResultState.Status, Is.EqualTo(TestStatus.Failed));
+                Assert.That(delta.ResultState.Label, Is.EqualTo(ResultState.Error.Label));
                 Assert.That(delta.Message, Does.Contain(exception.Message));
             });
         }
@@ -183,7 +199,12 @@ namespace NUnit.Framework.Tests.Internal.Results
 
             var delta = _currentResult.CalculateDeltaWithPrevious(_previousResult);
 
-            Assert.That(delta.ResultState.Status, Is.EqualTo(TestStatus.Warning));
+            Assert.Multiple(() =>
+            {
+                Assert.That(delta.ResultState.Status, Is.EqualTo(TestStatus.Warning));
+                Assert.That(delta.ResultState.Label, Is.Empty);
+            });
+
         }
     }
 }
