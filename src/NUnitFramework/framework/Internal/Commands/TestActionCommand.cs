@@ -26,7 +26,7 @@ namespace NUnit.Framework.Internal.Commands
             {
                 if (context.ExecutionHooksEnabled)
                 {
-                    var hookedMethodInfo = new MethodWrapper(action.GetType(), "BeforeTest");
+                    var hookedMethodInfo = new MethodWrapper(action.GetType(), nameof(ITestAction.BeforeTest));
                     try
                     {
                         context.ExecutionHooks.OnBeforeTestActionBeforeTest(context, hookedMethodInfo);
@@ -50,7 +50,7 @@ namespace NUnit.Framework.Internal.Commands
             {
                 if (context.ExecutionHooksEnabled)
                 {
-                    var hookedMethodInfo = new MethodWrapper(action.GetType(), "AfterTest");
+                    var hookedMethodInfo = new MethodWrapper(action.GetType(), nameof(ITestAction.AfterTest));
                     try
                     {
                         context.ExecutionHooks.OnBeforeTestActionAfterTest(context, hookedMethodInfo);
