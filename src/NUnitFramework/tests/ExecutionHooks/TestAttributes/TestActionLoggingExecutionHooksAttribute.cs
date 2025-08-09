@@ -9,19 +9,19 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Common
     {
         public void ApplyToContext(TestExecutionContext context)
         {
-            context.ExecutionHooks.AddBeforeTestActionBeforeTestHandler((hookData) =>
+            context.ExecutionHooks.AddBeforeTestActionBeforeTestHandler(hookData =>
             {
                 TestLog.LogCurrentMethod($"BeforeTestActionBeforeTestHook({(hookData.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
             });
-            context.ExecutionHooks.AddAfterTestActionBeforeTestHandler((hookData) =>
+            context.ExecutionHooks.AddAfterTestActionBeforeTestHandler(hookData =>
             {
                 TestLog.LogCurrentMethod($"AfterTestActionBeforeTestHook({(hookData.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
             });
-            context.ExecutionHooks.AddBeforeTestActionAfterTestHandler((hookData) =>
+            context.ExecutionHooks.AddBeforeTestActionAfterTestHandler(hookData =>
             {
                 TestLog.LogCurrentMethod($"BeforeTestActionAfterTestHook({(hookData.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
             });
-            context.ExecutionHooks.AddAfterTestActionAfterTestHandler((hookData) =>
+            context.ExecutionHooks.AddAfterTestActionAfterTestHandler(hookData =>
             {
                 TestLog.LogCurrentMethod($"AfterTestActionAfterTestHook({(hookData.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
             });
