@@ -42,7 +42,7 @@ namespace NUnit.Framework.Internal.Commands
             var context = TestExecutionContext.CurrentContext;
             if (context.ExecutionHooksEnabled)
             {
-                var hookedMethodInfo = new MethodWrapper(_action.GetType(), "BeforeTest");
+                var hookedMethodInfo = new MethodWrapper(_action.GetType(), nameof(ITestAction.BeforeTest));
                 try
                 {
                     context.ExecutionHooks.OnBeforeTestActionBeforeTest(context, hookedMethodInfo);
@@ -74,7 +74,7 @@ namespace NUnit.Framework.Internal.Commands
             var context = TestExecutionContext.CurrentContext;
             if (context.ExecutionHooksEnabled)
             {
-                var hookedMethodInfo = new MethodWrapper(_action.GetType(), "AfterTest");
+                var hookedMethodInfo = new MethodWrapper(_action.GetType(), nameof(ITestAction.AfterTest));
                 try
                 {
                     context.ExecutionHooks.OnBeforeTestActionAfterTest(context, hookedMethodInfo);
