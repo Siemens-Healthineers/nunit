@@ -11,19 +11,19 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Common
         {
             context.ExecutionHooks.AddBeforeTestActionBeforeTestHandler(hookData =>
             {
-                TestLog.LogCurrentMethod($"BeforeTestActionBeforeTestHook({(hookData.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
+                TestLog.LogCurrentMethod($"BeforeTestActionBeforeTestHook({(hookData.Context.Test.IsSuite ? "Suite" : "Test")})");
             });
             context.ExecutionHooks.AddAfterTestActionBeforeTestHandler(hookData =>
             {
-                TestLog.LogCurrentMethod($"AfterTestActionBeforeTestHook({(hookData.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
+                TestLog.LogCurrentMethod($"AfterTestActionBeforeTestHook({(hookData.Context.Test.IsSuite ? "Suite" : "Test")})");
             });
             context.ExecutionHooks.AddBeforeTestActionAfterTestHandler(hookData =>
             {
-                TestLog.LogCurrentMethod($"BeforeTestActionAfterTestHook({(hookData.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
+                TestLog.LogCurrentMethod($"BeforeTestActionAfterTestHook({(hookData.Context.Test.IsSuite ? "Suite" : "Test")})");
             });
             context.ExecutionHooks.AddAfterTestActionAfterTestHandler(hookData =>
             {
-                TestLog.LogCurrentMethod($"AfterTestActionAfterTestHook({(hookData.Context.CurrentTest.IsSuite ? "Suite" : "Test")})");
+                TestLog.LogCurrentMethod($"AfterTestActionAfterTestHook({(hookData.Context.Test.IsSuite ? "Suite" : "Test")})");
             });
         }
     }
