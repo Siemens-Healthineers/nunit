@@ -12,7 +12,8 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Outcome;
 
 public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
 {
-    public class AfterSetUpOutcomeLogger : ExecutionHookAttribute
+    [AttributeUsage(AttributeTargets.Class)]
+    public class AfterSetUpOutcomeLoggerAttribute : ExecutionHookAttribute
     {
         internal static readonly string OutcomeMatched = "Outcome Matched";
         internal static readonly string OutcomeMismatch = "Outcome Mismatch!!!";
@@ -121,7 +122,7 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
             var fixtureName = TestContext.CurrentContext.Test.Parent.FullName;
             if (!(fixtureName.Contains("4Passed") || fixtureName.Contains("4Warning")))
             {
-                TestLog.LogMessage(AfterSetUpOutcomeLogger.OutcomeMismatch +
+                TestLog.LogMessage(AfterSetUpOutcomeLoggerAttribute.OutcomeMismatch +
                             $" -> Test HookedMethod of '{fixtureName}' executed unexpected!");
             }
         }
@@ -140,7 +141,7 @@ public class AfterOneTimeSetUpHooksEvaluateTestOutcomeTests
         {
             foreach (var log in currentTestLogs)
             {
-                Assert.That(log, Does.Not.Contain(AfterSetUpOutcomeLogger.OutcomeMismatch));
+                Assert.That(log, Does.Not.Contain(AfterSetUpOutcomeLoggerAttribute.OutcomeMismatch));
             }
 
             var failingReasons = Enum.GetValues(typeof(FailingReason)).Cast<FailingReason>().ToList();

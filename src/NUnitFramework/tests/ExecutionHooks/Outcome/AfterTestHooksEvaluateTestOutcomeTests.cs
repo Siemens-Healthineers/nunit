@@ -1,5 +1,6 @@
 // Copyright (c) Charlie Poole, Rob Prouse and Contributors. MIT License - see LICENSE.txt
 
+using System;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using NUnit.Framework.Internal.ExecutionHooks;
@@ -9,7 +10,8 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Outcome;
 
 public class AfterTestHooksEvaluateTestOutcomeTests
 {
-    public class AfterTestOutcomeLogger : ExecutionHookAttribute
+    [AttributeUsage(AttributeTargets.Class)]
+    public class AfterTestOutcomeLoggerAttribute : ExecutionHookAttribute
     {
         internal static readonly string OutcomeMatched = "Outcome Matched";
         internal static readonly string OutcomeMismatch = "Outcome Mismatch!!!";
@@ -98,6 +100,6 @@ public class AfterTestHooksEvaluateTestOutcomeTests
         var currentTestLogs = TestLog.Logs(workItem.Test);
 
         Assert.That(currentTestLogs, Is.Not.Empty);
-        Assert.That(currentTestLogs, Has.All.StartWith(AfterTestOutcomeLogger.OutcomeMatched));
+        Assert.That(currentTestLogs, Has.All.StartWith(AfterTestOutcomeLoggerAttribute.OutcomeMatched));
     }
 }

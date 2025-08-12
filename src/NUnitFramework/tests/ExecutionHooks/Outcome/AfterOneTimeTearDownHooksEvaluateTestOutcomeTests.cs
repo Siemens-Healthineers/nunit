@@ -12,7 +12,8 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Outcome;
 
 public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
 {
-    public class AfterOneTimeTearDownOutcomeLogger : ExecutionHookAttribute
+    [AttributeUsage(AttributeTargets.Class)]
+    public class AfterOneTimeTearDownOutcomeLoggerAttribute : ExecutionHookAttribute
     {
         internal static readonly string OutcomeMatched = "Outcome Matched";
         internal static readonly string OutcomeMismatch = "Outcome Mismatch!!!";
@@ -131,7 +132,7 @@ public class AfterOneTimeOneTimeTearDownHooksEvaluateTestOutcomeTests
         {
             foreach (var log in currentTestLogs)
             {
-                Assert.That(log, Does.Not.Contain(AfterOneTimeTearDownOutcomeLogger.OutcomeMismatch));
+                Assert.That(log, Does.Not.Contain(AfterOneTimeTearDownOutcomeLoggerAttribute.OutcomeMismatch));
             }
 
             var numberOfTests = Enum.GetValues(typeof(AfterOneTimeSetUpHooksEvaluateTestOutcomeTests.FailingReason)).Cast<AfterOneTimeSetUpHooksEvaluateTestOutcomeTests.FailingReason>().Count();

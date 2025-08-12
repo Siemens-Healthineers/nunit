@@ -12,7 +12,8 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Outcome;
 
 public class AfterTearDownHooksEvaluateTestOutcomeTests
 {
-    public class AfterTearDownOutcomeLogger : ExecutionHookAttribute
+    [AttributeUsage(AttributeTargets.Class)]
+    public class AfterTearDownOutcomeLoggerAttribute : ExecutionHookAttribute
     {
         internal static readonly string OutcomeMatched = "Outcome Matched";
         internal static readonly string OutcomeMismatch = "Outcome Mismatch!!!";
@@ -130,7 +131,7 @@ public class AfterTearDownHooksEvaluateTestOutcomeTests
         {
             foreach (var log in currentTestLogs)
             {
-                Assert.That(log, Does.Not.Contain(AfterTearDownOutcomeLogger.OutcomeMismatch));
+                Assert.That(log, Does.Not.Contain(AfterTearDownOutcomeLoggerAttribute.OutcomeMismatch));
             }
 
             var failingReasons = Enum.GetValues(typeof(AfterOneTimeSetUpHooksEvaluateTestOutcomeTests.FailingReason)).Cast<AfterOneTimeSetUpHooksEvaluateTestOutcomeTests.FailingReason>().ToList();

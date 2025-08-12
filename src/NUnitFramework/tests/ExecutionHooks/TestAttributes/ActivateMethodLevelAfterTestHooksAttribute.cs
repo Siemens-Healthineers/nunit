@@ -1,7 +1,9 @@
+// Copyright (c) Charlie Poole, Rob Prouse and Contributors. MIT License - see LICENSE.txt
+
 using System;
 using NUnit.Framework.Internal.ExecutionHooks;
 
-namespace NUnit.Framework.Tests.ExecutionHooks.Common
+namespace NUnit.Framework.Tests.ExecutionHooks.TestAttributes
 {
     [AttributeUsage(AttributeTargets.Method)]
     internal sealed class ActivateMethodLevelAfterTestHooksAttribute : ExecutionHookAttribute

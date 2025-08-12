@@ -13,7 +13,8 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Outcome;
 
 public class AfterSetUpHooksEvaluateTestOutcomeTests
 {
-    public class AfterSetUpOutcomeLogger : ExecutionHookAttribute, IApplyToContext
+    [AttributeUsage(AttributeTargets.Class)]
+    public class AfterSetUpOutcomeLoggerAttribute : ExecutionHookAttribute
     {
         internal static readonly string OutcomeMatched = "Outcome Matched";
         internal static readonly string OutcomeMismatch = "Outcome Mismatch!!!";
@@ -118,7 +119,7 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
             var fixtureName = TestContext.CurrentContext.Test.Parent.FullName;
             if (!(fixtureName.Contains("4Passed") || fixtureName.Contains("4Warning")))
             {
-                TestLog.LogMessage(AfterSetUpOutcomeLogger.OutcomeMismatch +
+                TestLog.LogMessage(AfterSetUpOutcomeLoggerAttribute.OutcomeMismatch +
                             $" -> Test HookedMethod of '{fixtureName}' executed unexpected!");
             }
         }
@@ -136,7 +137,7 @@ public class AfterSetUpHooksEvaluateTestOutcomeTests
         {
             foreach (var log in currentTestLogs)
             {
-                Assert.That(log, Does.Not.Contain(AfterSetUpOutcomeLogger.OutcomeMismatch));
+                Assert.That(log, Does.Not.Contain(AfterSetUpOutcomeLoggerAttribute.OutcomeMismatch));
             }
 
             foreach (var testCase in ((CompositeWorkItem)workItem).Children)

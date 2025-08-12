@@ -10,7 +10,8 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Outcome;
 
 public class AfterTestActionHooksEvaluateTestOutcomeTests
 {
-    public class TestActionOutcomeLogger(BeforeOrAfterTest beforeOrAfterTest) : ExecutionHookAttribute
+    [AttributeUsage(AttributeTargets.Class)]
+    public class TestActionOutcomeLoggerAttribute(BeforeOrAfterTest beforeOrAfterTest) : ExecutionHookAttribute
     {
         internal static readonly string OutcomeMatched = "Outcome Matched";
         internal static readonly string OutcomeMismatch = "Outcome Mismatch!!!";
@@ -158,7 +159,7 @@ public class AfterTestActionHooksEvaluateTestOutcomeTests
     [Explicit($"This test should only be run as part of the {nameof(AfterTestActionHooksEvaluateTestOutcomeTests)} test")]
     [TestActionOutcomeLogger(BeforeOrAfterTest.BeforeTest)]
     [TestFixture]
-    public class TestsUnderTestsWithMixedOutcome_ForBeforeTest
+    public class TestsUnderTestsWithMixedOutcomeForBeforeTest
     {
         [ActionAttributeWithInjectedFailures(FailingReason.None4Passed, BeforeOrAfterTest.BeforeTest)]
         [Test]
@@ -209,7 +210,7 @@ public class AfterTestActionHooksEvaluateTestOutcomeTests
     [Explicit($"This test should only be run as part of the {nameof(AfterTestActionHooksEvaluateTestOutcomeTests)} test")]
     [TestActionOutcomeLogger(BeforeOrAfterTest.AfterTest)]
     [TestFixture]
-    public class TestsUnderTestsWithMixedOutcome_ForAfterTest
+    public class TestsUnderTestsWithMixedOutcomeForAfterTest
     {
         [ActionAttributeWithInjectedFailures(FailingReason.None4Passed, BeforeOrAfterTest.AfterTest)]
         [Test]
@@ -260,7 +261,7 @@ public class AfterTestActionHooksEvaluateTestOutcomeTests
     [Test]
     public void CheckThatAfterTestActionBeforeTestHooksEvaluateTestOutcome()
     {
-        var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithMixedOutcome_ForBeforeTest), TestFilter.Explicit);
+        var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithMixedOutcomeForBeforeTest), TestFilter.Explicit);
         workItem.Execute();
         var currentTestLogs = TestLog.Logs(workItem.Test);
 
@@ -269,7 +270,7 @@ public class AfterTestActionHooksEvaluateTestOutcomeTests
         {
             foreach (string logLine in currentTestLogs)
             {
-                Assert.That(logLine, Does.StartWith(TestActionOutcomeLogger.OutcomeMatched));
+                Assert.That(logLine, Does.StartWith(TestActionOutcomeLoggerAttribute.OutcomeMatched));
             }
         });
     }
@@ -277,7 +278,7 @@ public class AfterTestActionHooksEvaluateTestOutcomeTests
     [Test]
     public void CheckThatAfterTestActionAfterTestHooksEvaluateTestOutcome()
     {
-        var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithMixedOutcome_ForAfterTest), TestFilter.Explicit);
+        var workItem = TestBuilder.CreateWorkItem(typeof(TestsUnderTestsWithMixedOutcomeForAfterTest), TestFilter.Explicit);
         workItem.Execute();
         var currentTestLogs = TestLog.Logs(workItem.Test);
 
@@ -286,7 +287,7 @@ public class AfterTestActionHooksEvaluateTestOutcomeTests
         {
             foreach (string logLine in currentTestLogs)
             {
-                Assert.That(logLine, Does.StartWith(TestActionOutcomeLogger.OutcomeMatched));
+                Assert.That(logLine, Does.StartWith(TestActionOutcomeLoggerAttribute.OutcomeMatched));
             }
         });
     }
