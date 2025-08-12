@@ -89,6 +89,50 @@ namespace NUnit.Framework
             // This method should never be called.
             ThrowNeedsOverride();
         }
+
+        /// <summary>
+        /// Method that is called <b>immediately before</b> the BeforeTest(ITest test) method of a <see cref="ITestAction"></see> is executed
+        /// </summary>
+        /// <param name="hookData"></param>
+        public virtual void BeforeTestActionBeforeTestHook(HookData hookData)
+        {
+            // Just to verify our logic for detecting overridden methods works correctly.
+            // This method should never be called.
+            ThrowNeedsOverride();
+        }
+
+        /// <summary>
+        /// Method that is called <b>immediately before</b> the AfterTest(ITest test) method of a <see cref="ITestAction"></see> is executed
+        /// </summary>
+        /// <param name="hookData"></param>
+        public virtual void BeforeTestActionAfterTestHook(HookData hookData)
+        {
+            // Just to verify our logic for detecting overridden methods works correctly.
+            // This method should never be called.
+            ThrowNeedsOverride();
+        }
+
+        /// <summary>
+        /// Method that is called <b>immediately after</b> the BeforeTest(ITest test) method of a <see cref="ITestAction"></see> is executed
+        /// </summary>
+        /// <param name="hookData"></param>
+        public virtual void AfterTestActionBeforeTestHook(HookData hookData)
+        {
+            // Just to verify our logic for detecting overridden methods works correctly.
+            // This method should never be called.
+            ThrowNeedsOverride();
+        }
+
+        /// <summary>
+        /// Method that is called <b>immediately after</b> the AfterTest(ITest test) method of a <see cref="ITestAction"></see> is executed
+        /// </summary>
+        /// <param name="hookData"></param>
+        public virtual void AfterTestActionAfterTestHook(HookData hookData)
+        {
+            // Just to verify our logic for detecting overridden methods works correctly.
+            // This method should never be called.
+            ThrowNeedsOverride();
+        }
     }
 
     /// <summary>
@@ -151,6 +195,30 @@ namespace NUnit.Framework
             {
                 // Only add the AfterEveryTearDownHook if it has been overridden
                 context.ExecutionHooks.AddAfterEveryTearDownHandler(AfterEveryTearDownHook);
+            }
+
+            if (BeforeTestActionBeforeTestHook != base.BeforeTestActionBeforeTestHook)
+            {
+                // Only add the BeforeTestActionBeforeTestHook if it has been overridden
+                context.ExecutionHooks.AddBeforeTestActionBeforeTestHandler(BeforeTestActionBeforeTestHook);
+            }
+
+            if (BeforeTestActionAfterTestHook != base.BeforeTestActionAfterTestHook)
+            {
+                // Only add the BeforeTestActionAfterTestHook if it has been overridden
+                context.ExecutionHooks.AddBeforeTestActionAfterTestHandler(BeforeTestActionAfterTestHook);
+            }
+
+            if (AfterTestActionBeforeTestHook != base.AfterTestActionBeforeTestHook)
+            {
+                // Only add the AfterTestActionBeforeTestHook if it has been overridden
+                context.ExecutionHooks.AddAfterTestActionBeforeTestHandler(AfterTestActionBeforeTestHook);
+            }
+
+            if (AfterTestActionAfterTestHook != base.AfterTestActionAfterTestHook)
+            {
+                // Only add the AfterTestActionAfterTestHook if it has been overridden
+                context.ExecutionHooks.AddAfterTestActionAfterTestHandler(AfterTestActionAfterTestHook);
             }
         }
     }

@@ -1,30 +1,33 @@
 using System;
-using NUnit.Framework.Interfaces;
-using NUnit.Framework.Internal;
+using NUnit.Framework.Internal.ExecutionHooks;
 
-namespace NUnit.Framework.Tests.ExecutionHooks.Common
+namespace NUnit.Framework.Tests.ExecutionHooks.TestAttributes
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-    internal sealed class TestActionLoggingExecutionHooksAttribute : NUnitAttribute, IApplyToContext
+    internal sealed class TestActionLoggingExecutionHooksAttribute : ExecutionHookAttribute
     {
-        public void ApplyToContext(TestExecutionContext context)
+        public override void BeforeTestActionBeforeTestHook(HookData hookData)
         {
-            context.ExecutionHooks.AddBeforeTestActionBeforeTestHandler(hookData =>
-            {
-                TestLog.LogCurrentMethod($"BeforeTestActionBeforeTestHook({(hookData.Context.Test.IsSuite ? "Suite" : "Test")})");
-            });
-            context.ExecutionHooks.AddAfterTestActionBeforeTestHandler(hookData =>
-            {
-                TestLog.LogCurrentMethod($"AfterTestActionBeforeTestHook({(hookData.Context.Test.IsSuite ? "Suite" : "Test")})");
-            });
-            context.ExecutionHooks.AddBeforeTestActionAfterTestHandler(hookData =>
-            {
-                TestLog.LogCurrentMethod($"BeforeTestActionAfterTestHook({(hookData.Context.Test.IsSuite ? "Suite" : "Test")})");
-            });
-            context.ExecutionHooks.AddAfterTestActionAfterTestHandler(hookData =>
-            {
-                TestLog.LogCurrentMethod($"AfterTestActionAfterTestHook({(hookData.Context.Test.IsSuite ? "Suite" : "Test")})");
-            });
+            TestLog.LogCurrentMethod(
+                $"{nameof(BeforeTestActionBeforeTestHook)}({(hookData.Context.Test.IsSuite ? "Suite" : "Test")})");
+        }
+
+        public override void BeforeTestActionAfterTestHook(HookData hookData)
+        {
+            TestLog.LogCurrentMethod(
+                $"{nameof(BeforeTestActionAfterTestHook)}({(hookData.Context.Test.IsSuite ? "Suite" : "Test")})");
+        }
+
+        public override void AfterTestActionBeforeTestHook(HookData hookData)
+        {
+            TestLog.LogCurrentMethod(
+                $"{nameof(AfterTestActionBeforeTestHook)}({(hookData.Context.Test.IsSuite ? "Suite" : "Test")})");
+        }
+
+        public override void AfterTestActionAfterTestHook(HookData hookData)
+        {
+            TestLog.LogCurrentMethod(
+                $"{nameof(AfterTestActionAfterTestHook)}({(hookData.Context.Test.IsSuite ? "Suite" : "Test")})");
         }
     }
 }

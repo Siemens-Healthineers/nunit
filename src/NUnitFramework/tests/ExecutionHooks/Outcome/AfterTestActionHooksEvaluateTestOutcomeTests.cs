@@ -10,29 +10,41 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Outcome;
 
 public class AfterTestActionHooksEvaluateTestOutcomeTests
 {
-    public class TestActionOutcomeLogger : NUnitAttribute, IApplyToContext
+    public class TestActionOutcomeLogger(BeforeOrAfterTest beforeOrAfterTest) : ExecutionHookAttribute
     {
         internal static readonly string OutcomeMatched = "Outcome Matched";
         internal static readonly string OutcomeMismatch = "Outcome Mismatch!!!";
         private TestContext.ResultAdapter? _beforeHookTestResult;
-        private readonly BeforeOrAfterTest _beforeOrAfterTest;
 
-        public TestActionOutcomeLogger(BeforeOrAfterTest beforeOrAfterTest)
+        public override void BeforeTestActionBeforeTestHook(HookData hookData)
         {
-            _beforeOrAfterTest = beforeOrAfterTest;
+            if (beforeOrAfterTest == BeforeOrAfterTest.BeforeTest)
+            {
+                BeforeTestActionHook(hookData);
+            }
         }
 
-        public void ApplyToContext(TestExecutionContext context)
+        public override void BeforeTestActionAfterTestHook(HookData hookData)
         {
-            if (_beforeOrAfterTest == BeforeOrAfterTest.BeforeTest)
+            if (beforeOrAfterTest == BeforeOrAfterTest.AfterTest)
             {
-                context.ExecutionHooks.AddBeforeTestActionBeforeTestHandler(BeforeTestActionHook);
-                context.ExecutionHooks.AddAfterTestActionBeforeTestHandler(AfterTestActionHook);
+                BeforeTestActionHook(hookData);
             }
-            else
+        }
+
+        public override void AfterTestActionBeforeTestHook(HookData hookData)
+        {
+            if (beforeOrAfterTest == BeforeOrAfterTest.BeforeTest)
             {
-                context.ExecutionHooks.AddBeforeTestActionAfterTestHandler(BeforeTestActionHook);
-                context.ExecutionHooks.AddAfterTestActionAfterTestHandler(AfterTestActionHook);
+                AfterTestActionHook(hookData);
+            }
+        }
+
+        public override void AfterTestActionAfterTestHook(HookData hookData)
+        {
+            if (beforeOrAfterTest == BeforeOrAfterTest.AfterTest)
+            {
+                AfterTestActionHook(hookData);
             }
         }
 
@@ -88,22 +100,13 @@ public class AfterTestActionHooksEvaluateTestOutcomeTests
         AfterTest
     }
 
-    internal class ActionAttributeWithInjectedFailuresAttribute : Attribute, ITestAction
+    internal class ActionAttributeWithInjectedFailuresAttribute(FailingReason failingReason, BeforeOrAfterTest beforeOrAfterTest) : Attribute, ITestAction
     {
-        private readonly FailingReason _failingReason;
-        private readonly BeforeOrAfterTest _beforeOrAfterTest;
-
-        public ActionAttributeWithInjectedFailuresAttribute(FailingReason failingReason, BeforeOrAfterTest beforeOrAfterTest)
-        {
-            _failingReason = failingReason;
-            _beforeOrAfterTest = beforeOrAfterTest;
-        }
-
         public ActionTargets Targets => ActionTargets.Test;
 
         public void BeforeTest(ITest test)
         {
-            if (_beforeOrAfterTest == BeforeOrAfterTest.BeforeTest)
+            if (beforeOrAfterTest == BeforeOrAfterTest.BeforeTest)
             {
                 ExecuteFailingReason();
             }
@@ -111,7 +114,7 @@ public class AfterTestActionHooksEvaluateTestOutcomeTests
 
         public void AfterTest(ITest test)
         {
-            if (_beforeOrAfterTest == BeforeOrAfterTest.AfterTest)
+            if (beforeOrAfterTest == BeforeOrAfterTest.AfterTest)
             {
                 ExecuteFailingReason();
             }
@@ -119,7 +122,7 @@ public class AfterTestActionHooksEvaluateTestOutcomeTests
 
         private void ExecuteFailingReason()
         {
-            switch (_failingReason)
+            switch (failingReason)
             {
                 case FailingReason.Assertion4Failed:
                     Assert.Fail("OneTimeSetUp fails by Assertion_Failed.");
