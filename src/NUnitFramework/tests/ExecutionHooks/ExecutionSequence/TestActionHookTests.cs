@@ -1,7 +1,7 @@
 // Copyright (c) Charlie Poole, Rob Prouse and Contributors. MIT License - see LICENSE.txt
 
 using NUnit.Framework.Internal;
-using NUnit.Framework.Tests.ExecutionHooks.Common;
+using NUnit.Framework.Tests.ExecutionHooks.TestAttributes;
 using NUnit.Framework.Tests.TestUtilities;
 
 namespace NUnit.Framework.Tests.ExecutionHooks.ExecutionSequence
@@ -9,16 +9,12 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ExecutionSequence
     public class TestActionHooksTests
     {
         [Explicit($"This test should only be run as part of the {nameof(TestActionHooksCalledBeforeAndAfterTestAction)} test")]
-        [TestFixture]
         [LogTestAction]
         [TestActionLoggingExecutionHooks]
         public class TestClassWithTestAction
         {
             [Test]
-            public void TestUnderTest()
-            {
-                TestLog.LogCurrentMethod();
-            }
+            public void TestUnderTest() => TestLog.LogCurrentMethod();
         }
 
         [Test]

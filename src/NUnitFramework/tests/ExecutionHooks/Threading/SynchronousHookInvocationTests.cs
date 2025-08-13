@@ -3,41 +3,27 @@
 using System;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
-using NUnit.Framework.Tests.ExecutionHooks.Common;
+using NUnit.Framework.Tests.ExecutionHooks.TestAttributes;
 using NUnit.Framework.Tests.TestUtilities;
 
-namespace NUnit.Framework.Tests.ExecutionHooks.ThreadingTests
+namespace NUnit.Framework.Tests.ExecutionHooks.Threading
 {
     internal class SynchronousHookInvocationTests
     {
         [Explicit($"This test should only be run as part of the {nameof(SynchronousHookInvocation_HookExecutesInSameThreadAsTest)} test")]
-        public class SynchronousHookInvocationTests_TestUnderTest
+        private class SynchronousHookInvocationTestsTestUnderTest
         {
             [SetUp]
-            public void Setup()
-            {
-                TestExecutionContext.CurrentContext
-                                    .CurrentTest.Properties
-                                    .Add("TestThreadId", Environment.CurrentManagedThreadId);
-            }
+            public void Setup() => TestExecutionContext.CurrentContext.CurrentTest.Properties.Add("TestThreadId", Environment.CurrentManagedThreadId);
 
             [Test, ActivateSynchronousTestHook]
-            public void TestPasses_WithAssertPass()
-            {
-                Assert.Pass("Test passed.");
-            }
+            public void TestPasses_WithAssertPass() => Assert.Pass("Test passed.");
 
             [Test, ActivateSynchronousTestHook]
-            public void TestFails_WithAssertFail()
-            {
-                Assert.Fail("Test failed with Assert.Fail");
-            }
+            public void TestFails_WithAssertFail() => Assert.Fail("Test failed with Assert.Fail");
 
             [Test, ActivateSynchronousTestHook]
-            public void TestFails_WithException()
-            {
-                throw new Exception("Test failed with Exception");
-            }
+            public void TestFails_WithException() => throw new Exception("Test failed with Exception");
         }
 
         [Test]
@@ -45,7 +31,7 @@ namespace NUnit.Framework.Tests.ExecutionHooks.ThreadingTests
         {
             TestLog.Clear();
 
-            var workItem = TestBuilder.CreateWorkItem(typeof(SynchronousHookInvocationTests_TestUnderTest), TestFilter.Explicit);
+            var workItem = TestBuilder.CreateWorkItem(typeof(SynchronousHookInvocationTestsTestUnderTest), TestFilter.Explicit);
             workItem.Execute();
 
             Assert.Multiple(() =>

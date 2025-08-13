@@ -1,7 +1,7 @@
 // Copyright (c) Charlie Poole, Rob Prouse and Contributors. MIT License - see LICENSE.txt
 
 using NUnit.Framework.Internal;
-using NUnit.Framework.Tests.ExecutionHooks.Common;
+using NUnit.Framework.Tests.ExecutionHooks.TestAttributes;
 using NUnit.Framework.Tests.TestUtilities;
 
 namespace NUnit.Framework.Tests.ExecutionHooks.ExecutionSequence;
@@ -16,10 +16,7 @@ public class ExecutionProceedsOnlyAfterAllBeforeTestHooksExecute
         [ActivateBeforeTestHook]
         [ActivateBeforeTestHook]
         [ActivateLongRunningBeforeTestHook]
-        public void SomeTest()
-        {
-            TestLog.LogCurrentMethod();
-        }
+        public void SomeTest() => TestLog.LogCurrentMethod();
     }
 
     [Test]

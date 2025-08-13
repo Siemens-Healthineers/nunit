@@ -1,7 +1,7 @@
 // Copyright (c) Charlie Poole, Rob Prouse and Contributors. MIT License - see LICENSE.txt
 
 using NUnit.Framework.Internal;
-using NUnit.Framework.Tests.ExecutionHooks.Common;
+using NUnit.Framework.Tests.ExecutionHooks.TestAttributes;
 using NUnit.Framework.Tests.TestUtilities;
 
 namespace NUnit.Framework.Tests.ExecutionHooks.Execution
@@ -12,16 +12,10 @@ namespace NUnit.Framework.Tests.ExecutionHooks.Execution
         public class TestUnderTest
         {
             [Test, ActivateTestHook, Order(1)]
-            public void TestWithHookLogging()
-            {
-                TestLog.LogCurrentMethod();
-            }
+            public void TestWithHookLogging() => TestLog.LogCurrentMethod();
 
             [Test, Order(2)]
-            public void TestWithoutHookLogging()
-            {
-                TestLog.LogCurrentMethod();
-            }
+            public void TestWithoutHookLogging() => TestLog.LogCurrentMethod();
         }
 
         [Test]
