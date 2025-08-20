@@ -256,7 +256,7 @@ namespace NUnit.Framework.Internal
         #endregion
 
         /// <inheritdoc />
-        public override TestResult CalculateDeltaWithPrevious(TestResult previous, Exception? exception = null)
+        public override TestResult CalculateDeltaResult(TestResult previous, Exception? exception = null)
         {
             var deltaResult = new TestSuiteResult(this)
             {
@@ -277,7 +277,7 @@ namespace NUnit.Framework.Internal
             {
             }
 
-            CalculateDeltaWithPrevious(deltaResult, previous, exception);
+            CalculateDeltaResult(deltaResult, previous, exception);
 
             return deltaResult;
         }
