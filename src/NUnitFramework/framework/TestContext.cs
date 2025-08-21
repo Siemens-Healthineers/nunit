@@ -11,6 +11,7 @@ using NUnit.Framework.Constraints;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using NUnit.Framework.Internal.Execution;
+using NUnit.Framework.Internal.ExecutionHooks;
 
 namespace NUnit.Framework
 {
@@ -409,6 +410,7 @@ namespace NUnit.Framework
         public class TestAdapter
         {
             private readonly Test _test;
+            private readonly MethodInfoAdapter? _methodInfoAdapter;
 
             #region Constructor
 
@@ -419,6 +421,7 @@ namespace NUnit.Framework
             public TestAdapter(Test test)
             {
                 _test = test;
+                _methodInfoAdapter = _test.Method is null ? null : new MethodInfoAdapter(_test.Method);
             }
 
             #endregion
@@ -449,7 +452,18 @@ namespace NUnit.Framework
             /// <summary>
             /// The name of the method representing the test.
             /// </summary>
-            public string? MethodName => (_test as TestMethod)?.Method.Name;
+            //public string? MethodName => (_test as TestMethod)?.Method.Name;
+            public string? MethodName => _methodInfoAdapter?.Name;
+
+            /// <summary>
+            /// The declaring type of the method representing the test.
+            /// </summary>
+            public Type? MethodDeclaringType => _methodInfoAdapter?.DeclaringType;
+
+            /// <summary>
+            /// The parameters of the method representing the test.
+            /// </summary>
+            public IParameterInfo[]? MethodParameters => _methodInfoAdapter?.Parameters;
 
             /// <summary>
             /// The method representing the test.

@@ -19,9 +19,9 @@ namespace NUnit.Framework.Internal.ExecutionHooks
         public string Name => _methodInfo.Name;
 
         /// <summary>
-        /// Gets the full declaring type of the method.
+        /// Gets the declaring type of the method.
         /// </summary>
-        public string DeclaringTypeFullName => _methodInfo.MethodInfo.DeclaringType?.FullName ?? string.Empty;
+        public System.Type? DeclaringType => _methodInfo.MethodInfo.DeclaringType;
 
         /// <summary>
         /// Gets the parameters of the method.
