@@ -11,7 +11,6 @@ using NUnit.Framework.Constraints;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using NUnit.Framework.Internal.Execution;
-using NUnit.Framework.Internal.ExecutionHooks;
 
 namespace NUnit.Framework
 {
@@ -574,6 +573,35 @@ namespace NUnit.Framework
             public IEnumerable<string> AllCategories() => AllPropertyValues("Category").Select(o => (string)o).ToList();
 
             #endregion
+        }
+
+        #endregion
+
+        #region Nested MethodInfoAdapter Class
+
+        /// <summary>
+        /// Useful when exposing IMethodInfo data without needing to expose the entire IMethodInfo interface
+        /// and the possibility to invoke it.
+        /// </summary>
+        /// <param name="methodInfo">The <see cref="IMethodInfo"/> to be wrapped.</param>
+        public class MethodInfoAdapter(IMethodInfo methodInfo)
+        {
+            private readonly IMethodInfo _methodInfo = methodInfo;
+
+            /// <summary>
+            /// Gets the name of the method.
+            /// </summary>
+            public string Name => _methodInfo.Name;
+
+            /// <summary>
+            /// Gets the declaring type of the method.
+            /// </summary>
+            public System.Type? DeclaringType => _methodInfo.MethodInfo.DeclaringType;
+
+            /// <summary>
+            /// Gets the parameters of the method.
+            /// </summary>
+            public IParameterInfo[] Parameters => _methodInfo.GetParameters();
         }
 
         #endregion
