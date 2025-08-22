@@ -105,7 +105,7 @@ namespace NUnit.Framework
         /// Method that is called <b>immediately after</b> the BeforeTest(ITest test) method of a <see cref="ITestAction"></see> is executed
         /// </summary>
         /// <param name="hookData">The current <see cref="HookData"/> for the test.</param>
-        public virtual void AfterTestActionBeforeTestHook(HookData hookData)
+        public virtual void BeforeTestActionAfterTestHook(HookData hookData)
         {
             // Just to verify our logic for detecting overridden methods works correctly.
             // This method should never be called.
@@ -116,7 +116,7 @@ namespace NUnit.Framework
         /// Method that is called <b>immediately before</b> the AfterTest(ITest test) method of a <see cref="ITestAction"></see> is executed
         /// </summary>
         /// <param name="hookData">The current <see cref="HookData"/> for the test.</param>
-        public virtual void BeforeTestActionAfterTestHook(HookData hookData)
+        public virtual void AfterTestActionBeforeTestHook(HookData hookData)
         {
             // Just to verify our logic for detecting overridden methods works correctly.
             // This method should never be called.
