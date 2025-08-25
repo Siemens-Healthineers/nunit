@@ -49,10 +49,10 @@ were considered/adjusted to minimize intrusive changes to existing command creat
 # High level changes
 - Introduced an `ExecutionHooks` (originally HookExtensions) subsystem that:
    - Exposes hook collections on `TestExecutionContext`.
-   - Allows attributes (e.g. an `ExecutionHookAttribute` or any `IApplyToContext` attribute) to add handlers to those hooks.
+   - Allows attributes to add handlers to those hooks. `ExecutionHookAttribute` is provided as a base class for consumers to derive from.
    - Invokes registered handlers before and after test methods.
   
-- Added `TestHook` abstractions to hold handlers. Thread-safe snapshots are used when invoking.
+- Added TestHook abstractions to hold handlers. Thread-safe snapshots are used when invoking. For e.g. `BeforeHook` and `AfterHook`.
 
 - Added a `HookDelegatingTestCommand` (delegating command) that wraps test execution and calls hook handlers at the correct times.
 
