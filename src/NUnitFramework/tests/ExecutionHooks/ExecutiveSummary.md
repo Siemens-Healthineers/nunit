@@ -70,14 +70,27 @@ were considered/adjusted to minimize intrusive changes to existing command creat
    - Minimizing unnecessary allocations and avoiding creating instances of the hook structure when not required.
 
 # Example usage
+A hook can be created by deriving from `ExecutionHookAttribute` and overriding the relevant methods.
 ```C#
-public class MyHookAttribute : NUnitAttribute, IApplyToContext
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class ActivateAfterTestHooksAttribute : ExecutionHookAttribute
 {
-  public void ApplyToContext(TestExecutionContext context)
-    => context.ExecutionHooks.BeforeTestHook.AddHandler(ctx => MyLogger.Log(...));
+    public override void AfterTestHook(TestExecutionContext context)
+    {
+        // Do something after the test
+    }
 }
 ```
- 
+Usage in test code is straightforward. Just add the attribute to a test method:
+```C#
+[Test]
+[ActivateAfterTestHook]
+public void SomeTest()
+{
+}
+```
+Similarly, hooks can be applied at the class or assembly level. And multiple hooks can be combined.
+
 # Detailed changes
 - **src/NUnitFramework/framework/Internal/ExecutionHooks/ExecutionHooks.cs**
    - New ExecutionHooks container (renamed from HookExtension).
