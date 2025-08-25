@@ -596,7 +596,7 @@ namespace NUnit.Framework
             /// <summary>
             /// Gets the declaring type of the method.
             /// </summary>
-            public System.Type? DeclaringType => _methodInfo.MethodInfo.DeclaringType;
+            public Type? DeclaringType => _methodInfo.MethodInfo.DeclaringType;
 
             /// <summary>
             /// Gets the parameters of the method.
