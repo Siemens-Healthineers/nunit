@@ -105,7 +105,7 @@ Numerous code-review-driven enhancements, including class sealing, thread-safety
       - Combination of hooks with ITestAction.
       - Ensuring hooks run correctly in presence of SetupFixtures.
 
-- **Improvements (on top of Slice 1)**:
+- **Improvements on top of Slice 1**:
    - Refined HookDelegatingTestCommand to only wrap commands when hooks are present (avoids overhead).
    - Added explicit support & tests for class/assembly‑level hooks.
    - Hardened thread‑safety.
