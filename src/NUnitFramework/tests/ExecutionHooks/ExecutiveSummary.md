@@ -1,15 +1,22 @@
 # Introduction to NUnit Execution Hooks
 This PR adds a new, lightweight extension mechanism that lets consumers register handlers 
 to run immediately before and after test-relevant methods. It exposes these hooks via the `TestExecutionContext` 
-so extensions/attributes can add handlers at method, class and assembly levels.
+so extensions/attributes can add handlers at method, class and assembly levels. 
+From the consumers perspective the execution hooks can be accessed via `TestContext.CurrentContext`.
 
 # Motivation
-This feature was motivated by the need to support high-level system/acceptance tests that need
-additional infrastructure to add new extension point useful for logging, screenshots, diagnostic dumps, etc.
-These tests often require additional setup/teardown steps that are not easily handled by existing NUnit extension points.
+For higher level tests it is often necessary to execute user defined functionalities directly before and after test relevant methods, which are:
+
+- Test methods,
+- SetUp / TearDown methods,
+- OneTimeSetUp / OneTimeTearDown methods,
+- BeforeTest / AfterTest methods of ITestAction.
+
+One example of such a use case is logging. We create extensive test protocols. In order to protocol that a specific method has started and finished, 
+the user code needs to be notified about it.
 
 # Delivery model
-The feature is delivered in vertical slices. This PR (Slice 1) implements synchronous **before/after hooks for test methods**
+The feature is delivered in vertical slices. This PR (Slice 1) implements synchronous before/after hooks for **Test Methods**
 and the plumbing to create, register and invoke them. Subsequent PRs will add other hook points, outcome calculation and async modes.
 
 # Design Goals
@@ -21,22 +28,23 @@ and the plumbing to create, register and invoke them. Subsequent PRs will add ot
 Extensions apply hooks to the context so they are available during execution.
 
 - **Command wrapper approach**:   
-Test execution is wrapped by a delegating TestCommand that invokes registered hooks and then delegates to the inner command.
+Test **method** execution is wrapped by a delegating TestCommand that invokes registered hooks and then delegates to the inner command.
 
 - **Hook ordering**:
-   - Before-hooks are invoked in registration order from assembly -> class -> method.
-   - After-hooks are invoked in the reverse order relative to before-hooks (method -> class -> assembly), giving teardown-like semantics.
-   - Tests exercise combinations with ITestAction.
+   - Before-hooks are invoked in registration order of the handlers.
+   - After-hooks are invoked in the **reverse** order of registration of the handlers.
+   - The original execution order of test relevant methods is preserved. 
+   In addition, the hooks are tightly coupled to the methods which they are associated with and are executed immediately before and after the corresponding methods.
 
 - **Hook scoping**:   
-ExecutionHooks are attached to TestExecutionContext and created lazily. When contexts are nested the hook collections are cloned 
-(or shared) to avoid leakage across tests.
+ExecutionHooks are attached to `TestExecutionContext` and created lazily. When test objects are nested the hook collections are cloned 
+along with the context to avoid leakage across tests.
 
 - **Exception behavior**:   
 If a hook throws, the exception is propagated and fails the test. Tests verify propagation and that inner test execution semantics remain predictable.
 
 - **Thread-safety**:   
-Handler collections are protected and invoked via safe snapshots to allow concurrent registration/iteration and invocation without races.
+In order to safe guard parallel test executions, Hook extension is designed to be thread-safe.
 
 - **Performance**:     
 Minimal runtime cost when unused. The code avoids creating hook structures when not needed so no performance penalty for users not using hooks.
@@ -44,7 +52,7 @@ Hooks are lazily allocated, so projects not using hooks incur no allocation cost
 
 - **Minimize intrusive changes**:   
 Alignment with existing NUnit extension patterns, integration points like IWrapTestMethod / IWrapSetUpTearDown 
-were considered/adjusted to minimize intrusive changes to existing command creation.
+were considered to be used in order to minimize intrusive changes to NUnit Framework.
 
 # High level changes
 - Introduced an `ExecutionHooks` (originally HookExtensions) subsystem that:
@@ -89,7 +97,7 @@ public void SomeTest()
 {
 }
 ```
-Similarly, hooks can be applied at the class or assembly level. And multiple hooks can be combined.
+Similarly, hooks can be applied at the class or assembly level. And multiple instances of a hook can be placed on the same element.
 
 # Detailed changes
 - **src/NUnitFramework/framework/Internal/ExecutionHooks/ExecutionHooks.cs**
