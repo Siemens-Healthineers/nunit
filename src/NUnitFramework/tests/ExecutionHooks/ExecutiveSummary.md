@@ -47,8 +47,8 @@ If a hook throws, the exception is propagated and fails the test. Tests verify p
 In order to safe guard parallel test executions, Hook extension is designed to be thread-safe.
 
 - **Performance**:     
-Minimal runtime cost when unused. The code avoids creating hook structures when not needed so no performance penalty for users not using hooks.
-Hooks are lazily allocated, so projects not using hooks incur no allocation cost. Integration points add minimal overhead only when hooks are present.
+Minimal runtime cost when unused. Hooks are lazily allocated thereby the code avoids creating hook structures when not needed 
+so no performance penalty for users not using hooks.
 
 - **Minimize intrusive changes**:   
 Alignment with existing NUnit extension patterns, integration points like IWrapTestMethod / IWrapSetUpTearDown 
@@ -56,8 +56,8 @@ were considered to be used in order to minimize intrusive changes to NUnit Frame
 
 # High level changes
 - Introduced an `ExecutionHooks` (originally HookExtensions) subsystem that:
-   - Exposes hook collections on `TestExecutionContext`.
-   - Allows attributes to add handlers to those hooks. `ExecutionHookAttribute` is provided as a base class for consumers to derive from.
+   - Exposes hook collections on `TestContext.CurrentContext`.
+   - Allows attributes to add handlers to those hooks. `ExecutionHookAttribute` is provided as a base class for consumers to derive from and overridere hook methods.
    - Invokes registered handlers before and after test methods.
   
 - Added TestHook abstractions to hold handlers. Thread-safe snapshots are used when invoking. For e.g. `BeforeHook` and `AfterHook`.
