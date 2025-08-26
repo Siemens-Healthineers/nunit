@@ -54,29 +54,6 @@ so no performance penalty for users not using hooks.
 Alignment with existing NUnit extension patterns, integration points like IWrapTestMethod / IWrapSetUpTearDown 
 were considered to be used in order to minimize intrusive changes to NUnit Framework.
 
-# High level changes
-- Introduced an `ExecutionHooks` (originally HookExtensions) subsystem that:
-   - Exposes hook collections on `TestContext.CurrentContext`.
-   - Allows attributes to add handlers to those hooks. `ExecutionHookAttribute` is provided as a base class for consumers to derive from and overridere hook methods.
-   - Invokes registered handlers before and after test methods.
-  
-- Added TestHook abstractions to hold handlers. Thread-safe snapshots are used when invoking. For e.g. `BeforeHook` and `AfterHook`.
-
-- Added a `HookDelegatingTestCommand` (delegating command) that wraps test execution and calls hook handlers at the correct times.
-
-- Key Tests added:
-   - Creation/TestHooksCreationAtMethodLevelTests.cs
-   - Creation/TestHooksCreationAtAssemblyLevelTests.cs
-   - Execution/CombinedHookTests.cs (ordering, ITestAction interaction)
-   - Exception handling tests (verify propagation)
-   - Testdata/ExecutionHooksTestData.cs (fixtures/attributes used in tests)
-
-- Numerous code-review-driven improvements:
-   - Sealing classes, 
-   - Thread-safety fixes, 
-   - Replacing custom delegate usage with EventHandler, 
-   - Minimizing unnecessary allocations and avoiding creating instances of the hook structure when not required.
-
 # Example usage
 A hook can be created by deriving from `ExecutionHookAttribute` and overriding the relevant methods.
 ```C#
@@ -99,34 +76,59 @@ public void SomeTest()
 ```
 Similarly, hooks can be applied at the class or assembly level. And multiple instances of a hook can be placed on the same element.
 
-# Detailed changes
-- **src/NUnitFramework/framework/Internal/ExecutionHooks/ExecutionHooks.cs**
-   - New ExecutionHooks container (renamed from HookExtension).
-   - Adds properties for each hook (e.g. BeforeTestHook, AfterTestHook) and creation/clone logic.
-   - Lazy creation / avoidance of allocating hooks when unused.
-   - Small API/visibility refinements (sealed, removed unused setters).
+# Slice 1 - High level changes
+- Introduced an `ExecutionHooks` (originally HookExtensions) subsystem that:
+   - Exposes hook collections on `TestContext.CurrentContext`.
+   - Allows attributes to add handlers to those hooks. `ExecutionHookAttribute` is provided as a base class for consumers to derive from and override hook methods.
+   - Invokes registered handlers before and after test methods.
+- Added TestHook abstractions to hold handlers. Thread-safe snapshots are used when invoking. For e.g. `BeforeHook` and `AfterHook`.
+- Added a `HookDelegatingTestCommand` (delegating command) that wraps test execution and calls hook handlers at the correct times.
 
-- **src/NUnitFramework/framework/Internal/ExecutionHooks/TestHook.cs (+ Forward/Reverse variants)*-  
-   - New TestHook abstraction for registering/invoking handlers.
-   - Introduced ForwardTestHook and ReverseTestHook to support ordering semantics.
-   - Thread-safety: locking and returning a handler snapshot before invocation.
-   - Public/internal methods: AddHandler, GetHandlers, InvokeHandlers; Count property.
-   - Replaced earlier delegate implementation with EventHandler/Action usage and fixed CA1860/style issues.
+- **Key Tests**: 
+Comprehensive tests cover hook creation (method/class/assembly), execution ordering, `ITestAction` interaction, and exception handling.
 
-- **src/NUnitFramework/framework/Attributes/ExecutionHookAttribute.cs (and base attribute)**
-   - New attribute(s) to let users declare/implement execution hooks.
-   - Implements IApplyToContext (or similar) so attributes add handlers to TestExecutionContext.
-   - Helper methods to detect which hook methods are implemented on a derived attribute.
+- **Code Improvements**: 
+Numerous code-review-driven enhancements, including class sealing, thread-safety fixes, `EventHandler` usage, and optimizations to minimize allocations.
 
-- **src/NUnitFramework/framework/Internal/Commands/HookDelegatingTestCommand.cs (delegating wrapper)*-          
-   - New delegating TestCommand that:
-    - Invokes before-test handlers.
-    - Calls the innerCommand (actual test execution).
-    - Invokes after-test handlers (reverse-order semantics where applicable).
-   - Ensures inner command executes in presence of hooks; exception handling tests added/updated.
-   - Contains logic to avoid wrapping/executing innerCommand unnecessarily when no hooks exist (review requested).
+- **Pull request**: 
+[PR-4986 NUnit Framework repo](https://github.com/nunit/nunit/pull/4986)
 
-- **src/NUnitFramework/framework/Internal/TestExecutionContext.cs**
-   - Exposes ExecutionHooks on the context (added property / accessor).
-   - Ensures the ExecutionHooks instance is available to attributes and commands (with lazy creation).
-   - Minor adjustments to prevent creating ExecutionHooks when not required.
+# Slice 2 - High level changes
+- **New functionalities**:
+   - Added hook extensions for:
+      - [SetUp] / [TearDown]
+      - [OneTimeSetUp] / [OneTimeTearDown]
+      - BeforeTest() and AfterTest() of ITestAction.
+   - Implemented reverse‑ordering for after-hooks using ForwardTestHook / ReverseTestHook classes.
+   - Added tests covering:
+      - Hook application at SetUp/TearDown and OneTimeSetUp/TearDown methods.
+      - Combination of hooks with ITestAction.
+      - Ensuring hooks run correctly in presence of SetupFixtures.
+
+- **Improvements (on top of Slice 1)**:
+   - Refined HookDelegatingTestCommand to only wrap commands when hooks are present (avoids overhead).
+   - Added explicit support & tests for class/assembly‑level hooks.
+   - Hardened thread‑safety.
+
+- **Improvements in NUnit Framework**:
+   - Added test filter for explicit tests in `TestBuilder` (Already part of NUnit Main). 
+
+- **Code quality improvements**:
+   - Fixed CA/style issues; sealed hook classes, removed unused setters.
+
+- **Pull request**: [PR-21 Healthineers NUnit Fork](https://github.com/Siemens-Healthineers/nunit/pull/21)
+
+# Slice 3 - High level changes
+- **New functionalities added**:
+   - Introduced outcome calculation helpers inside ExecutionHooks.      
+   - Provided an API on `TestResult` to query the outcome of the hooked method through `TestExecutionContext`.
+   - Tests added to validate correct outcome reporting in all possible outcomes.
+
+- **Improvements on top of Slice 2**:
+   - Maintained thread‑safety with reduced mutable state.
+
+- **Code quality improvements**:
+   - Encapsulated parameters for hook handlers in a separate class `HookData`.
+   - Cleanups: removed unused event args, enforced get‑only properties, namespace/style fixes.
+   
+- **Pull request**: [PR-27 Healthineers NUnit Fork](https://github.com/Siemens-Healthineers/nunit/pull/27)
