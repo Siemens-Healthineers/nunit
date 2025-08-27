@@ -272,7 +272,8 @@ namespace NUnit.Framework.Internal
                 _totalCount = TotalCount - previous.TotalCount
             };
 
-            // We dont consider children in the delta result for now
+            // We don't consider children in the delta result for now.
+            // Therefore, we delete all the children from the delta result.
             while (deltaResult._children.TryDequeue(out _))
             {
             }
