@@ -437,7 +437,7 @@ namespace NUnit.Framework.Internal
         /// <param name="previous">The previous TestResult to compare against.</param>
         /// <param name="exception">An optional exception to consider when calculating the delta.</param>
         /// <returns>A new TestResult representing the delta between the current and previous TestResults.</returns>
-        public abstract TestResult CalculateDeltaResult(TestResult previous, Exception? exception = null);
+        protected internal abstract TestResult CalculateDeltaResult(TestResult previous, Exception? exception = null);
 
         /// <summary>
         /// Contains the core logic for calculating delta results for all TestResult types

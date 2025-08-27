@@ -168,7 +168,7 @@ namespace NUnit.Framework.Tests
 
             public override IEnumerable<ITestResult> Children => Enumerable.Empty<ITestResult>();
 
-            public override TestResult CalculateDeltaResult(TestResult previous, Exception? exception)
+            protected internal override TestResult CalculateDeltaResult(TestResult previous, Exception? exception)
             {
                 FakeTestResult deltaResult = new FakeTestResult(Test)
                 {

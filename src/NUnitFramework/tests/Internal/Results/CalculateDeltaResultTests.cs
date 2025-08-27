@@ -238,7 +238,7 @@ namespace NUnit.Framework.Tests.Internal.Results
             public override bool HasChildren => false;
             public override IEnumerable<ITestResult> Children => [];
 
-            public override TestResult CalculateDeltaResult(TestResult previous, Exception? exception = null)
+            protected internal override TestResult CalculateDeltaResult(TestResult previous, Exception? exception = null)
                 => throw new NotImplementedException();
 
             public override TestResult Clone()

@@ -76,7 +76,7 @@ namespace NUnit.Framework.Internal
         public override IEnumerable<ITestResult> Children => Array.Empty<ITestResult>();
 
         /// <inheritdoc />
-        public override TestResult CalculateDeltaResult(TestResult previous, Exception? exception = null)
+        protected internal override TestResult CalculateDeltaResult(TestResult previous, Exception? exception = null)
         {
             var deltaResult = new TestCaseResult(this)
             {
