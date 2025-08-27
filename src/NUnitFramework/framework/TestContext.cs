@@ -451,7 +451,6 @@ namespace NUnit.Framework
             /// <summary>
             /// The name of the method representing the test.
             /// </summary>
-            //public string? MethodName => (_test as TestMethod)?.Method.Name;
             public string? MethodName => _methodInfoAdapter?.Name;
 
             /// <summary>
