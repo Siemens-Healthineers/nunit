@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using NUnit.Framework.Interfaces;
+using System;
 
 namespace NUnit.Framework.Internal
 {
@@ -25,6 +26,29 @@ namespace NUnit.Framework.Internal
         /// <param name="suite">The TestSuite to which the result applies</param>
         public TestSuiteResult(TestSuite suite) : base(suite)
         {
+        }
+
+        /// <summary>
+        /// <inheritdoc cref="TestResult"/>
+        /// </summary>
+        /// <param name="other">The TestSuite from which the result shall be copied</param>
+        private TestSuiteResult(TestSuiteResult other) : base(other)
+        {
+            _passCount = other._passCount;
+            _failCount = other._failCount;
+            _warningCount = other._warningCount;
+            _skipCount = other._skipCount;
+            _inconclusiveCount = other._inconclusiveCount;
+            _totalCount = other._totalCount;
+            _children = new ConcurrentQueue<ITestResult>(other._children);
+        }
+
+        /// <summary>
+        /// <inheritdoc cref="TestResult.Clone"/>
+        /// </summary>
+        public override TestResult Clone()
+        {
+            return new TestSuiteResult(this);
         }
 
         #region Overrides
@@ -230,5 +254,33 @@ namespace NUnit.Framework.Internal
         }
 
         #endregion
+
+        /// <inheritdoc />
+        protected internal override TestResult CalculateDeltaResult(TestResult previous, Exception? exception = null)
+        {
+            var deltaResult = new TestSuiteResult(this)
+            {
+                StartTime = StartTime,
+                EndTime = EndTime,
+                Duration = Duration,
+
+                _passCount = PassCount - previous.PassCount,
+                _failCount = FailCount - previous.FailCount,
+                _warningCount = WarningCount - previous.WarningCount,
+                _skipCount = SkipCount - previous.SkipCount,
+                _inconclusiveCount = InconclusiveCount - previous.InconclusiveCount,
+                _totalCount = TotalCount - previous.TotalCount
+            };
+
+            // We don't consider children in the delta result for now.
+            // Therefore, we delete all the children from the delta result.
+            while (deltaResult._children.TryDequeue(out _))
+            {
+            }
+
+            CalculateDeltaResult(deltaResult, previous, exception);
+
+            return deltaResult;
+        }
     }
 }

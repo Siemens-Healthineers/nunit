@@ -409,6 +409,7 @@ namespace NUnit.Framework
         public class TestAdapter
         {
             private readonly Test _test;
+            private readonly MethodInfoAdapter? _methodInfoAdapter;
 
             #region Constructor
 
@@ -419,6 +420,7 @@ namespace NUnit.Framework
             public TestAdapter(Test test)
             {
                 _test = test;
+                _methodInfoAdapter = _test.Method is null ? null : new MethodInfoAdapter(_test.Method);
             }
 
             #endregion
@@ -449,7 +451,17 @@ namespace NUnit.Framework
             /// <summary>
             /// The name of the method representing the test.
             /// </summary>
-            public string? MethodName => (_test as TestMethod)?.Method.Name;
+            public string? MethodName => _methodInfoAdapter?.Name;
+
+            /// <summary>
+            /// The declaring type of the method representing the test.
+            /// </summary>
+            public Type? MethodDeclaringType => _methodInfoAdapter?.DeclaringType;
+
+            /// <summary>
+            /// The parameters of the method representing the test.
+            /// </summary>
+            public IParameterInfo[]? MethodParameters => _methodInfoAdapter?.Parameters;
 
             /// <summary>
             /// The method representing the test.
@@ -490,6 +502,11 @@ namespace NUnit.Framework
             /// The parent of this test or suite
             /// </summary>
             public ITest? Parent => _test.Parent;
+
+            /// <summary>
+            /// Returns true if this is a TestSuite
+            /// </summary>
+            public bool IsSuite => _test.IsSuite;
 
             /// <summary>
             /// Returns all properties in the hierarchy
@@ -555,6 +572,35 @@ namespace NUnit.Framework
             public IEnumerable<string> AllCategories() => AllPropertyValues("Category").Select(o => (string)o).ToList();
 
             #endregion
+        }
+
+        #endregion
+
+        #region Nested MethodInfoAdapter Class
+
+        /// <summary>
+        /// Useful when exposing IMethodInfo data without needing to expose the entire IMethodInfo interface
+        /// and the possibility to invoke it.
+        /// </summary>
+        /// <param name="methodInfo">The <see cref="IMethodInfo"/> to be wrapped.</param>
+        public class MethodInfoAdapter(IMethodInfo methodInfo)
+        {
+            private readonly IMethodInfo _methodInfo = methodInfo;
+
+            /// <summary>
+            /// Gets the name of the method.
+            /// </summary>
+            public string Name => _methodInfo.Name;
+
+            /// <summary>
+            /// Gets the declaring type of the method.
+            /// </summary>
+            public Type? DeclaringType => _methodInfo.MethodInfo.DeclaringType;
+
+            /// <summary>
+            /// Gets the parameters of the method.
+            /// </summary>
+            public IParameterInfo[] Parameters => _methodInfo.GetParameters();
         }
 
         #endregion
@@ -702,6 +748,25 @@ namespace NUnit.Framework
             public int InconclusiveCount => _result.InconclusiveCount;
 
             #endregion
+
+            /// <summary>
+            /// Create a clone of the current instance.
+            /// </summary>
+            /// <returns></returns>
+            public ResultAdapter Clone()
+            {
+                return new ResultAdapter(_result.Clone());
+            }
+
+            /// <summary>
+            /// Calculates the delta between the current TestResult and a previous TestResult.
+            /// This method should be used in the context of execution hooks if you need to
+            /// get the test result for a hooked method.
+            /// </summary>
+            public ResultAdapter CalculateDeltaWithPrevious(ResultAdapter previous, Exception? exception)
+            {
+                return new ResultAdapter(_result.CalculateDeltaResult(previous._result, exception));
+            }
         }
 
         #endregion

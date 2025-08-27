@@ -89,6 +89,26 @@ namespace NUnit.Framework.Internal
             OutWriter = TextWriter.Synchronized(new StringWriter(_output));
         }
 
+        /// <summary>
+        /// Copy ctor as an enabler for <see cref="TestResult.Clone"/> class.
+        /// </summary>
+        /// <param name="other"></param>
+        protected TestResult(TestResult other)
+        {
+            Test = other.Test;
+            _resultState = other._resultState;
+            _message = other._message;
+            _stackTrace = other._stackTrace;
+            _duration = other._duration;
+            StartTime = other.StartTime;
+            EndTime = other.EndTime;
+            InternalAssertCount = other.InternalAssertCount;
+            _output = new StringBuilder(other._output.ToString());
+            OutWriter = TextWriter.Synchronized(new StringWriter(_output));
+            _assertionResults = new List<AssertionResult>(other._assertionResults);
+            _testAttachments = new List<TestAttachment>(other._testAttachments);
+        }
+
         #endregion
 
         #region ITestResult Members
@@ -399,6 +419,68 @@ namespace NUnit.Framework.Internal
         #endregion
 
         #region Other Public Methods
+
+        /// <summary>
+        /// Create a clone of the current instance.
+        /// </summary>
+        public abstract TestResult Clone();
+
+        /// <summary>
+        /// Calculates the delta between the current TestResult and a previous TestResult.
+        /// This method should be used in the context of execution hooks if you need to
+        /// get the test result for a hooked method.
+        /// Example: The test result for SetUp, TestMethod and TearDown is the same instance.
+        /// If you need to know the separated test outcome for the TearDown method, you can
+        /// create a clone of the TestResult in the before hook and calculate the delta
+        /// in the after hook and use this result as the "TearDown result".
+        /// </summary>
+        /// <param name="previous">The previous TestResult to compare against.</param>
+        /// <param name="exception">An optional exception to consider when calculating the delta.</param>
+        /// <returns>A new TestResult representing the delta between the current and previous TestResults.</returns>
+        protected internal abstract TestResult CalculateDeltaResult(TestResult previous, Exception? exception = null);
+
+        /// <summary>
+        /// Contains the core logic for calculating delta results for all TestResult types
+        /// such as <see cref="TestCaseResult"/> and <see cref="TestSuiteResult"/>.
+        /// Type specific logic should be implemented in
+        /// <see cref="CalculateDeltaResult(TestResult, Exception?)"/> of the derived classes.
+        /// </summary>
+        /// <param name="deltaResult">An empty TestResult to store the delta result.</param>
+        /// <param name="previous">The previous TestResult to compare against.</param>
+        /// <param name="exception">An optional exception to consider when calculating the delta.</param>
+        protected void CalculateDeltaResult(TestResult deltaResult, TestResult previous, Exception? exception = null)
+        {
+            // Calculate the delta for ResultState
+            if (ResultState != previous.ResultState)
+            {
+                deltaResult.SetResult(ResultState, Message, StackTrace);
+            }
+            else
+            {
+                deltaResult.SetResult(ResultState.Success);
+            }
+
+            // Calculate the delta for AssertCount
+            deltaResult.AssertCount = AssertCount - previous.AssertCount;
+
+            // Calculate the delta for AssertionResults
+            deltaResult.AssertionResults.Clear();
+            foreach (var assertion in AssertionResults.Except(previous.AssertionResults))
+            {
+                deltaResult.RecordAssertion(assertion);
+            }
+
+            // consider the exception and warnings
+            if (exception is not null)
+            {
+                deltaResult.RecordException(exception);
+            }
+            else if (deltaResult.AssertionResults.Count > 0)
+            {
+                // Warnings needs to be treated differently.
+                deltaResult.RecordTestCompletion();
+            }
+        }
 
         /// <summary>
         /// Set the result of the test
