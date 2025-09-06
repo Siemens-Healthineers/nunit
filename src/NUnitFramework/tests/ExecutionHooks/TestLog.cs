@@ -1,52 +1,60 @@
 // Copyright (c) Charlie Poole, Rob Prouse and Contributors. MIT License - see LICENSE.txt
 
-using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading;
+using NUnit.Framework.Interfaces;
+using NUnit.Framework.Internal;
 
 namespace NUnit.Framework.Tests.ExecutionHooks
 {
     internal static class TestLog
     {
-        private static readonly AsyncLocal<List<string>> LocalLogs = new();
-        private static readonly object LogLock = new();
+        internal const string TestLogPropertyKey = "TestLog";
 
-        public static List<string> Logs
+        public static IEnumerable Logs(ITest? test = null)
         {
-            get
+            var props = GetBaseParent(test).Properties;
+            if (!props.TryGet(TestLogPropertyKey, out IList? value))
             {
-                lock (LogLock)
-                {
-                    return LocalLogs.Value ??= new List<string>();
-                }
+                return Enumerable.Empty<string>();
             }
-            private set
-            {
-                lock (LogLock)
-                {
-                    LocalLogs.Value = value;
-                }
-            }
+            return value;
         }
 
         public static void LogCurrentMethod([CallerMemberName] string callerMethodName = "")
         {
-            Logs.Add(callerMethodName);
+            LogToPropertyBag(callerMethodName);
         }
 
         public static void LogCurrentMethodWithContextInfo(string contextInfo, [CallerMemberName] string callerMethodName = "")
         {
-            Logs.Add($"{callerMethodName}({contextInfo})");
+            LogToPropertyBag($"{callerMethodName}({contextInfo})");
         }
 
         public static void LogMessage(string message)
         {
-            Logs.Add(message);
+            LogToPropertyBag(message);
         }
 
-        public static void Clear()
+        public static void LogToPropertyBag(string s)
         {
-            Logs.Clear();
+            if (string.IsNullOrEmpty(s))
+            {
+                return;
+            }
+            var props = GetBaseParent().Properties;
+            props.Add(TestLogPropertyKey, s);
+        }
+
+        public static ITest GetBaseParent(ITest? test = null)
+        {
+            ITest current = test is null ? TestExecutionContext.CurrentContext.CurrentTest : test;
+            while (current.Parent is not null)
+            {
+                current = current.Parent;
+            }
+            return current;
         }
     }
 }
