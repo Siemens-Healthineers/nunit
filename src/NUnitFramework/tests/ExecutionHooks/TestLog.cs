@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
-namespace NUnit.TestData.ExecutionHookTests
+namespace NUnit.Framework.Tests.ExecutionHooks
 {
-    public static class TestLog
+    internal static class TestLog
     {
         private static readonly AsyncLocal<List<string>> LocalLogs = new();
         private static readonly object LogLock = new();
@@ -32,6 +32,11 @@ namespace NUnit.TestData.ExecutionHookTests
         public static void LogCurrentMethod([CallerMemberName] string callerMethodName = "")
         {
             Logs.Add(callerMethodName);
+        }
+
+        public static void LogCurrentMethodWithContextInfo(string contextInfo, [CallerMemberName] string callerMethodName = "")
+        {
+            Logs.Add($"{callerMethodName}({contextInfo})");
         }
 
         public static void LogMessage(string message)
